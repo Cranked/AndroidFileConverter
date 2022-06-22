@@ -20,7 +20,6 @@ fun View.renderAnimation(
 ) {
     val aniObject = AnimationX().setDuration(duration)
         .setAnimatorSet(animatorSet)
-    aniObject.getAnimatorX().removeAllListeners()
     aniObject.getAnimatorX().addListener(listener)
     aniObject.start()
 }
