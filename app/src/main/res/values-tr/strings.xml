@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">FileTransformer</string>
+    <string name="home">Anasayfa</string>
+    <string name="tools">Araçlar</string>
+    <string name="camera">Kamera</string>
+    <string name="settings">Ayarlar</string>
+</resources>
