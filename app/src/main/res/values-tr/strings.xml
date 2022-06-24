@@ -1,7 +1,16 @@
 <resources>
     <string name="app_name">FileTransformer</string>
+    <!--    Bottom Navigation Strings-->
     <string name="home">Anasayfa</string>
     <string name="tools">Araçlar</string>
     <string name="camera">Kamera</string>
     <string name="settings">Ayarlar</string>
+
+    <string name="hello_blank_fragment">Merhaba boş fragment</string>
+
+    <!--    Search Strings-->
+    <string name="search">Arama</string>
+    <string name="search_hint">Aramak için buraya yazın </string>
+
+
 </resources>
