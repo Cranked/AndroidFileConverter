@@ -4,7 +4,7 @@
     package="com.cranked.androidfileconverter">
 
     <application
-        android:name=".AppModule"
+        android:name=".FileConvertApp"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -15,7 +15,7 @@
         android:theme="@style/Theme.AndroidFileConverter"
         tools:targetApi="31">
         <activity
-            android:name=".SearchActivity"
+            android:name=".ui.search.SearchActivity"
             android:exported="false" />
         <activity
             android:name=".ui.main.MainActivity"
