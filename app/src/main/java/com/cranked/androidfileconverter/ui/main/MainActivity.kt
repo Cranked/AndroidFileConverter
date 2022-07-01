@@ -12,6 +12,7 @@ import androidx.navigation.ui.setupWithNavController
 import com.cranked.androidcorelibrary.ui.base.BaseActivity
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
+import com.cranked.androidfileconverter.ui.model.NavigationModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
@@ -25,14 +26,12 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
 //        appComponent!!.inject(this)
         navController = findNavController(R.id.nav_host_fragment)
         setupBottomNavMenu(navController)
-        navControllerListener()
     }
 
     private fun setupBottomNavMenu(navController: NavController) {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-
         bottomNav?.setupWithNavController(navController)
-
+        navControllerListener()
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -50,36 +49,51 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
     }
 
     override fun createLiveData() {
-        this.viewModel.searchVisibleState.observe(
+        this.viewModel.barIconsVisibleState.observe(
             this
         ) { t ->
             binding.root.findViewById<ImageView>(R.id.searchImageView).apply {
-                visibility = if (t) View.VISIBLE else View.GONE
+                visibility = if (t!!.searchState) View.VISIBLE else View.GONE
             }
-        }
-        this.viewModel.gridVisibleState.observe(
-            this
-        ) { t ->
             binding.root.findViewById<ImageView>(R.id.gridimageView).apply {
-                visibility = if (t) View.VISIBLE else View.GONE
+                visibility = if (t!!.gridState) View.VISIBLE else View.GONE
             }
-        }
-        this.viewModel.userVisibleState.observe(
-            this
-        ) { t ->
             binding.root.findViewById<ImageView>(R.id.userImageView).apply {
-                visibility = if (t) View.VISIBLE else View.GONE
+                visibility = if (t!!.userState) View.VISIBLE else View.GONE
             }
         }
     }
+
     fun navControllerListener() {
         navController.addOnDestinationChangedListener { _, destination, _ ->
             when (destination.id) {
-                R.id.home_dest -> viewModel.setImageViewsState(true, false, true)
-                R.id.tools_dest -> viewModel.setImageViewsState(true, true, true)
-                R.id.camera_dest -> viewModel.setImageViewsState(false, false, true)
-                R.id.settings_dest -> viewModel.setImageViewsState(false, false, false)
+                R.id.home_dest -> viewModel.setImageViewsState(NavigationModel(true, false, true))
+                R.id.tools_dest -> viewModel.setImageViewsState(NavigationModel(true, true, true))
+                R.id.camera_dest -> viewModel.setImageViewsState(
+                    NavigationModel(
+                        false,
+                        false,
+                        true
+                    )
+                )
+                R.id.settings_dest -> viewModel.setImageViewsState(
+                    NavigationModel(
+                        false,
+                        false,
+                        false
+                    )
+                )
             }
         }
+    }
+
+    override fun onBindingClear(binding: ActivityMainBinding) {
+        viewModel.onCleared()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        onBindingClear(binding)
+
     }
 }
