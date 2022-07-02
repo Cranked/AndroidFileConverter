@@ -12,5 +12,13 @@
     <string name="search">Arama</string>
     <string name="search_hint">Aramak için buraya yazın </string>
 
-
+    <string name="recent_files">Son dosyalar</string>
+    <string name="storage_categories">Depolama Kategorileri</string>
+    <string name="internal_storage">Dahili Depolama</string>
+    <string name="sd_card">SD Kart</string>
+    <string name="downloads">İndirilenler</string>
+    <string name="file_converter">FileConverter</string>
+    <string name="processed_files">İşlem görmüş dosyalar</string>
+    <string name="favorites">Favoriler</string>
+    <string name="favorites_description">Favori dosyalarınız burada gözükecektir.</string>
 </resources>

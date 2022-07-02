@@ -12,4 +12,14 @@
     <string name="search">Search</string>
     <string name="search_hint">Type here to search </string>
 
+    <!--    HomeFragmentStrings-->
+    <string name="recent_files">Recent Files</string>
+    <string name="storage_categories">Storage Categories</string>
+    <string name="internal_storage">Internal Storage</string>
+    <string name="sd_card">SD Card</string>
+    <string name="downloads">Downloads</string>
+    <string name="file_converter">FileConverter</string>
+    <string name="processed_files">Processed Files</string>
+    <string name="favorites">Favorites</string>
+    <string name="favorites_description">Your Favorite files will appear here</string>
 </resources>
