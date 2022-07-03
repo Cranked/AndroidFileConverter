@@ -45,7 +45,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
     }
 
     override fun initViewModel(viewModel: MainViewModel) {
-
+        
     }
 
     override fun createLiveData() {
