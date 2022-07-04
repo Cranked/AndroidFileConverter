@@ -11,12 +11,12 @@ object FileUtility {
         val downloads_path = base_path + Environment.DIRECTORY_DOWNLOADS
         val sdcard_path = System.getenv("EXTERNAL_STORAGE")
         val internalStorageSize = FileUtils.getFolderFiles(base_path, 1, 1).filter { it.isDirectory or validtypes.contains(FileUtils.getExtension(it.name)) }.size.toString()
-        val downloadSize = FileUtils.getFolderFiles(downloads_path, 1, 1).size.toString()
+        val downloadSize = FileUtils.getFolderFiles(downloads_path, 1, 1).filter { it.isDirectory or validtypes.contains(FileUtils.getExtension(it.name)) }.size.toString()
         val sdCardSize = FileUtils.getFolderFiles(
             sdcard_path,
             1,
             1
-        ).size.toString()
+        ).filter { it.isDirectory or validtypes.contains(FileUtils.getExtension(it.name)) }.size.toString()
         val processedSize = "41"
         return StorageModel(
             internalStorageSize,
