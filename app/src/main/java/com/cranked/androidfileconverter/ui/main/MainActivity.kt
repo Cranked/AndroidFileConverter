@@ -45,7 +45,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
     }
 
     override fun initViewModel(viewModel: MainViewModel) {
-
+        
     }
 
     override fun createLiveData() {
@@ -90,10 +90,8 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
     override fun onBindingClear(binding: ActivityMainBinding) {
         viewModel.onCleared()
     }
-
     override fun onDestroy() {
         super.onDestroy()
         onBindingClear(binding)
-
     }
 }

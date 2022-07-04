@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <dimen name="side_margin">16dp</dimen>
+    <dimen name="image_size">50dp</dimen>
+    <dimen name="title_size">24sp</dimen>
+    <dimen name="text_size">18sp</dimen>
+    <dimen name="title_margin">32dp</dimen>
+    <dimen name="icon_margin_8dp">8dp</dimen>
+</resources>
