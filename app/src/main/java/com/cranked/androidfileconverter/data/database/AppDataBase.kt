@@ -34,6 +34,7 @@ abstract class AppDataBase : RoomDatabase() {
         private val LOCK = Any()
         private fun buildDataBase(context: Context) =
             Room.databaseBuilder(context.applicationContext, AppDataBase::class.java, DATABASE_NAME)
+                .allowMainThreadQueries()
                 .fallbackToDestructiveMigration().build()
 
         operator fun invoke(context: Context) = instance ?: synchronized(LOCK) {
