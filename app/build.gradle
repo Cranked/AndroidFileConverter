@@ -37,6 +37,12 @@ android {
     buildFeatures {
         viewBinding true
     }
+    lintOptions {
+        abortOnError false
+    }
+}
+kapt {
+    generateStubs = true
 }
 
 dependencies {
@@ -92,11 +98,12 @@ dependencies {
     implementation 'com.github.Cranked:AndroidCoreLibrary:1.0.4'
 
     // Dagger 2
-    implementation "com.google.dagger:dagger:2.40.5"
-    kapt "com.google.dagger:dagger-compiler:2.21"
-    api 'com.google.dagger:dagger-android:2.37'
-    api 'com.google.dagger:dagger-android-support:2.37'
-    kapt 'com.google.dagger:dagger-android-processor:2.21'
+    implementation "com.google.dagger:dagger:2.22"
+    implementation "com.google.dagger:dagger-android-support:2.22"
+    kapt "com.google.dagger:dagger-compiler:2.22"
+    kapt "com.google.dagger:dagger-android-processor:2.22"
+
+
 
 
 

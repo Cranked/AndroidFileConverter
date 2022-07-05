@@ -9,29 +9,43 @@ import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
-import com.cranked.androidcorelibrary.ui.base.BaseActivity
+import com.cranked.androidcorelibrary.ui.base.BaseDaggerActivity
+import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
+import com.cranked.androidfileconverter.data.database.entity.ProcessedFile
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
 import com.cranked.androidfileconverter.ui.model.NavigationModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import javax.inject.Inject
 
-class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
+class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     MainViewModel::class.java,
     R.layout.activity_main
 ) {
+    @Inject
+    lateinit var processedFilesDao: ProcessedFilesDao
+
+
     lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-//        val appComponent = DaggerAppComponent.builder().application(application)!!.build()
-//        appComponent!!.inject(this)
         navController = findNavController(R.id.nav_host_fragment)
         setupBottomNavMenu(navController)
+
+        (applicationContext as FileConvertApp).appComponent.bindMainActivity(this)
+
+        init()
     }
 
     private fun setupBottomNavMenu(navController: NavController) {
         val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
         bottomNav?.setupWithNavController(navController)
         navControllerListener()
+    }
+
+    fun init() {
+        processedFilesDao.insert(ProcessedFile("awd", "cac", 1, "awdw"))
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -45,7 +59,7 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
     }
 
     override fun initViewModel(viewModel: MainViewModel) {
-        
+
     }
 
     override fun createLiveData() {
@@ -90,8 +104,10 @@ class MainActivity : BaseActivity<MainViewModel, ActivityMainBinding>(
     override fun onBindingClear(binding: ActivityMainBinding) {
         viewModel.onCleared()
     }
+
     override fun onDestroy() {
         super.onDestroy()
         onBindingClear(binding)
     }
+
 }
