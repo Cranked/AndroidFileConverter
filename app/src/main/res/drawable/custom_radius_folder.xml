@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/custom_folder"
+        android:drawable="@drawable/icon_folder">
+        <shape
+            android:shape="rectangle"
+            android:thickness="5dp">
+            <solid android:color="@color/white" />
+            <stroke android:color="@color/white" />
+            <corners android:radius="10dp" />
+        </shape>
+        <color android:color="@color/white" />
+    </item>
+</layer-list>

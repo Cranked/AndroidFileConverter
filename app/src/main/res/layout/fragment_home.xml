@@ -3,11 +3,12 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
+
         <import type="android.view.View" />
+
         <variable
             name="viewModel"
             type="com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel" />
-
     </data>
 
     <ScrollView
@@ -22,7 +23,7 @@
 
 
             <androidx.recyclerview.widget.RecyclerView
-                android:id="@+id/recyclerView"
+                android:id="@+id/recentFileRecylerView"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/side_margin"
@@ -40,7 +41,7 @@
                 android:textSize="@dimen/title_size"
                 android:textStyle="bold"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@+id/recyclerView" />
+                app:layout_constraintTop_toBottomOf="@+id/recentFileRecylerView" />
 
             <androidx.constraintlayout.widget.ConstraintLayout
                 android:id="@+id/internalStorageConstraintLayout"
@@ -241,6 +242,30 @@
                 app:layout_constraintTop_toBottomOf="@+id/constraintLayout4"
                 app:srcCompat="@drawable/custom_radius_favorite" />
 
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/favoritesRecylerView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/icon_margin_8dp"
+                android:layout_marginTop="@dimen/side_margin"
+                android:layout_marginRight="@dimen/side_margin"
+                android:layout_marginBottom="@dimen/side_margin"
+                android:orientation="horizontal"
+                android:visibility="@{viewModel.favoritesState ? View.VISIBLE : View.GONE}"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView6" />
+
+            <TextView
+                android:id="@+id/favoriteTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/side_margin"
+                android:text="@string/favorites_description"
+                android:visibility="@{viewModel.favoritesState ? View.GONE : View.VISIBLE }"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/imageView6" />
         </androidx.constraintlayout.widget.ConstraintLayout>
     </ScrollView>
 
