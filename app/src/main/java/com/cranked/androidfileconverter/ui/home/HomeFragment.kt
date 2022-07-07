@@ -5,12 +5,13 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.FavoritesAdapter
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
+import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapter
+import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
 import javax.inject.Inject
 
@@ -19,6 +20,10 @@ class HomeFragment :
     BaseDaggerFragment<HomeFragmentViewModel, FragmentHomeBinding>(HomeFragmentViewModel::class.java) {
     @Inject
     lateinit var favoritesAdapterViewModel: FavoritesAdapterViewModel
+
+    @Inject
+    lateinit var recentFileAdapterViewModel: RecentFileAdapterViewModel
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -42,12 +47,17 @@ class HomeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val fav_adapter = FavoritesAdapter()
-        fav_adapter.setItems(favoritesAdapterViewModel.favoritesList)
-        binding.favoritesRecylerView.apply {
-            layoutManager = LinearLayoutManager(requireContext(), LinearLayoutManager.HORIZONTAL, false)
-            adapter=fav_adapter
-        }
+        favoritesAdapterViewModel.setAdapter(
+            this.context!!, binding.favoritesRecylerView,
+            FavoritesAdapter(), favoritesAdapterViewModel.favoritesList
+        )
+        recentFileAdapterViewModel.insert()
+        recentFileAdapterViewModel.setAdapter(
+            this.context!!, binding.recentFileRecylerView,
+            RecentFileAdapter(), recentFileAdapterViewModel.recentFileList
+        )
+
     }
+
 
 }

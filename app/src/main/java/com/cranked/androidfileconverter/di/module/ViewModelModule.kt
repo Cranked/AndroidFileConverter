@@ -2,6 +2,7 @@ package com.cranked.androidfileconverter.di.module
 
 import androidx.lifecycle.ViewModel
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
+import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.main.MainViewModel
 import dagger.Binds
@@ -36,4 +37,12 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(FavoritesAdapterViewModel::class)
     abstract fun favoriteAdapterViewModel(viewModel: FavoritesAdapterViewModel):ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(RecentFileAdapterViewModel::class)
+    abstract fun recentFileAdapterViewModel(viewModel: RecentFileAdapterViewModel):ViewModel
+
+
 }

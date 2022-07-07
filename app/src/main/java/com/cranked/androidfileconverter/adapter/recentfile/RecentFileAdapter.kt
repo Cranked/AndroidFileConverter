@@ -1,29 +1,28 @@
-package com.cranked.androidfileconverter.adapter
+package com.cranked.androidfileconverter.adapter.recentfile
 
 import android.graphics.drawable.Drawable
 import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
-import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
+import com.cranked.androidfileconverter.data.database.entity.RecentFile
+import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
 import java.io.File
 
-class FavoritesAdapter :
-    BaseViewBindingRecyclerViewAdapter<FavoriteFile, RowFavoriteAdapterItemBinding>(R.layout.row_favorite_adapter_item) {
-
+class RecentFileAdapter :
+    BaseViewBindingRecyclerViewAdapter<RecentFile, RowRecentfileItemBinding>(R.layout.row_recentfile_item) {
     override fun setBindingModel(
-        item: FavoriteFile,
-        binding: RowFavoriteAdapterItemBinding,
+        item: RecentFile,
+        binding: RowRecentfileItemBinding,
         position: Int
     ) {
         val drawable = R.drawable.icon_folder
-        binding.favImage.setImageDrawable(
+        binding.recentFileImage.setImageDrawable(
             ContextCompat.getDrawable(
                 binding.root.context,
                 drawable
             )
         )
-        binding.favItemName.text = getItems()[position].fileName
+        binding.recentFileName.text = getItems()[position].fileName
         val item = File(getItems()[position].fileName)
         var drwable: Drawable?
         if (item.isDirectory) {
@@ -31,10 +30,10 @@ class FavoritesAdapter :
         } else {
             drwable = ContextCompat.getDrawable(
                 binding.root.context,
-               R.drawable.icon_folder
+                R.drawable.icon_folder
             )
         }
-        binding.favImage.setImageDrawable(drwable)
+        binding.recentFileImage.setImageDrawable(drwable)
 
     }
 }
