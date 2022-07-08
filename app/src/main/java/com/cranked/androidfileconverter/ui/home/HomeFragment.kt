@@ -55,7 +55,6 @@ class HomeFragment :
             this.context!!, binding.recentFileRecylerView,
             RecentFileAdapter(), recentFileAdapterViewModel.recentFileList
         )
-
     }
 
 

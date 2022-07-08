@@ -11,6 +11,7 @@
     <!--    Search Strings-->
     <string name="search">Arama</string>
     <string name="search_hint">Aramak için buraya yazın </string>
+    <string name="ok">Tamam</string>
 
     <string name="recent_files">Son dosyalar</string>
     <string name="storage_categories">Depolama Kategorileri</string>
@@ -21,4 +22,8 @@
     <string name="processed_files">İşlem görmüş dosyalar</string>
     <string name="favorites">Favoriler</string>
     <string name="favorites_description">Favori dosyalarınız burada gözükecektir.</string>
+
+    <string name="necessary_permissions_description">Lütfen gerekli izinleri veriniz.</string>
+
+
 </resources>
