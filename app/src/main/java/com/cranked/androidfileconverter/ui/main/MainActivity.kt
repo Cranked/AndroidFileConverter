@@ -1,41 +1,39 @@
 package com.cranked.androidfileconverter.ui.main
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.Settings
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.ImageView
+import androidx.appcompat.app.AlertDialog
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
+import com.cranked.androidcorelibrary.extension.openAppPermissionPage
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerActivity
+import com.cranked.androidfileconverter.BuildConfig
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
-import com.cranked.androidfileconverter.data.database.entity.ProcessedFile
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
 import com.cranked.androidfileconverter.ui.model.NavigationModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import javax.inject.Inject
+import kotlin.system.exitProcess
 
 class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     MainViewModel::class.java,
     R.layout.activity_main
 ) {
-    @Inject
-    lateinit var processedFilesDao: ProcessedFilesDao
-
-
     lateinit var navController: NavController
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navController = findNavController(R.id.nav_host_fragment)
         setupBottomNavMenu(navController)
-
         (applicationContext as FileConvertApp).appComponent.bindMainActivity(this)
-
-        init()
+        viewModel.init(this)
     }
 
     private fun setupBottomNavMenu(navController: NavController) {
@@ -44,16 +42,12 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
         navControllerListener()
     }
 
-    fun init() {
-        processedFilesDao.insert(ProcessedFile("awd", "cac", 1, "awdw"))
-    }
-
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return item.onNavDestinationSelected(findNavController(R.id.nav_host_fragment)) ||
                 super.onOptionsItemSelected(item)
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+    override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.search_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
@@ -61,6 +55,7 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     override fun initViewModel(viewModel: MainViewModel) {
 
     }
+
 
     override fun createLiveData() {
         this.viewModel.barIconsVisibleState.observe(
@@ -103,6 +98,40 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
 
     override fun onBindingClear(binding: ActivityMainBinding) {
         viewModel.onCleared()
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(
+            requestCode,
+            permissions,
+            grantResults
+        )
+        viewModel.permissionTemp.onRequestPermissionsResult(this, requestCode, grantResults)
+            .onGranted {
+                viewModel.createFileConverterFolder()
+            }.onDenied {
+                viewModel.permissionTemp.request(this)
+            }.onNeverAskAgain {
+                val builder = AlertDialog.Builder(this)
+                builder.setCancelable(false)
+                builder.setMessage(getString(R.string.necessary_permissions_description))
+                builder.setPositiveButton(
+                    getString(R.string.settings)
+                ) { dialog, which ->
+                    openAppPermissionPage()
+                }
+                builder.setNegativeButton(
+                    getString(R.string.ok)
+                ) { dialog, which ->
+                    dialog.dismiss()
+                    exitProcess(0)
+                }
+                builder.show()
+            }
     }
 
     override fun onDestroy() {

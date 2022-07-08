@@ -11,6 +11,7 @@
     <!--    Search Strings-->
     <string name="search">Search</string>
     <string name="search_hint">Type here to search </string>
+    <string name="ok">OK</string>
 
     <!--    HomeFragmentStrings-->
     <string name="recent_files">Recent Files</string>
@@ -22,4 +23,6 @@
     <string name="processed_files">Processed Files</string>
     <string name="favorites">Favorites</string>
     <string name="favorites_description">Your Favorite files will appear here</string>
+
+    <string name="necessary_permissions_description">Please give the necessary permissions</string>
 </resources>
