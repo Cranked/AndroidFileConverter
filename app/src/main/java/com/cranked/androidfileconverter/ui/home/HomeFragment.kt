@@ -51,7 +51,6 @@ class HomeFragment :
             this.context!!, binding.favoritesRecylerView,
             FavoritesAdapter(), favoritesAdapterViewModel.favoritesList
         )
-        recentFileAdapterViewModel.insert()
         recentFileAdapterViewModel.setAdapter(
             this.context!!, binding.recentFileRecylerView,
             RecentFileAdapter(), recentFileAdapterViewModel.recentFileList

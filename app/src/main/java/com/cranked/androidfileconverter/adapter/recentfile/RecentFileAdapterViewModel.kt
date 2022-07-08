@@ -11,12 +11,6 @@ import javax.inject.Inject
 class RecentFileAdapterViewModel @Inject constructor(private val recentFilesDao: RecentFilesDao) :
     BaseViewModel() {
     val recentFileList = recentFilesDao.getAll()
-    fun insert() {
-        repeat(10) {
-            recentFilesDao.insert(RecentFile("Hıkıh", "jpg", 2, "hebele/hübele"))
-        }
-    }
-
     fun setAdapter(
         context: Context,
         recyclerView: RecyclerView,
