@@ -53,7 +53,6 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     }
 
     override fun initViewModel(viewModel: MainViewModel) {
-
     }
 
 
