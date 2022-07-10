@@ -1,11 +1,16 @@
 package com.cranked.androidfileconverter.ui.main
 
 import android.Manifest
+import android.content.Intent
 import android.os.Environment
 import android.util.Log
+import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.MutableLiveData
+import com.cranked.androidcorelibrary.ui.raw.RawActivity
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
+import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.ui.model.NavigationModel
+import com.cranked.androidfileconverter.ui.search.SearchActivity
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import net.codecision.startask.permissions.Permission
@@ -35,10 +40,24 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
             createFileConverterFolder()
         else
             permissionTemp.request(activity)
+
     } catch (e: Exception) {
         Log.e(TAG, e.toString())
     }
 
+    fun setupToolBar(activity: MainActivity, toolbar: Toolbar) {
+        toolbar.inflateMenu(R.menu.toolbar_menu)
+        toolbar.setLogo(R.drawable.icon_app_small)
+        toolbar.setOnMenuItemClickListener { item ->
+            when (item!!.itemId) {
+                R.id.search_item -> {
+                    activity.startActivity(Intent(activity, SearchActivity::class.java))
+                    activity.finish()
+                }
+            }
+            true
+        }
+    }
 
     fun createFileConverterFolder() = try {
         FileUtility.createfolder(

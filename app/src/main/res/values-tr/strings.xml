@@ -5,6 +5,8 @@
     <string name="tools">Araçlar</string>
     <string name="camera">Kamera</string>
     <string name="settings">Ayarlar</string>
+    <string name="view">Görünüm</string>
+    <string name="user">Kullanıcı</string>
 
     <string name="hello_blank_fragment">Merhaba boş fragment</string>
 
