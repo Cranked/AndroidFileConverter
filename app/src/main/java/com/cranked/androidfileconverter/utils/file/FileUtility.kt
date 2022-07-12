@@ -8,22 +8,21 @@ import java.io.File
 
 object FileUtility {
     fun getMenuFolderSizes(): StorageModel {
-        val validtypes = arrayListOf("pdf", "xlsx", "docx", "png", "jpeg")
         val base_path = getInternalStoragePath()
         val downloads_path = getDownloadsPath()
         val sdcard_path = getSdCarPath()
         val fileTransformerPath = base_path + Constants.folderName
         val fileTransformSize = FileUtils.getFolderFiles(fileTransformerPath, 1, 1).size.toString()
         val internalStorageSize = FileUtils.getFolderFiles(base_path, 1, 1)
-            .filter { it.isDirectory or validtypes.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
         val downloadSize = FileUtils.getFolderFiles(downloads_path, 1, 1)
-            .filter { it.isDirectory or validtypes.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
         val sdCardSize = FileUtils.getFolderFiles(
             sdcard_path,
             1,
             1
         )
-            .filter { it.isDirectory or validtypes.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
         val processedSize = "0"
         return StorageModel(
             internalStorageSize,
@@ -49,6 +48,12 @@ object FileUtility {
         val file = File(path + File.separator + pathName)
         if (!file.exists())
             file.mkdirs()
+    }
 
+    fun getType(file: File): Int {
+        if (file.isDirectory)
+            return 1
+        else
+            return 2
     }
 }

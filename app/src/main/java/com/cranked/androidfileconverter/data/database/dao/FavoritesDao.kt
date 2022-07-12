@@ -17,6 +17,12 @@ abstract class FavoritesDao {
     @Query("DELETE FROM ${FavoriteFile.TABLE_NAME}")
     abstract fun deleteAll()
 
+    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME} WHERE ${FavoriteFile.FILE_NAME}=:fileName AND ${FavoriteFile.FILE_TYPE}=:fileType LIMIT 1 ")
+    abstract fun getFavorite(
+        fileName: String,
+        fileType: Int,
+    ): FavoriteFile
+
     @Delete
     abstract fun delete(favoriteFile: FavoriteFile)
 

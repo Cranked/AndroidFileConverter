@@ -9,10 +9,9 @@
             type="com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel" />
     </data>
 
-    <TextView
-        android:id="@+id/transitionTextView"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/transitionRecylerView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="Hello" />
+        android:layout_height="match_parent" />
 
 </layout>

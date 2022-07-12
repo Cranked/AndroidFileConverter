@@ -29,9 +29,14 @@
         android:name="com.cranked.androidfileconverter.ui.settings.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
-<fragment
-    android:id="@+id/transition_fragment"
-    android:name="com.cranked.androidfileconverter.ui.transition.TransitionFragment"
-    tools:layout="@layout/fragment_transition" />
+    <fragment
+        android:id="@+id/transition_fragment"
+        android:name="com.cranked.androidfileconverter.ui.transition.TransitionFragment"
+        android:label="@string/transition"
+        tools:layout="@layout/fragment_transition" >
+        <action
+            android:id="@+id/action_transition_fragment_self"
+            app:destination="@id/transition_fragment" />
+    </fragment>
 
 </navigation>
