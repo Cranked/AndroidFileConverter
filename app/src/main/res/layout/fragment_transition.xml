@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
-    >
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
 
@@ -9,9 +10,56 @@
             type="com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel" />
     </data>
 
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/transitionRecylerView"
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent">
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transitionRecylerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.0" />
+
+        <ImageView
+            android:id="@+id/noDataImageView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="64dp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="@+id/transitionRecylerView"
+            app:layout_constraintStart_toStartOf="@+id/transitionRecylerView"
+            app:srcCompat="@drawable/icon_no_data" />
+
+        <TextView
+            android:id="@+id/emptyFolder"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_marginBottom="16dp"
+            android:fontFamily="sans-serif-medium"
+            android:text="@string/empty_folder"
+            android:textColor="#000000"
+            android:textSize="16sp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/emptyFolderDescription"
+            app:layout_constraintEnd_toEndOf="@+id/noDataImageView"
+            app:layout_constraintStart_toStartOf="@+id/noDataImageView" />
+
+        <TextView
+            android:id="@+id/emptyFolderDescription"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="32dp"
+            android:text="@string/create_folder_description"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/noDataImageView"
+            app:layout_constraintEnd_toEndOf="@+id/noDataImageView"
+            app:layout_constraintStart_toStartOf="@+id/noDataImageView" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </layout>

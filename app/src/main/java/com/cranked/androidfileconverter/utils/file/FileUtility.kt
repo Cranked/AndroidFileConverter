@@ -1,16 +1,18 @@
 package com.cranked.androidfileconverter.utils.file
 
+import android.content.Context
 import android.os.Environment
+import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.ui.home.StorageModel
 import com.cranked.androidfileconverter.utils.Constants
 import java.io.File
 
 object FileUtility {
-    fun getMenuFolderSizes(): StorageModel {
+    fun getMenuFolderSizes(context: Context): StorageModel {
         val base_path = getInternalStoragePath()
         val downloads_path = getDownloadsPath()
-        val sdcard_path = getSdCarPath()
+        val sdcard_path = getSdCarPath(context)
         val fileTransformerPath = base_path + Constants.folderName
         val fileTransformSize = FileUtils.getFolderFiles(fileTransformerPath, 1, 1).size.toString()
         val internalStorageSize = FileUtils.getFolderFiles(base_path, 1, 1)
@@ -36,7 +38,10 @@ object FileUtility {
     fun getInternalStoragePath() =
         Environment.getExternalStorageDirectory().absolutePath + File.separator
 
-    fun getSdCarPath() = System.getenv("EXTERNAL_STORAGE")
+    fun getSdCarPath(context: Context) = "/storage/" +
+            ContextCompat.getExternalFilesDirs(context, null).get(1).absolutePath.split("/")
+                .get(2) + "/"
+
     fun getFileTransformerPath() =
         getInternalStoragePath() + Constants.folderName + File.separator
 
