@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout
+<layout xmlns:tools="http://schemas.android.com/tools"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     >
@@ -7,6 +7,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
        >
+
         <fragment
             android:id="@+id/nav_host_fragment"
             android:name="androidx.navigation.fragment.NavHostFragment"
@@ -16,7 +17,7 @@
             app:layout_constraintBottom_toTopOf="@+id/bottom_nav"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/constraintLayout"
+            app:layout_constraintTop_toBottomOf="@id/toolbar"
             app:navGraph="@navigation/navigation" />
 
         <com.google.android.material.bottomnavigation.BottomNavigationView
@@ -32,57 +33,22 @@
             app:layout_constraintStart_toStartOf="parent"
             app:menu="@menu/navigation_menu" />
 
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:id="@+id/constraintLayout"
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="0dp"
-            android:layout_height="50dp"
+            android:layout_height="55dp"
+            android:clickable="true"
+            android:gravity="start"
+            app:contentInsetEnd="0sp"
+            app:contentInsetEndWithActions="0sp"
+            app:contentInsetLeft="0sp"
+            app:contentInsetRight="0sp"
+            app:contentInsetStart="0sp"
+            app:contentInsetStartWithNavigation="1sp"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent">
-
-            <ImageView
-                android:id="@+id/imageView2"
-                android:layout_width="60dp"
-                android:layout_height="0dp"
-                android:scaleType="fitStart"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/app_icon" />
-
-            <ImageView
-                android:id="@+id/searchImageView"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="16dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/gridimageView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/icon_search" />
-
-            <ImageView
-                android:id="@+id/userImageView"
-                android:layout_width="30dp"
-                android:layout_height="40dp"
-                android:layout_marginEnd="8dp"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/icon_user" />
-
-            <ImageView
-                android:id="@+id/gridimageView"
-                android:layout_width="30dp"
-                android:layout_height="30dp"
-                android:layout_marginEnd="16dp"
-                android:visibility="visible"
-                app:layout_constraintBottom_toBottomOf="parent"
-                app:layout_constraintEnd_toStartOf="@+id/userImageView"
-                app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/icon_grid" />
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
+            app:layout_constraintTop_toTopOf="parent"
+            app:maxButtonHeight="50dp" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

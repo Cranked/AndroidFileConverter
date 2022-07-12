@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <item
+        android:id="@+id/search_item"
+        android:contentDescription="@string/search"
+        android:icon="@drawable/icon_search"
+        android:title="@string/search"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/layout_item"
+        android:contentDescription="@string/view"
+        android:icon="@drawable/icon_grid"
+        android:title="@string/view"
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/user_item"
+        android:contentDescription="@string/user"
+        android:icon="@drawable/icon_user"
+        android:title="@string/user"
+        app:showAsAction="always" />
+</menu>

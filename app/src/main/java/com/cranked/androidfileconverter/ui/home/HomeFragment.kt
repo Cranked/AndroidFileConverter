@@ -49,13 +49,12 @@ class HomeFragment :
         super.onViewCreated(view, savedInstanceState)
         favoritesAdapterViewModel.setAdapter(
             this.context!!, binding.favoritesRecylerView,
-            FavoritesAdapter(), favoritesAdapterViewModel.favoritesList
+            FavoritesAdapter(R.layout.row_favorite_adapter_item), favoritesAdapterViewModel.favoritesList
         )
         recentFileAdapterViewModel.setAdapter(
             this.context!!, binding.recentFileRecylerView,
             RecentFileAdapter(), recentFileAdapterViewModel.recentFileList
         )
     }
-
 
 }

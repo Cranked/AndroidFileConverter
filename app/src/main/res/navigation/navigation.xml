@@ -9,7 +9,11 @@
         android:id="@+id/home_dest"
         android:name="com.cranked.androidfileconverter.ui.home.HomeFragment"
         android:label="@string/home"
-        tools:layout="@layout/fragment_home" />
+        tools:layout="@layout/fragment_home" >
+        <action
+            android:id="@+id/action_home_dest_to_transition_fragment"
+            app:destination="@id/transition_fragment" />
+    </fragment>
     <fragment
         android:id="@+id/tools_dest"
         android:name="com.cranked.androidfileconverter.ui.tools.ToolsFragment"
@@ -25,6 +29,14 @@
         android:name="com.cranked.androidfileconverter.ui.settings.SettingsFragment"
         android:label="@string/settings"
         tools:layout="@layout/fragment_settings" />
-
+    <fragment
+        android:id="@+id/transition_fragment"
+        android:name="com.cranked.androidfileconverter.ui.transition.TransitionFragment"
+        android:label="@string/transition"
+        tools:layout="@layout/fragment_transition" >
+        <action
+            android:id="@+id/action_transition_fragment_self"
+            app:destination="@id/transition_fragment" />
+    </fragment>
 
 </navigation>

@@ -5,6 +5,7 @@ import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.main.MainViewModel
+import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
@@ -36,13 +37,19 @@ abstract class ViewModelModule {
     @Binds
     @IntoMap
     @ViewModelKey(FavoritesAdapterViewModel::class)
-    abstract fun favoriteAdapterViewModel(viewModel: FavoritesAdapterViewModel):ViewModel
+    abstract fun favoriteAdapterViewModel(viewModel: FavoritesAdapterViewModel): ViewModel
 
 
     @Binds
     @IntoMap
     @ViewModelKey(RecentFileAdapterViewModel::class)
-    abstract fun recentFileAdapterViewModel(viewModel: RecentFileAdapterViewModel):ViewModel
+    abstract fun recentFileAdapterViewModel(viewModel: RecentFileAdapterViewModel): ViewModel
+
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(TransitionFragmentViewModel::class)
+    abstract fun transitionFragmentViewModel(viewModel: TransitionFragmentViewModel): ViewModel
 
 
 }

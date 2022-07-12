@@ -1,6 +1,7 @@
 package com.cranked.androidfileconverter.adapter
 
 import android.graphics.drawable.Drawable
+import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
@@ -8,8 +9,8 @@ import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import java.io.File
 
-class FavoritesAdapter :
-    BaseViewBindingRecyclerViewAdapter<FavoriteFile,RowFavoriteAdapterItemBinding>(R.layout.row_favorite_adapter_item) {
+class FavoritesAdapter(@LayoutRes layoutRes:Int) :
+    BaseViewBindingRecyclerViewAdapter<FavoriteFile,RowFavoriteAdapterItemBinding>(layoutRes) {
 
     override fun setBindingModel(
         item: FavoriteFile,
