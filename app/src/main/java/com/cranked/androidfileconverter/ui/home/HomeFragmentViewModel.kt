@@ -8,17 +8,19 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
+import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import javax.inject.Inject
 
 class HomeFragmentViewModel @Inject constructor(
-    private val favoritesDao: FavoritesDao,
-    private val mContext: Context,
+    favoritesDao: FavoritesDao,
+    processedFilesDao: ProcessedFilesDao,
+    mContext: Context,
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
-    val storageModel = FileUtility.getMenuFolderSizes(mContext)
+    val storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
     val favoritesList = favoritesDao.getAll().toList()
     val favoritesState = favoritesList.size > 0
     fun goToTransitionFragmentWithIntent(view: View, path: String) {
