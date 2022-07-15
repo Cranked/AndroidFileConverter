@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.cranked.androidcorelibrary.extension.showToast
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.R
@@ -17,7 +16,7 @@ import com.cranked.androidfileconverter.utils.Constants
 class TransitionFragment :
     BaseDaggerFragment<TransitionFragmentViewModel, FragmentTransitionBinding>(
         TransitionFragmentViewModel::class.java
-    ){
+    ) {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -46,20 +45,27 @@ class TransitionFragment :
             false
         )
     }
+
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
         viewModel.folderPath.observe(viewLifecycleOwner)
         {
+            val list = viewModel.getFilesFromPath(it!!)
+            viewModel.sendNoDataState(list.size > 0)
             viewModel.setAdapter(this.context!!,
                 binding.transitionRecylerView, TransitionListAdapter(),
-                viewModel.getFilesFromPath(it!!))
+                list)
         }
         viewModel.toastMessage.observe(viewLifecycleOwner) {
             showToast(it!!)
+        }
+        viewModel.noDataState.observe(viewLifecycleOwner) {
+            binding.emptyFolder.visibility = if (it) View.GONE else View.VISIBLE
+            binding.noDataImageView.visibility = if (it) View.GONE else View.VISIBLE
+            binding.emptyFolderDescription.visibility = if (it) View.GONE else View.VISIBLE
         }
     }
 
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
         binding.viewModel = viewModel
     }
-
 }

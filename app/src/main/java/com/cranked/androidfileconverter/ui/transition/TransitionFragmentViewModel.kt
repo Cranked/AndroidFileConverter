@@ -3,6 +3,7 @@ package com.cranked.androidfileconverter.ui.transition
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -21,12 +22,12 @@ class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: 
     BaseViewModel() {
     val folderPath = MutableLiveData<String>()
     val toastMessage = MutableLiveData<String>()
-
+    val noDataState = MutableLiveData<Boolean>()
     fun setAdapter(
         context: Context,
         recylerView: RecyclerView,
         transitionListAdapter: TransitionListAdapter,
-        list: MutableList<TransitionModel>
+        list: MutableList<TransitionModel>,
     ) {
         transitionListAdapter.apply {
             setItems(list)
@@ -41,10 +42,11 @@ class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: 
                         sendIntentToTransitionFragmentWithIntent(it, getItems()[position].filePath)
                     }
                     rowBinding.optionsImageView.setOnClickListener {
-                        toastMessage("Options'a tıklandı...")
+                        Toast.makeText(rowBinding.root.context,
+                            "OptionsaTıklandı",
+                            Toast.LENGTH_SHORT).show()
                     }
                 }
-
             })
         }
 
@@ -70,6 +72,10 @@ class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: 
 
     fun sendPath(path: String) {
         folderPath.postValue(path)
+    }
+
+    fun sendNoDataState(state: Boolean) {
+        noDataState.postValue(state)
     }
 
     fun toastMessage(string: String) {
