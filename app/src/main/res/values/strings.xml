@@ -10,7 +10,7 @@
     <string name="empty_folder">Empty Folder</string>
     <string name="view">View</string>
     <string name="user">User</string>
-    <string name="create_folder_description">Press yellow button for create a folder</string>
+    <string name="create_folder_description">Press yellow button for create a  new folder</string>
 
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!--    Create folder Strings-->
