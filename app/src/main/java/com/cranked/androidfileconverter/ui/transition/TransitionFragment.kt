@@ -68,5 +68,4 @@ class TransitionFragment :
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
         binding.viewModel = viewModel
     }
-
 }

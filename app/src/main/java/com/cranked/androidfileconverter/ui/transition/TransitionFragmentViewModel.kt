@@ -3,6 +3,7 @@ package com.cranked.androidfileconverter.ui.transition
 import android.content.Context
 import android.os.Bundle
 import android.view.View
+import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -41,10 +42,11 @@ class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: 
                         sendIntentToTransitionFragmentWithIntent(it, getItems()[position].filePath)
                     }
                     rowBinding.optionsImageView.setOnClickListener {
-                        toastMessage("Options'a tıklandı...")
+                        Toast.makeText(rowBinding.root.context,
+                            "OptionsaTıklandı",
+                            Toast.LENGTH_SHORT).show()
                     }
                 }
-
             })
         }
 
