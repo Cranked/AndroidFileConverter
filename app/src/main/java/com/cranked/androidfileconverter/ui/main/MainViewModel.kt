@@ -7,6 +7,7 @@ import android.util.Log
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.MutableLiveData
 import com.cranked.androidcorelibrary.ui.raw.RawActivity
+import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.ui.model.NavigationModel
@@ -60,7 +61,7 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun createFileConverterFolder() = try {
-        FileUtility.createfolder(
+       FileUtils.createfolder(
             Environment.getExternalStorageDirectory().absolutePath,
             Constants.folderName
         )

@@ -49,12 +49,7 @@ object FileUtility {
     fun getDownloadsPath() =
         getInternalStoragePath() + Environment.DIRECTORY_DOWNLOADS + File.separator
 
-    fun getProcessedPath() = getFileTransformerPath() + "processed"
-    fun createfolder(path: String, pathName: String) {
-        val file = File(path + File.separator + pathName)
-        if (!file.exists())
-            file.mkdirs()
-    }
+    fun getProcessedPath() = getFileTransformerPath() + "processed" + File.separator
 
     fun getType(file: File): Int {
         if (file.isDirectory)
