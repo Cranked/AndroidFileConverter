@@ -1,9 +1,13 @@
 package com.cranked.androidfileconverter.ui.transition
 
+import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.widget.Button
 import android.widget.Toast
+import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,13 +19,17 @@ import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
 import com.cranked.androidfileconverter.databinding.RowItemListTransitionBinding
+import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.utils.Constants
+import com.google.android.material.textfield.TextInputEditText
 import javax.inject.Inject
 
-class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: FavoritesDao) :
+class TransitionFragmentViewModel @Inject constructor(
+    private val favoritesDao: FavoritesDao,
+) :
     BaseViewModel() {
+
     val folderPath = MutableLiveData<String>()
-    val toastMessage = MutableLiveData<String>()
     val noDataState = MutableLiveData<Boolean>()
     fun setAdapter(
         context: Context,
@@ -57,6 +65,11 @@ class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: 
         }
     }
 
+    fun showCreateFolderBottomDialog(supportFragmentManager: FragmentManager, path: String) {
+        val bottomDialog = CreateFolderBottomDialog(this, path)
+        bottomDialog.show(supportFragmentManager, "CreateFolderBottomDialog")
+    }
+
     fun sendIntentToTransitionFragmentWithIntent(view: View, path: String) {
         val bundle = Bundle()
         bundle.putString(Constants.DESTINATION_PATH_ACTION, path)
@@ -78,7 +91,25 @@ class TransitionFragmentViewModel @Inject constructor(private val favoritesDao: 
         noDataState.postValue(state)
     }
 
-    fun toastMessage(string: String) {
-        toastMessage.postValue(string)
+    fun showDialog(context: Context, path: String) {
+        val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)
+        val view =
+            (layoutInflater as LayoutInflater).inflate(R.layout.create_folder_dialog_layout, null)
+        val cancelButton = view.findViewById<Button>(R.id.cancelButton)
+        val okButton = view.findViewById<Button>(R.id.okButton)
+        val dialog = AlertDialog.Builder(context)
+            .setView(view)
+            .setCancelable(true)
+            .create()
+        dialog.show()
+        cancelButton.setOnClickListener { dialog.dismiss() }
+        okButton.setOnClickListener {
+            val folderName =
+                view.findViewById<TextInputEditText>(R.id.folderNameEditText).text!!.trim()
+                    .toString()
+            FileUtils.createfolder(path, folderName)
+            sendPath(path)
+            dialog.dismiss()
+        }
     }
 }

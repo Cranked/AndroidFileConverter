@@ -14,6 +14,15 @@
     <string name="user">Kullanıcı</string>
 
     <string name="hello_blank_fragment">Merhaba boş fragment</string>
+    <!--    Create folder Strings-->
+
+    <string name="create_folder">Yeni Klasör Oluştur</string>
+    <string name="folder_name">Klasör Adı</string>
+    <string name="folder">Klasör</string>
+    <string name="cancel">İptal</string>
+    <string name="folderexit">Folder is Exist</string>
+
+
 
     <!--    Search Strings-->
     <string name="search">Arama</string>

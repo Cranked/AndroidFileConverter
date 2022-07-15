@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
-import com.cranked.androidcorelibrary.extension.showToast
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
@@ -55,14 +54,21 @@ class TransitionFragment :
                 binding.transitionRecylerView, TransitionListAdapter(),
                 list)
         }
-        viewModel.toastMessage.observe(viewLifecycleOwner) {
-            showToast(it!!)
-        }
         viewModel.noDataState.observe(viewLifecycleOwner) {
             binding.emptyFolder.visibility = if (it) View.GONE else View.VISIBLE
             binding.noDataImageView.visibility = if (it) View.GONE else View.VISIBLE
             binding.emptyFolderDescription.visibility = if (it) View.GONE else View.VISIBLE
         }
+    }
+
+    fun createFolder() {
+        viewModel.showCreateFolderBottomDialog(activity!!.supportFragmentManager,
+            viewModel.folderPath.value.toString())
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        binding.createFolderButton.setOnClickListener { createFolder() }
     }
 
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
