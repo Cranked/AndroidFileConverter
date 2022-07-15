@@ -7,8 +7,8 @@
     <string name="settings">Ayarlar</string>
 
     <string name="transition">Transition</string>
-    <string name="empty_folder">Boş Dosya</string>
-    <string name="create_folder_description">Yeni bir Klasör oluşturmak için sarı buttona basınız.</string>
+    <string name="empty_folder">Boş Klasör</string>
+    <string name="create_folder_description">Yeni bir Klasör oluşturmak için sarı butona basınız.</string>
 
     <string name="view">Görünüm</string>
     <string name="user">Kullanıcı</string>
