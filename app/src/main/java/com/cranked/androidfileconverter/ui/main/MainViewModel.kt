@@ -6,14 +6,12 @@ import android.os.Environment
 import android.util.Log
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.MutableLiveData
-import com.cranked.androidcorelibrary.ui.raw.RawActivity
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.ui.model.NavigationModel
 import com.cranked.androidfileconverter.ui.search.SearchActivity
 import com.cranked.androidfileconverter.utils.Constants
-import com.cranked.androidfileconverter.utils.file.FileUtility
 import net.codecision.startask.permissions.Permission
 import javax.inject.Inject
 
@@ -36,7 +34,6 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun init(activity: MainActivity) = try {
-
         if (permissionTemp.isGranted(activity))
             createFileConverterFolder()
         else
@@ -61,7 +58,7 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
     }
 
     fun createFileConverterFolder() = try {
-       FileUtils.createfolder(
+        FileUtils.createfolder(
             Environment.getExternalStorageDirectory().absolutePath,
             Constants.folderName
         )

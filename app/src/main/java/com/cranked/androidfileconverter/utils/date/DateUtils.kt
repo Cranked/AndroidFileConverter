@@ -1,4 +1,4 @@
-package com.cranked.androidfileconverter.utils
+package com.cranked.androidfileconverter.utils.date
 
 import java.text.SimpleDateFormat
 import java.util.*

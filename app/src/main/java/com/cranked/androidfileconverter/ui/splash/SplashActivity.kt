@@ -2,15 +2,19 @@ package com.cranked.androidfileconverter.ui.splash
 
 import android.Manifest
 import android.animation.AnimatorSet
+import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import com.cranked.androidcorelibrary.extension.openAppPermissionPage
+import com.cranked.androidcorelibrary.local.PrefManager
 import com.cranked.androidcorelibrary.ui.raw.RawActivity
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.ui.main.MainActivity
 import com.cranked.androidfileconverter.utils.AnimationX
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.localization.LocalizationUtil
 import net.codecision.startask.permissions.Permission
+import java.util.*
 
 
 class SplashActivity : RawActivity() {
@@ -55,18 +59,26 @@ class SplashActivity : RawActivity() {
 //            AnimationXUtils.zoomInRight(imageView, animatorSet)
 //        imageView.animationStart(1000, animatorSetX, zoomInRightAnimation)
 
-        if (permissionTemp.isGranted(this))
+        if (permissionTemp.isGranted(this)) {
             startActivity(MainActivity::class.java, true)
-        else {
+        } else {
             permissionTemp.request(this)
         }
+
     }
 
+    override fun attachBaseContext(newBase: Context) {
+        val prefManager = PrefManager(newBase)
+        val language = if (prefManager.getLanguage()
+                .isEmpty()
+        ) Constants.DEFAULT_LANGUAGE else prefManager.getLanguage()
+        super.attachBaseContext(LocalizationUtil.applyLanguageContext(newBase, Locale(language)))
+    }
 
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
-        grantResults: IntArray
+        grantResults: IntArray,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionTemp.onRequestPermissionsResult(this, requestCode, grantResults)

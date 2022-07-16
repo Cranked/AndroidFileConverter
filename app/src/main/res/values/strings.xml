@@ -38,4 +38,11 @@
     <string name="favorites_description">Your Favorite files will appear here</string>
 
     <string name="necessary_permissions_description">Please give the necessary permissions</string>
+
+
+    <!--    SettingsFragment-->
+    <string name="language">Language</string>
+    <string name="ask_before_using_mobiledata">Ask before using mobile data</string>
+    <string name="dark_mode">Dark mode</string>
+
 </resources>

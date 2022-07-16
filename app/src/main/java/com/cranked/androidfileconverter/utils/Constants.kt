@@ -14,4 +14,21 @@ object Constants {
         CAMERA,
         WRITE_EXTERNAL_STORAGE
     )
+    val languagesKeyValue =
+        hashMapOf(
+            Pair("tr", "Türkçe"),
+            Pair("en", "English"),
+            Pair("fr","français"),
+            Pair("es","espanol"),
+            Pair("it","italiano"),
+            Pair("de","Deutsch"),
+            Pair("ja","日本語"),
+            Pair("ko","한국어")
+        )
+    const val LANGUAGE = "LANGUAGE"
+    const val DEFAULT_LANGUAGE = "en"
+    const val LAYOUT_STATE = "LayoutState"
+    const val LIST_LAYOUT = "ListLayout"
+    const val GRID_LAYOUT = "GridLayout"
 }
+

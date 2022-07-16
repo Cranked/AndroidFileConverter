@@ -2,7 +2,7 @@ package com.cranked.androidfileconverter.ui.transition
 
 import android.os.Parcelable
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
-import com.cranked.androidfileconverter.utils.DateUtils
+import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import kotlinx.parcelize.Parcelize
 import java.io.File
