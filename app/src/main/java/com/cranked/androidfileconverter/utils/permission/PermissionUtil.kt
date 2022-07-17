@@ -1,4 +1,4 @@
-package com.cranked.androidfileconverter.utils
+package com.cranked.androidfileconverter.utils.permission
 
 import android.content.Context
 import android.content.pm.PackageManager

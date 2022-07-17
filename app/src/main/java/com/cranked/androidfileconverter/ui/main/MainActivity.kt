@@ -4,7 +4,6 @@ import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AlertDialog
-import androidx.appcompat.widget.Toolbar
 import androidx.navigation.NavController
 import androidx.navigation.findNavController
 import androidx.navigation.ui.onNavDestinationSelected
@@ -15,7 +14,6 @@ import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
 import com.cranked.androidfileconverter.ui.model.NavigationModel
-import com.cranked.androidfileconverter.ui.search.SearchActivity
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlin.system.exitProcess
 
@@ -30,7 +28,7 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
         setupBottomNavMenu(navController)
         (applicationContext as FileConvertApp).appComponent.bindMainActivity(this)
         viewModel.init(this)
-        viewModel.setupToolBar(this,binding.toolbar)
+        viewModel.setupToolBar(this, binding.toolbar)
     }
 
     private fun setupBottomNavMenu(navController: NavController) {
@@ -49,6 +47,7 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
         menuInflater.inflate(R.menu.navigation_menu, menu)
         return super.onCreateOptionsMenu(menu)
     }
+
     override fun initViewModel(viewModel: MainViewModel) {
     }
 

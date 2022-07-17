@@ -23,7 +23,6 @@
     <string name="folderexit">Folder is Exist</string>
 
 
-
     <!--    Search Strings-->
     <string name="search">Arama</string>
     <string name="search_hint">Aramak için buraya yazın </string>
@@ -40,6 +39,11 @@
     <string name="favorites_description">Favori dosyalarınız burada gözükecektir.</string>
 
     <string name="necessary_permissions_description">Lütfen gerekli izinleri veriniz.</string>
+
+    <!--    SettingsFragment-->
+    <string name="language">Dil</string>
+    <string name="ask_before_using_mobiledata">Mobil veri kullanılmadan önce sor</string>
+    <string name="dark_mode">Dark mode</string>
 
 
 </resources>
