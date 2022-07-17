@@ -14,16 +14,16 @@ object Constants {
         CAMERA,
         WRITE_EXTERNAL_STORAGE
     )
-    val languagesKeyValue =
+    val languagesKeyValue: HashMap<String, String> =
         hashMapOf(
             Pair("tr", "Türkçe"),
             Pair("en", "English"),
-            Pair("fr","français"),
-            Pair("es","espanol"),
-            Pair("it","italiano"),
-            Pair("de","Deutsch"),
-            Pair("ja","日本語"),
-            Pair("ko","한국어")
+            Pair("fr", "français"),
+            Pair("es", "espanol"),
+            Pair("it", "italiano"),
+            Pair("de", "Deutsch"),
+            Pair("ja", "日本語"),
+            Pair("ko", "한국어")
         )
     const val LANGUAGE = "LANGUAGE"
     const val DEFAULT_LANGUAGE = "en"

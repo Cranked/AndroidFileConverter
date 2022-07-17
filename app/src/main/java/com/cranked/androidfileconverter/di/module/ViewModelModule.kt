@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
+import com.cranked.androidfileconverter.ui.languages.LanguageActivityViewModel
 import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.ui.settings.SettingsFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
@@ -56,5 +57,11 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(SettingsFragmentViewModel::class)
     abstract fun settingsFragmentViewModel(viewModel: SettingsFragmentViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(LanguageActivityViewModel::class)
+    abstract fun languagesActivityViewModel(viewModel: LanguageActivityViewModel): ViewModel
+
 
 }

@@ -5,12 +5,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
-import com.cranked.androidcorelibrary.local.PrefManager
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.FragmentSettingsBinding
-import com.cranked.androidfileconverter.ui.splash.SplashActivity
-import javax.inject.Inject
 
 class SettingsFragment :
     BaseDaggerFragment<SettingsFragmentViewModel, FragmentSettingsBinding>(SettingsFragmentViewModel::class.java) {
@@ -23,7 +20,9 @@ class SettingsFragment :
         arguments?.let {
             onBundle(it)
         }
-
+        binding.languagesConstraintLayout.setOnClickListener {
+            viewModel.goToLanguagesActivity(activity!!)
+        }
         return binding.root
     }
 
