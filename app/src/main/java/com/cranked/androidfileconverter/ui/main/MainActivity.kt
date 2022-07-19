@@ -24,7 +24,7 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
 ) {
     lateinit var navController: NavController
     lateinit var disposable: Disposable
-    val app by lazy {
+    private val app by lazy {
         (application as FileConvertApp)
     }
 

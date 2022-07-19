@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <variable
+            name="viewModel"
+            type="com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/transitionGridLinearLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <ImageView
+                android:id="@+id/transitionGridImageView"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_margin="@dimen/icon_margin_8dp"
+                app:srcCompat="@drawable/custom_radius_folder" />
+
+            <ImageView
+                android:id="@+id/favoriteGridImageView"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_weight="1"
+                app:srcCompat="@drawable/custom_radius_favorite" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical"
+                android:padding="@dimen/icon_margin_8dp">
+
+                <TextView
+                    android:id="@+id/fileNameGridTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin_8dp"
+                    android:text="Filename" />
+
+                <TextView
+                    android:id="@+id/lastModifiedGridTextView"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="@dimen/icon_margin_8dp"
+                    android:freezesText="false"
+                    android:inputType="textMultiLine"
+                    android:maxLines="6"
+                    android:singleLine="false"
+                    android:text="lastModified" />
+            </LinearLayout>
+
+            <ImageView
+                android:id="@+id/optionsGridImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:clickable="true"
+                app:srcCompat="@drawable/icon_vertical_dots" />
+        </LinearLayout>
+    </LinearLayout>
+</layout>
