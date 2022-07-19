@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Environment
 import android.util.Log
+import android.view.View
 import androidx.appcompat.widget.Toolbar
 import androidx.lifecycle.MutableLiveData
 import com.cranked.androidcorelibrary.utility.FileUtils
@@ -43,9 +44,9 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
         Log.e(TAG, e.toString())
     }
 
-    fun setupToolBar(activity: MainActivity, toolbar: Toolbar) {
-        toolbar.inflateMenu(R.menu.toolbar_menu)
+    fun setupToolBar(activity: MainActivity, toolbar: Toolbar, visibleState: Boolean) {
         toolbar.setLogo(R.drawable.icon_app_small)
+        toolbar.visibility = if (visibleState) View.VISIBLE else View.GONE
         toolbar.setOnMenuItemClickListener { item ->
             when (item!!.itemId) {
                 R.id.search_item -> {

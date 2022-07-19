@@ -28,7 +28,6 @@ object Constants {
     const val LANGUAGE = "LANGUAGE"
     const val DEFAULT_LANGUAGE = "en"
     const val LAYOUT_STATE = "LayoutState"
-    const val LIST_LAYOUT = "ListLayout"
-    const val GRID_LAYOUT = "GridLayout"
+    const val FILTER_STATE = "FilterState"
 }
 

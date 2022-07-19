@@ -17,7 +17,7 @@
         android:clickable="true">
 
         <ImageView
-            android:id="@+id/transitionImageView"
+            android:id="@+id/transitionListImageView"
             android:layout_width="80dp"
             android:layout_height="80dp"
             android:layout_marginTop="@dimen/side_margin"
@@ -34,8 +34,8 @@
             android:layout_marginLeft="@dimen/icon_margin_8dp"
             android:layout_marginBottom="@dimen/icon_margin_8dp"
             android:text="TextView"
-            app:layout_constraintBottom_toBottomOf="@+id/transitionImageView"
-            app:layout_constraintStart_toEndOf="@+id/transitionImageView"
+            app:layout_constraintBottom_toBottomOf="@+id/transitionListImageView"
+            app:layout_constraintStart_toEndOf="@+id/transitionListImageView"
             app:layout_constraintTop_toBottomOf="@+id/transitionFileName" />
 
         <ImageView
@@ -54,8 +54,8 @@
             android:layout_marginLeft="@dimen/icon_margin_8dp"
             android:layout_marginTop="@dimen/icon_margin_8dp"
             android:text="TextView"
-            app:layout_constraintStart_toEndOf="@+id/transitionImageView"
-            app:layout_constraintTop_toTopOf="@+id/transitionImageView" />
+            app:layout_constraintStart_toEndOf="@+id/transitionListImageView"
+            app:layout_constraintTop_toTopOf="@+id/transitionListImageView" />
 
         <ImageView
             android:id="@+id/optionsImageView"
@@ -63,7 +63,7 @@
             android:layout_height="60dp"
             android:layout_margin="@dimen/side_margin"
             android:clickable="true"
-            app:layout_constraintBottom_toBottomOf="@+id/transitionImageView"
+            app:layout_constraintBottom_toBottomOf="@+id/transitionListImageView"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/icon_vertical_dots" />

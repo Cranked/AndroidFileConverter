@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:tools="http://schemas.android.com/tools"
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -17,18 +16,19 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/transitionRecylerView"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toBottomOf="@+id/constraintLayout" />
 
         <ImageView
             android:id="@+id/noDataImageView"
-            android:layout_width="150dp"
-            android:layout_height="150dp"
+            android:layout_width="200dp"
+            android:layout_height="150sp"
+            android:layout_margin="@dimen/margin_32sp"
             android:visibility="gone"
-            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/createFolderButton"
             app:layout_constraintEnd_toEndOf="@+id/transitionRecylerView"
             app:layout_constraintStart_toStartOf="@+id/transitionRecylerView"
             app:layout_constraintTop_toBottomOf="@+id/emptyFolderDescription"
@@ -38,7 +38,7 @@
             android:id="@+id/emptyFolder"
             android:layout_width="wrap_content"
             android:layout_height="22dp"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="@dimen/icon_margin_8dp"
             android:fontFamily="sans-serif-medium"
             android:text="@string/empty_folder"
             android:textColor="#000000"
@@ -46,13 +46,13 @@
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/emptyFolderDescription"
             app:layout_constraintStart_toStartOf="@+id/emptyFolderDescription"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="@+id/transitionRecylerView" />
 
         <TextView
             android:id="@+id/emptyFolderDescription"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="32dp"
+            android:layout_marginTop="8dp"
             android:text="@string/create_folder_description"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@+id/noDataImageView"
@@ -69,6 +69,73 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:srcCompat="@drawable/icon_plus" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/constraintLayout"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <ImageView
+                android:id="@+id/backImageView"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:clickable="true"
+                android:onClick="@{(view) -> viewModel.backStack(view)}"
+                android:src="@drawable/icon_back"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/layoutImageView"
+                android:layout_width="50dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/icon_margin_8dp"
+                android:layout_marginRight="@dimen/icon_margin_8dp"
+                android:layout_marginBottom="@dimen/icon_margin_8dp"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/sortSpinner"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_grid" />
+
+            <Spinner
+                android:id="@+id/sortSpinner"
+                android:layout_width="50dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/icon_margin_8dp"
+                android:layout_marginBottom="@dimen/icon_margin_8dp"
+                android:background="@drawable/icon_sort"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <ImageView
+                android:id="@+id/searchImageView"
+                android:layout_width="50dp"
+                android:layout_height="0dp"
+                android:layout_marginTop="@dimen/icon_margin_8dp"
+                android:layout_marginEnd="@dimen/icon_margin_8dp"
+                android:layout_marginBottom="@dimen/icon_margin_8dp"
+                android:clickable="true"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@+id/layoutImageView"
+                app:layout_constraintTop_toTopOf="parent"
+                app:srcCompat="@drawable/icon_search" />
+
+            <TextView
+                android:id="@+id/titleTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="@dimen/icon_margin_8dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@+id/backImageView"
+                app:layout_constraintTop_toTopOf="parent" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

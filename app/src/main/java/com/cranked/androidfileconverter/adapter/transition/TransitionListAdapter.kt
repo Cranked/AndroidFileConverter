@@ -4,29 +4,30 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.databinding.RowItemListTransitionBinding
+import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 
 class TransitionListAdapter :
-    BaseViewBindingRecyclerViewAdapter<TransitionModel, RowItemListTransitionBinding>(R.layout.row_item_list_transition) {
+    BaseViewBindingRecyclerViewAdapter<TransitionModel, RowTransitionListItemBinding>(R.layout.row_transition_list_item) {
     override fun setBindingModel(
         item: TransitionModel,
-        binding: RowItemListTransitionBinding,
+        binding: RowTransitionListItemBinding,
         position: Int,
     ) {
-        binding.transitionFileName.text = getItems()[position].fileName
-        binding.lastModifiedTextView.text = getItems()[position].lastModified
-        when (getItems()[position].fileType) {
+        binding.transitionFileName.text = item.fileName
+        binding.lastModifiedTextView.text = item.lastModified
+        when (item.fileType) {
             1 -> {
-                binding.transitionImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
+                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
                     R.drawable.icon_folder))
             }
             2 -> {
-                binding.transitionImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
+                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
                     com.cranked.androidcorelibrary.R.drawable.icon_default))
             }
         }
-        binding.favoriteImageView.visibility = if (getItems()[position].isFavorite) View.VISIBLE else View.GONE
+        binding.favoriteImageView.visibility =
+            if (item.isFavorite) View.VISIBLE else View.GONE
     }
 
 }

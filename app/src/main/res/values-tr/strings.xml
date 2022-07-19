@@ -3,6 +3,7 @@
     <!--    Bottom Navigation Strings-->
     <string name="home">Anasayfa</string>
     <string name="tools">Araçlar</string>
+    <string name="sort">Sorting</string>
     <string name="camera">Kamera</string>
     <string name="settings">Ayarlar</string>
 

@@ -14,7 +14,8 @@ import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
 import com.cranked.androidfileconverter.ui.model.NavigationModel
-import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import io.reactivex.rxjava3.disposables.Disposable
 import kotlin.system.exitProcess
 
 class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
@@ -22,18 +23,23 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     R.layout.activity_main
 ) {
     lateinit var navController: NavController
+    lateinit var disposable: Disposable
+    private val app by lazy {
+        (application as FileConvertApp)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         navController = findNavController(R.id.nav_host_fragment)
         setupBottomNavMenu(navController)
-        (applicationContext as FileConvertApp).appComponent.bindMainActivity(this)
+        app.appComponent.bindMainActivity(this)
         viewModel.init(this)
-        viewModel.setupToolBar(this, binding.toolbar)
+        viewModel.setupToolBar(this, binding.toolbar, true)
+        initRxBus()
     }
 
     private fun setupBottomNavMenu(navController: NavController) {
-        val bottomNav = findViewById<BottomNavigationView>(R.id.bottom_nav)
-        bottomNav?.setupWithNavController(navController)
+        binding.bottomNav.setupWithNavController(navController)
         navControllerListener()
     }
 
@@ -91,6 +97,14 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
         viewModel.onCleared()
     }
 
+    fun initRxBus() {
+        disposable = app.rxBus.toObservable().subscribe {
+            when (it) {
+                is ToolbarState -> viewModel.setupToolBar(this, binding.toolbar, it.state)
+            }
+        }
+    }
+
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -128,5 +142,6 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     override fun onDestroy() {
         super.onDestroy()
         onBindingClear(binding)
+        disposable.dispose()
     }
 }
