@@ -36,7 +36,7 @@
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
             android:layout_width="0dp"
-            android:layout_height="55dp"
+            android:layout_height="@dimen/tool_bar_height"
             android:clickable="true"
             android:gravity="start"
             app:contentInsetEnd="0sp"
@@ -48,7 +48,7 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:maxButtonHeight="50dp" />
+            app:menu="@menu/toolbar_menu" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

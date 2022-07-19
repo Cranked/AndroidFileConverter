@@ -4,15 +4,19 @@ import com.cranked.androidcorelibrary.local.PrefManager
 import com.cranked.androidfileconverter.data.database.AppDataBase
 import com.cranked.androidfileconverter.di.component.DaggerAppComponent
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.rxjava.RxBus
 import dagger.android.AndroidInjector
 import dagger.android.DaggerApplication
 
 
 class FileConvertApp : DaggerApplication() {
     val appComponent = DaggerAppComponent.builder().application(this).build()
-   val prefManager by lazy {
-       PrefManager(this)
-   }
+    val prefManager by lazy {
+        PrefManager(this)
+    }
+    val rxBus by lazy {
+        RxBus()
+    }
 
     override fun applicationInjector(): AndroidInjector<DaggerApplication> {
         return this.appComponent

@@ -7,10 +7,12 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
+import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.junk.ToolbarState
 
 class TransitionFragment :
     BaseDaggerFragment<TransitionFragmentViewModel, FragmentTransitionBinding>(
@@ -25,6 +27,7 @@ class TransitionFragment :
         arguments?.let {
             onBundle(it)
         }
+        (activity!!.application as FileConvertApp).rxBus.send(ToolbarState(false))
         return binding.root
     }
 
