@@ -132,6 +132,8 @@ class TransitionFragmentViewModel @Inject constructor(
         path: String,
         spinnerList: List<String>,
     ) {
+        val title = path.split("/").last { it.isNotEmpty() }
+        binding.titleToolBar.text = title
         when (app.getLayoutState()) {
             LayoutState.LIST_LAYOUT.value -> binding.layoutImageView.setImageDrawable(context.getDrawable(
                 R.drawable.icon_grid))
@@ -189,7 +191,6 @@ class TransitionFragmentViewModel @Inject constructor(
                 try {
                     app.setFilterState(position + 1)
                     sendFilterState(position + 1)
-                    println(parent!!.getItemAtPosition(position))
                 } catch (e: Exception) {
                     println(e.toString())
                 }
