@@ -2,7 +2,6 @@ package com.cranked.androidfileconverter.ui.splash
 
 import android.Manifest
 import android.animation.AnimatorSet
-import android.content.Context
 import android.os.Bundle
 import androidx.appcompat.app.AlertDialog
 import com.cranked.androidcorelibrary.extension.openAppPermissionPage
@@ -22,6 +21,7 @@ class SplashActivity : RawActivity() {
     lateinit var permissionTemp: Permission
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setLocale()
         setContentView(R.layout.activity_splash)
         permissionTemp =
             Permission.Builder(
@@ -67,14 +67,6 @@ class SplashActivity : RawActivity() {
 
     }
 
-    override fun attachBaseContext(newBase: Context) {
-        val prefManager = PrefManager(newBase)
-        val language = if (prefManager.getLanguage()
-                .isEmpty()
-        ) Constants.DEFAULT_LANGUAGE else prefManager.getLanguage()
-        super.attachBaseContext(LocalizationUtil.applyLanguageContext(newBase, Locale(language)))
-    }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -102,5 +94,14 @@ class SplashActivity : RawActivity() {
                 }
                 builder.show()
             }
+    }
+
+    fun setLocale() {
+        val prefManager = PrefManager(this)
+        val language = if (prefManager.getLanguage()
+                .isEmpty()
+        ) Constants.DEFAULT_LANGUAGE else prefManager.getLanguage()
+        LocalizationUtil.applyLanguageContext(this, Locale(language))
+
     }
 }

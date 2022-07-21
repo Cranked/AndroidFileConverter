@@ -109,10 +109,13 @@
                 android:layout_marginTop="@dimen/icon_margin_8dp"
                 android:layout_marginBottom="@dimen/icon_margin_8dp"
                 android:background="@drawable/icon_sort"
-                android:clickable="true"
+                android:dropDownWidth="200dp"
+                android:spinnerMode="dropdown"
                 app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="parent"
+
+                />
 
             <ImageView
                 android:id="@+id/searchImageView"

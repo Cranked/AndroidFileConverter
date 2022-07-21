@@ -23,6 +23,17 @@ class TransitionFragment :
     private val app by lazy {
         activity!!.application as FileConvertApp
     }
+    private val spinnerList by lazy {
+        listOf(
+            context!!.getString(R.string.sorting_a_to_z),
+            context!!.getString(R.string.sorting_z_to_a),
+            context!!.getString(R.string.sorting_newest_items),
+            context!!.getString(R.string.sorting_oldest_items),
+        )
+    }
+    var transitionListAdapter = TransitionListAdapter()
+    var transitionGridAdapter = TransitionGridAdapter()
+
     lateinit var path: String
 
     override fun onCreateView(
@@ -35,7 +46,7 @@ class TransitionFragment :
             onBundle(it)
         }
         app.rxBus.send(ToolbarState(false))
-        init()
+        viewModel.init(binding, this, app, path, spinnerList)
         return binding.root
     }
 
@@ -56,34 +67,6 @@ class TransitionFragment :
         )
     }
 
-    fun init() {
-        when (app.getLayoutState()) {
-            LayoutState.LIST_LAYOUT.value -> binding.layoutImageView.setImageDrawable(context!!.getDrawable(
-                R.drawable.icon_grid))
-            LayoutState.GRID_LAYOUT.value -> binding.layoutImageView.setImageDrawable(context!!.getDrawable(
-                R.drawable.icon_list))
-        }
-        binding.layoutImageView.setOnClickListener {
-            when (app.getLayoutState()) {
-                LayoutState.LIST_LAYOUT.value -> {
-                    app.setLayoutState(LayoutState.GRID_LAYOUT.value)
-                    binding.layoutImageView.setImageDrawable(context!!.getDrawable(R.drawable.icon_list))
-                    viewModel.setAdapter(context!!,
-                        binding.transitionRecylerView,
-                        TransitionGridAdapter(),
-                        viewModel.getFilesFromPath(path, app.getFilterState()))
-                }
-                LayoutState.GRID_LAYOUT.value -> {
-                    app.setLayoutState(LayoutState.LIST_LAYOUT.value)
-                    binding.layoutImageView.setImageDrawable(context!!.getDrawable(R.drawable.icon_grid))
-                    viewModel.setAdapter(context!!,
-                        binding.transitionRecylerView,
-                        TransitionListAdapter(),
-                        viewModel.getFilesFromPath(path, app.getFilterState()))
-                }
-            }
-        }
-    }
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
         viewModel.folderPath.observe(viewLifecycleOwner)
@@ -93,16 +76,16 @@ class TransitionFragment :
             when (app.getLayoutState()) {
                 LayoutState.LIST_LAYOUT.value -> {
                     binding.layoutImageView.setImageDrawable(context!!.getDrawable(R.drawable.icon_grid))
-                    viewModel.setAdapter(context!!,
+                    transitionListAdapter = viewModel.setAdapter(context!!,
                         binding.transitionRecylerView,
-                        TransitionListAdapter(),
+                        transitionListAdapter,
                         list)
                 }
                 LayoutState.GRID_LAYOUT.value -> {
                     binding.layoutImageView.setImageDrawable(context!!.getDrawable(R.drawable.icon_list))
-                    viewModel.setAdapter(context!!,
+                    transitionGridAdapter = viewModel.setAdapter(context!!,
                         binding.transitionRecylerView,
-                        TransitionGridAdapter(),
+                        transitionGridAdapter,
                         list)
                 }
             }
@@ -111,6 +94,13 @@ class TransitionFragment :
             binding.emptyFolder.visibility = if (it) View.GONE else View.VISIBLE
             binding.noDataImageView.visibility = if (it) View.GONE else View.VISIBLE
             binding.emptyFolderDescription.visibility = if (it) View.GONE else View.VISIBLE
+        }
+        viewModel.filterState.observe(viewLifecycleOwner) {
+            app.setFilterState(it)
+            val list=viewModel.getFilesFromPath(path,app.getFilterState())
+            transitionGridAdapter.setItems(list)
+            transitionListAdapter.setItems(list)
+
         }
     }
 
