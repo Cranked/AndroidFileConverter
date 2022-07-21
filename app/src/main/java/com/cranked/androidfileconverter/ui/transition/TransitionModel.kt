@@ -2,6 +2,7 @@ package com.cranked.androidfileconverter.ui.transition
 
 import android.os.Parcelable
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
+import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import kotlinx.parcelize.Parcelize
@@ -24,7 +25,7 @@ fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionMo
         file.extension,
         fileType,
         file.absolutePath,
-        DateUtils.getDatefromTime(file.lastModified(), "dd/MM/yyyy:HH:mm"),
+        DateUtils.getDatefromTime(file.lastModified(), Constants.dateFormat),
         favoritesDao.getFavorite(file.name,
             fileType) != null
     )

@@ -24,10 +24,10 @@ class FavoritesAdapter(@LayoutRes layoutRes:Int) :
                 drawable
             )
         )
-        binding.favItemName.text = getItems()[position].fileName
-        val item = File(getItems()[position].fileName)
+        binding.favItemName.text = item.fileName
+        val favoriteItem = File(item.fileName)
         var drwable: Drawable?
-        if (item.isDirectory) {
+        if (favoriteItem.isDirectory) {
             drwable = ContextCompat.getDrawable(binding.root.context, R.drawable.icon_folder)
         } else {
             drwable = ContextCompat.getDrawable(

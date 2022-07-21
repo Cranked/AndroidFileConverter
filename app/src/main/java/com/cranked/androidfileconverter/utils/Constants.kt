@@ -25,6 +25,7 @@ object Constants {
             Pair("ja", "日本語"),
             Pair("ko", "한국어")
         )
+    const val dateFormat = "dd/MM/yyyy:HH:mm"
     const val LANGUAGE = "LANGUAGE"
     const val DEFAULT_LANGUAGE = "en"
     const val LAYOUT_STATE = "LayoutState"

@@ -62,9 +62,9 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
         this.viewModel.barIconsVisibleState.observe(
             this
         ) { t ->
-            binding.toolbar.menu.getItem(0).setVisible(t!!.searchState)
-            binding.toolbar.menu.getItem(1).setVisible(t!!.gridState)
-            binding.toolbar.menu.getItem(2).setVisible(t!!.userState)
+            binding.toolbar.menu.getItem(0).isVisible = t!!.searchState
+            binding.toolbar.menu.getItem(1).isVisible = t.gridState
+            binding.toolbar.menu.getItem(2).isVisible = t.userState
         }
     }
 
@@ -77,16 +77,16 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
                 R.id.tools_dest -> viewModel.setImageViewsState(NavigationModel(true, true, true))
                 R.id.camera_dest -> viewModel.setImageViewsState(
                     NavigationModel(
-                        false,
-                        false,
-                        true
+                        searchState = false,
+                        gridState = false,
+                        userState = true
                     )
                 )
                 R.id.settings_dest -> viewModel.setImageViewsState(
                     NavigationModel(
-                        false,
-                        false,
-                        false
+                        searchState = false,
+                        gridState = false,
+                        userState = false
                     )
                 )
             }
@@ -126,12 +126,12 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
                 builder.setMessage(getString(R.string.necessary_permissions_description))
                 builder.setPositiveButton(
                     getString(R.string.settings)
-                ) { dialog, which ->
+                ) { _, _ ->
                     openAppPermissionPage()
                 }
                 builder.setNegativeButton(
                     getString(R.string.ok)
-                ) { dialog, which ->
+                ) { dialog, _ ->
                     dialog.dismiss()
                     exitProcess(0)
                 }

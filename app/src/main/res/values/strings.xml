@@ -5,14 +5,12 @@
     <string name="tools">Tools</string>
     <string name="camera">Camera</string>
     <string name="settings">Settings</string>
-
     <string name="transition">Transition</string>
     <string name="empty_folder">Empty Folder</string>
     <string name="view">View</string>
     <string name="user">User</string>
     <string name="sort">Sorting</string>
     <string name="create_folder_description">Press yellow button for create a  new folder</string>
-
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <!--    Create folder Strings-->
 
@@ -37,9 +35,13 @@
     <string name="processed_files">Processed Files</string>
     <string name="favorites">Favorites</string>
     <string name="favorites_description">Your Favorite files will appear here</string>
-
     <string name="necessary_permissions_description">Please give the necessary permissions</string>
 
+    <!-- TransitionStrings-->
+    <string name="sorting_a_to_z">Sorting (A to Z)</string>
+    <string name="sorting_z_to_a">Sorting (Z to A)</string>
+    <string name="sorting_newest_items">Sorting Newest Items</string>
+    <string name="sorting_oldest_items">Sorting Oldest Items</string>
 
     <!--    SettingsFragment-->
     <string name="language">Language</string>

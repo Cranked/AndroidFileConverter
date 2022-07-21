@@ -11,7 +11,7 @@ import java.io.File
 class RecentFileAdapter :
     BaseViewBindingRecyclerViewAdapter<RecentFile, RowRecentfileItemBinding>(R.layout.row_recentfile_item) {
     override fun setBindingModel(
-        item: RecentFile,
+        recentFile: RecentFile,
         binding: RowRecentfileItemBinding,
         position: Int
     ) {
@@ -22,8 +22,8 @@ class RecentFileAdapter :
                 drawable
             )
         )
-        binding.recentFileName.text = getItems()[position].fileName
-        val item = File(getItems()[position].fileName)
+        binding.recentFileName.text = recentFile.fileName
+        val item = File(recentFile.fileName)
         var drwable: Drawable?
         if (item.isDirectory) {
             drwable = ContextCompat.getDrawable(binding.root.context, R.drawable.icon_folder)
