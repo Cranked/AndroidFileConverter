@@ -57,6 +57,7 @@
     <string name="rename">Yeniden Adlandır</string>
     <string name="create_folder_with_selections">Seçimler ile klasör oluştur</string>
     <string name="mark_as_favorite">Favorilere ekle</string>
+    <string name="remove_favorite">Favorilerden kaldır</string>
     <string name="move">Taşı</string>
     <string name="delete">Sil</string>
     <string name="copy">Kopyala</string>

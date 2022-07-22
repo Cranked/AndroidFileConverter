@@ -29,10 +29,10 @@
 
             <ImageView
                 android:id="@+id/favoriteGridImageView"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/fav_icon_size"
+                android:layout_height="@dimen/fav_icon_size"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/custom_radius_favorite" />
+                android:background="@drawable/custom_radius_favorite" />
 
         </LinearLayout>
 

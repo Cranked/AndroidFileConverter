@@ -26,7 +26,7 @@ fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionMo
         fileType,
         file.absolutePath,
         DateUtils.getDatefromTime(file.lastModified(), Constants.dateFormat),
-        favoritesDao.getFavorite(file.name,
+        favoritesDao.getFavorite(file.absolutePath, file.name,
             fileType) != null
     )
 }

@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
     <data>
+
         <variable
             name="viewModel"
             type="com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel" />
@@ -26,7 +29,8 @@
 
             <LinearLayout
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content">
+                android:layout_height="wrap_content"
+                android:padding="@dimen/icon_margin_8dp">
 
                 <TextView
                     android:id="@+id/transitionFileName"
@@ -39,10 +43,12 @@
 
                 <ImageView
                     android:id="@+id/favoriteImageView"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
+                    android:layout_width="@dimen/fav_icon_size"
+                    android:layout_height="@dimen/fav_icon_size"
+                    android:background="@drawable/custom_radius_favorite"
                     android:src="@drawable/icon_favorite"
-                    android:visibility="visible" />
+                    android:visibility="visible"
+                    />
             </LinearLayout>
 
             <TextView

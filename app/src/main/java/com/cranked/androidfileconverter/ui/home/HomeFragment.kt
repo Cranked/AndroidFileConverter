@@ -12,30 +12,37 @@ import com.cranked.androidfileconverter.adapter.FavoritesAdapter
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapter
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
+import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
 import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
+import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 
 @SuppressWarnings("unchecked")
-class HomeFragment :
+class HomeFragment @Inject constructor() :
     BaseDaggerFragment<HomeFragmentViewModel, FragmentHomeBinding>(HomeFragmentViewModel::class.java) {
     @Inject
     lateinit var favoritesAdapterViewModel: FavoritesAdapterViewModel
 
     @Inject
     lateinit var recentFileAdapterViewModel: RecentFileAdapterViewModel
+
+    @Inject
+    lateinit var favoritesDao: FavoritesDao
+
     val app by lazy {
         activity!!.application as FileConvertApp
     }
-
+    var favoritesAdapter: FavoritesAdapter = FavoritesAdapter(R.layout.row_favorite_adapter_item)
+    var recentFileAdapter = RecentFileAdapter()
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
     ): View? {
         binding = getViewDataBinding(inflater, container)
         initViewModel(viewModel)
-        app.appComponent.bindHomeFragment(this)
         app.rxBus.send(ToolbarState(true))
+        app.appComponent.bindHomeFragment(this)
         return binding.root
     }
 
@@ -52,15 +59,16 @@ class HomeFragment :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        favoritesAdapterViewModel.setAdapter(
+        val favoritesList = favoritesDao.getAll()
+        favoritesAdapter = favoritesAdapterViewModel.setAdapter(
             this.context!!,
             binding.favoritesRecylerView,
-            FavoritesAdapter(R.layout.row_favorite_adapter_item),
-            favoritesAdapterViewModel.favoritesList
+            favoritesAdapter,
+            favoritesList
         )
-        recentFileAdapterViewModel.setAdapter(
+        recentFileAdapter = recentFileAdapterViewModel.setAdapter(
             this.context!!, binding.recentFileRecylerView,
-            RecentFileAdapter(), recentFileAdapterViewModel.recentFileList
+            recentFileAdapter, recentFileAdapterViewModel.recentFileList
         )
     }
 

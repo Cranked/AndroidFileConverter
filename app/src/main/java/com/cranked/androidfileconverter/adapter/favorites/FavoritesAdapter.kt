@@ -23,7 +23,6 @@ class FavoritesAdapter(@LayoutRes layoutRes: Int) :
                 drawable
             )
         )
-
         when (item.fileType) {
             FileType.FOLDER.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
                 R.drawable.icon_folder))

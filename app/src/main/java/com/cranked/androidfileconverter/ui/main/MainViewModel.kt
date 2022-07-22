@@ -16,12 +16,13 @@ import com.cranked.androidfileconverter.utils.Constants
 import net.codecision.startask.permissions.Permission
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor() : BaseViewModel() {
+class MainViewModel @Inject constructor(private val mainActivity: MainActivity) : BaseViewModel() {
     val TAG = MainViewModel::class.java.name.toString()
     val barIconsVisibleState = MutableLiveData<NavigationModel>()
     fun setImageViewsState(model: NavigationModel) {
         barIconsVisibleState.postValue(model)
     }
+
 
     val permissionTemp by lazy {
         Permission.Builder(

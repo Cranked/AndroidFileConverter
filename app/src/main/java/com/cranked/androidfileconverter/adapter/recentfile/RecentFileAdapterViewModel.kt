@@ -16,12 +16,13 @@ class RecentFileAdapterViewModel @Inject constructor(private val recentFilesDao:
         recyclerView: RecyclerView,
         recentFileAdapter: RecentFileAdapter,
         list: List<RecentFile>,
-    ) {
+    ): RecentFileAdapter {
         recentFileAdapter.setItems(list)
         recyclerView.apply {
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = recentFileAdapter
         }
+        return recentFileAdapter
     }
 }

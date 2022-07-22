@@ -14,9 +14,10 @@ import com.cranked.androidfileconverter.utils.file.FileUtility
 import javax.inject.Inject
 
 class HomeFragmentViewModel @Inject constructor(
-    favoritesDao: FavoritesDao,
+    private val favoritesDao: FavoritesDao,
     processedFilesDao: ProcessedFilesDao,
-    mContext: Context,
+    private val mContext: Context,
+    private val homeFragment: HomeFragment,
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
@@ -44,4 +45,8 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun processedFolderPath(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getProcessedPath())
+
+    fun notifyFavoriteAdapterItems() {
+        homeFragment.favoritesAdapter.setItems(favoritesDao.getAll())
+    }
 }

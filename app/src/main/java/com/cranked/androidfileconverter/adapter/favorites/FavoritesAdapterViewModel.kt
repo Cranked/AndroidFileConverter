@@ -9,7 +9,7 @@ import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import javax.inject.Inject
 
 class FavoritesAdapterViewModel @Inject constructor(
-    private val favoritesDao: FavoritesDao
+    private val favoritesDao: FavoritesDao,
 ) :
     BaseViewModel() {
     val favoritesList = favoritesDao.getAll()
@@ -18,13 +18,14 @@ class FavoritesAdapterViewModel @Inject constructor(
         recyclerView: RecyclerView,
         favoritesAdapter: FavoritesAdapter,
         list: List<FavoriteFile>,
-    ) {
+    ): FavoritesAdapter {
         favoritesAdapter.setItems(list)
         recyclerView.apply {
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = favoritesAdapter
         }
+        return favoritesAdapter
     }
 
 }

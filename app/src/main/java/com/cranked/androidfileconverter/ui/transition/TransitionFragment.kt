@@ -12,11 +12,13 @@ import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.transition.TransitionGridAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
+import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import javax.inject.Inject
 
-class TransitionFragment :
+class TransitionFragment @Inject constructor() :
     BaseDaggerFragment<TransitionFragmentViewModel, FragmentTransitionBinding>(
         TransitionFragmentViewModel::class.java
     ) {
@@ -31,6 +33,9 @@ class TransitionFragment :
             context!!.getString(R.string.sorting_oldest_items),
         )
     }
+
+    @Inject
+    lateinit var mainViewModel: MainViewModel
     var transitionListAdapter = TransitionListAdapter()
     var transitionGridAdapter = TransitionGridAdapter()
 
@@ -46,7 +51,7 @@ class TransitionFragment :
             onBundle(it)
         }
         app.rxBus.send(ToolbarState(false))
-        viewModel.init(binding, this,activity!!, app, path, spinnerList)
+        viewModel.init(binding, this, activity!!, app, path, spinnerList)
         return binding.root
     }
 
@@ -97,7 +102,12 @@ class TransitionFragment :
         }
         viewModel.filterState.observe(viewLifecycleOwner) {
             app.setFilterState(it)
-            val list=viewModel.getFilesFromPath(path,app.getFilterState())
+            val list = viewModel.getFilesFromPath(path, app.getFilterState())
+            transitionGridAdapter.setItems(list)
+            transitionListAdapter.setItems(list)
+        }
+        viewModel.itemsChangedState.observe(viewLifecycleOwner) {
+            val list = viewModel.getFilesFromPath(path, app.getFilterState())
             transitionGridAdapter.setItems(list)
             transitionListAdapter.setItems(list)
         }

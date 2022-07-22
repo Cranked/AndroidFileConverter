@@ -84,12 +84,12 @@ class SplashActivity : RawActivity() {
                 builder.setMessage(getString(R.string.necessary_permissions_description))
                 builder.setPositiveButton(
                     getString(R.string.settings)
-                ) { dialog, which ->
+                ) { _, _ ->
                     openAppPermissionPage()
                 }
                 builder.setNegativeButton(
                     getString(R.string.ok)
-                ) { dialog, which ->
+                ) { dialog, _ ->
                     dialog.dismiss()
                 }
                 builder.show()

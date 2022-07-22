@@ -54,6 +54,7 @@
     <string name="rename">Rename</string>
     <string name="create_folder_with_selections">Create Folder with selection</string>
     <string name="mark_as_favorite">Mark as favorite</string>
+    <string name="remove_favorite">Remove favorite</string>
     <string name="move">Move</string>
     <string name="delete">Delete</string>
     <string name="copy">Copy</string>
