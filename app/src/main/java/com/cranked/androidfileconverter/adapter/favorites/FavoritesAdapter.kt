@@ -1,21 +1,20 @@
 package com.cranked.androidfileconverter.adapter
 
-import android.graphics.drawable.Drawable
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
-import java.io.File
+import com.cranked.androidfileconverter.utils.enums.FileType
 
-class FavoritesAdapter(@LayoutRes layoutRes:Int) :
-    BaseViewBindingRecyclerViewAdapter<FavoriteFile,RowFavoriteAdapterItemBinding>(layoutRes) {
+class FavoritesAdapter(@LayoutRes layoutRes: Int) :
+    BaseViewBindingRecyclerViewAdapter<FavoriteFile, RowFavoriteAdapterItemBinding>(layoutRes) {
 
     override fun setBindingModel(
         item: FavoriteFile,
         binding: RowFavoriteAdapterItemBinding,
-        position: Int
+        position: Int,
     ) {
         val drawable = R.drawable.icon_folder
         binding.favImage.setImageDrawable(
@@ -24,18 +23,23 @@ class FavoritesAdapter(@LayoutRes layoutRes:Int) :
                 drawable
             )
         )
-        binding.favItemName.text = item.fileName
-        val favoriteItem = File(item.fileName)
-        var drwable: Drawable?
-        if (favoriteItem.isDirectory) {
-            drwable = ContextCompat.getDrawable(binding.root.context, R.drawable.icon_folder)
-        } else {
-            drwable = ContextCompat.getDrawable(
-                binding.root.context,
-               R.drawable.icon_folder
-            )
+
+        when (item.fileType) {
+            FileType.FOLDER.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
+                R.drawable.icon_folder))
+            FileType.JPG.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
+                com.cranked.androidcorelibrary.R.drawable.icon_jpg))
+            FileType.PNG.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
+                com.cranked.androidcorelibrary.R.drawable.icon_png))
+            FileType.WORD.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
+                com.cranked.androidcorelibrary.R.drawable.icon_doc))
+            FileType.PDF.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
+                com.cranked.androidcorelibrary.R.drawable.icon_pdf))
+            FileType.OTHERS.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
+                com.cranked.androidcorelibrary.R.drawable.icon_default))
         }
-        binding.favImage.setImageDrawable(drwable)
+        binding.favItemName.text = item.fileName
+//        binding.favImage.setImageDrawable(drwable)
 
     }
 }

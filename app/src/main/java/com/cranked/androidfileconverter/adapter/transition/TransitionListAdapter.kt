@@ -30,7 +30,7 @@ class TransitionListAdapter :
                 binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
                     com.cranked.androidcorelibrary.R.drawable.icon_png))
             }
-            FileType.JPEG.type -> {
+            FileType.JPG.type -> {
                 binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
                     com.cranked.androidcorelibrary.R.drawable.icon_jpg))
             }

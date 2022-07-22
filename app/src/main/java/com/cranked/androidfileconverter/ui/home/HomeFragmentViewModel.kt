@@ -44,9 +44,4 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun processedFolderPath(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getProcessedPath())
-
-
-    override fun onCleared() {
-        super.onCleared()
-    }
 }

@@ -235,7 +235,6 @@ class TransitionFragmentViewModel @Inject constructor(
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
         }
-
     }
 
     fun backStack(view: View) {

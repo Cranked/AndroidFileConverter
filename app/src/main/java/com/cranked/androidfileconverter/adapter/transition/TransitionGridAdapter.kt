@@ -31,7 +31,7 @@ class TransitionGridAdapter :
                 binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
                     com.cranked.androidcorelibrary.R.drawable.icon_png))
             }
-            FileType.JPEG.type -> {
+            FileType.JPG.type -> {
                 binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
                     com.cranked.androidcorelibrary.R.drawable.icon_jpg))
             }

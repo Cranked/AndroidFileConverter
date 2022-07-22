@@ -7,5 +7,5 @@ enum class FileType(val type: Int) {
     WORD(3),
     EXCEL(4),
     PNG(5),
-    JPEG(6)
+    JPG(6)
 }

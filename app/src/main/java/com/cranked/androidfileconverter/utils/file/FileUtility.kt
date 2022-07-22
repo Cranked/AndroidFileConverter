@@ -61,7 +61,7 @@ object FileUtility {
                 "xlxs" -> return FileType.EXCEL.type
                 "docx" -> return FileType.WORD.type
                 "png" -> return FileType.PNG.type
-                "jpg" -> return FileType.JPEG.type
+                "jpg" -> return FileType.JPG.type
             }
         return FileType.OTHERS.type
     }

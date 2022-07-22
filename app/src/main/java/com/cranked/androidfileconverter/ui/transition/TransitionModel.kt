@@ -21,7 +21,7 @@ data class TransitionModel(
 
 fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionModel {
     val fileType = FileUtility.getType(file)
-    var model = TransitionModel(file.name,
+    return TransitionModel(file.name,
         file.extension,
         fileType,
         file.absolutePath,
@@ -29,7 +29,6 @@ fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionMo
         favoritesDao.getFavorite(file.name,
             fileType) != null
     )
-    return model
 }
 
 fun List<File>.toTransitionList(favoritesDao: FavoritesDao): List<TransitionModel> {
