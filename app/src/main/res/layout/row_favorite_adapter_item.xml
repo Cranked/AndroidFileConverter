@@ -26,8 +26,12 @@
             android:id="@+id/fav_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
-            android:text="TextView"
+            android:maxWidth="200dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="TextViewawdawdawdawdawdawdawd"
             android:textSize="16sp"
             android:textStyle="bold" />
 
