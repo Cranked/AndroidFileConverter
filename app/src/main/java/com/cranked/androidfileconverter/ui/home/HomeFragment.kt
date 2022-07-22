@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
@@ -13,8 +14,11 @@ import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapter
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
+import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
+import com.cranked.androidfileconverter.data.database.entity.RecentFile
 import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
-import com.cranked.androidfileconverter.ui.main.MainViewModel
+import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
+import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 
@@ -60,16 +64,42 @@ class HomeFragment @Inject constructor() :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val favoritesList = favoritesDao.getAll()
-        favoritesAdapter = favoritesAdapterViewModel.setAdapter(
-            this.context!!,
+        favoritesAdapter = favoritesAdapterViewModel.setAdapter(this.context!!,
             binding.favoritesRecylerView,
             favoritesAdapter,
             favoritesList
         )
+        favoritesAdapter.setListener(object :
+            BaseViewBindingRecyclerViewAdapter.ClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
+            override fun onItemClick(
+                item: FavoriteFile,
+                position: Int,
+                rowBinding: RowFavoriteAdapterItemBinding,
+            ) {
+                rowBinding.favoriteLinearLayout.setOnClickListener {
+                    viewModel.goToTransitionFragmentWithIntent(it, item.path)
+                }
+            }
+
+
+        })
         recentFileAdapter = recentFileAdapterViewModel.setAdapter(
             this.context!!, binding.recentFileRecylerView,
             recentFileAdapter, recentFileAdapterViewModel.recentFileList
         )
+        recentFileAdapter.setListener(object :
+            BaseViewBindingRecyclerViewAdapter.ClickListener<RecentFile, RowRecentfileItemBinding> {
+            override fun onItemClick(
+                item: RecentFile,
+                position: Int,
+                rowBinding: RowRecentfileItemBinding,
+            ) {
+                rowBinding.recentFileLinearLayout.setOnClickListener {
+                    viewModel.goToTransitionFragmentWithIntent(it, item.path)
+                }
+            }
+
+        })
     }
 
 }

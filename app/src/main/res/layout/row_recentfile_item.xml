@@ -10,8 +10,11 @@
     </data>
 
     <LinearLayout
+        android:id="@+id/recentFileLinearLayout"
         android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contextClickable="true"
         android:orientation="vertical">
 
         <ImageView

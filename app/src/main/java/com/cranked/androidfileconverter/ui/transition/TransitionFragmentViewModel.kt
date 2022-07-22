@@ -190,12 +190,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                     transitionModel.fileName,
                                     transitionModel.fileType)
                             }
+                            homeFragmentViewModel.notifyFavoriteAdapterItems()
                         }
-
                     }
                     optionsBottomDialog.dismiss()
                     itemsChangedState.postValue(true)
-                    homeFragmentViewModel.notifyFavoriteAdapterItems()
                 }
 
             }

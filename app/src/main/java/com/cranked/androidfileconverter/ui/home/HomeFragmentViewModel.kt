@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.R
@@ -17,7 +18,7 @@ class HomeFragmentViewModel @Inject constructor(
     private val favoritesDao: FavoritesDao,
     processedFilesDao: ProcessedFilesDao,
     private val mContext: Context,
-    private val homeFragment: HomeFragment,
+    private val homeFragment: HomeFragment
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
