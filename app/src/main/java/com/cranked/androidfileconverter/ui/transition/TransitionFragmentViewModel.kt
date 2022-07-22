@@ -244,7 +244,7 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun getFilesFromPath(path: String, state: Int): MutableList<TransitionModel> {
         val list = FileUtils.getFolderFiles(path, 1, 1)
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }
             .toTransitionList(favoritesDao)
         when (state) {
             FilterState.ORDERBYNAME_A_TO_Z.value -> {

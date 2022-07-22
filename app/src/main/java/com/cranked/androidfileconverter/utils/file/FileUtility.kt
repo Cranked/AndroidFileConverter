@@ -18,15 +18,15 @@ object FileUtility {
         val fileTransformerPath = base_path + Constants.folderName
         val fileTransformSize = FileUtils.getFolderFiles(fileTransformerPath, 1, 1).size.toString()
         val internalStorageSize = FileUtils.getFolderFiles(base_path, 1, 1)
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val downloadSize = FileUtils.getFolderFiles(downloads_path, 1, 1)
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val sdCardSize = FileUtils.getFolderFiles(
             sdcard_path,
             1,
             1
         )
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val processedSize = processedFilesDao.getAll().size.toString()
         return StorageModel(
             internalStorageSize,
