@@ -8,7 +8,8 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Button
-import android.widget.Toast
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
@@ -20,6 +21,7 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.adapter.options.OptionsAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionGridAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
@@ -27,6 +29,8 @@ import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
+import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
+import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
@@ -43,6 +47,7 @@ class TransitionFragmentViewModel @Inject constructor(
     val folderPath = MutableLiveData<String>()
     val noDataState = MutableLiveData<Boolean>()
     val filterState = MutableLiveData<Int>()
+    lateinit var supportFragmentManager: FragmentManager
     fun setAdapter(
         context: Context,
         recylerView: RecyclerView,
@@ -62,9 +67,7 @@ class TransitionFragmentViewModel @Inject constructor(
                         sendIntentToTransitionFragmentWithIntent(it, getItems()[position].filePath)
                     }
                     rowBinding.optionsImageView.setOnClickListener {
-                        Toast.makeText(rowBinding.root.context,
-                            "OptionsaTıklandı",
-                            Toast.LENGTH_SHORT).show()
+                        showOptionsBottomDialog(supportFragmentManager, item)
                     }
                 }
             })
@@ -97,9 +100,7 @@ class TransitionFragmentViewModel @Inject constructor(
                         sendIntentToTransitionFragmentWithIntent(it, getItems()[position].filePath)
                     }
                     rowBinding.optionsGridImageView.setOnClickListener {
-                        Toast.makeText(rowBinding.root.context,
-                            "OptionsaTıklandı",
-                            Toast.LENGTH_SHORT).show()
+                        showOptionsBottomDialog(supportFragmentManager, item)
                     }
                 }
             })
@@ -111,6 +112,39 @@ class TransitionFragmentViewModel @Inject constructor(
                 GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
         }
         return transitionGridAdapter
+    }
+
+    fun showOptionsBottomDialog(
+        supportFragmentManager: FragmentManager,
+        transitionModel: TransitionModel,
+    ) {
+        var list = listOf<OptionsModel>()
+        when (transitionModel.fileType) {
+            1 -> {
+
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_tools)!!,
+                    context.getString(R.string.tools))
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_share)!!,
+                    context.getString(R.string.share))
+                list += OptionsModel(ContextCompat.getDrawable(context,
+                    R.drawable.icon_selection)!!,
+                    context.getString(R.string.create_folder_with_selections))
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_favorite)!!,
+                    context.getString(R.string.mark_as_favorite))
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_rename)!!,
+                    context.getString(R.string.rename))
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_delete)!!,
+                    context.getString(R.string.delete))
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_move)!!,
+                    context.getString(R.string.move))
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
+                    context.getString(R.string.copy))
+            }
+        }
+        val adapter = OptionsAdapter()
+        adapter.setItems(list.toMutableList())
+        val bottomDialog = OptionsBottomDialog(adapter, transitionModel.fileName)
+        bottomDialog.show(supportFragmentManager, "OptionsBottomDialog")
     }
 
     fun showCreateFolderBottomDialog(supportFragmentManager: FragmentManager, path: String) {
@@ -128,10 +162,12 @@ class TransitionFragmentViewModel @Inject constructor(
     fun init(
         binding: FragmentTransitionBinding,
         transitionFragment: TransitionFragment,
+        activity: FragmentActivity,
         app: FileConvertApp,
         path: String,
         spinnerList: List<String>,
     ) {
+        supportFragmentManager = activity.supportFragmentManager
         val title = path.split("/").last { it.isNotEmpty() }
         binding.titleToolBar.text = title
         when (app.getLayoutState()) {

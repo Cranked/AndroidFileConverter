@@ -7,6 +7,7 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.ui.home.StorageModel
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.enums.FileType
 import java.io.File
 
 object FileUtility {
@@ -53,8 +54,15 @@ object FileUtility {
 
     fun getType(file: File): Int {
         if (file.isDirectory)
-            return 1
+            return FileType.FOLDER.type
         else
-            return 2
+            when (file.extension) {
+                "pdf" -> return FileType.PDF.type
+                "xlxs" -> return FileType.EXCEL.type
+                "docx" -> return FileType.WORD.type
+                "png" -> return FileType.PNG.type
+                "jpg" -> return FileType.JPEG.type
+            }
+        return FileType.OTHERS.type
     }
 }

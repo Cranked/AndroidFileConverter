@@ -46,7 +46,7 @@ class TransitionFragment :
             onBundle(it)
         }
         app.rxBus.send(ToolbarState(false))
-        viewModel.init(binding, this, app, path, spinnerList)
+        viewModel.init(binding, this,activity!!, app, path, spinnerList)
         return binding.root
     }
 
@@ -100,7 +100,6 @@ class TransitionFragment :
             val list=viewModel.getFilesFromPath(path,app.getFilterState())
             transitionGridAdapter.setItems(list)
             transitionListAdapter.setItems(list)
-
         }
     }
 
@@ -112,6 +111,7 @@ class TransitionFragment :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         binding.createFolderButton.setOnClickListener { createFolder() }
+
     }
 
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {

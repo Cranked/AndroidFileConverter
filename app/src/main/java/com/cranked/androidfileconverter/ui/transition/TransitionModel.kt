@@ -29,9 +29,6 @@ fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionMo
         favoritesDao.getFavorite(file.name,
             fileType) != null
     )
-    if (file.isDirectory)
-        model.fileType = 1
-
     return model
 }
 
