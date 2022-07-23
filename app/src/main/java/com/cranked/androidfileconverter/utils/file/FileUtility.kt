@@ -73,4 +73,8 @@ object FileUtility {
         }
         return true
     }
+
+    fun renameFile(oldPath: String, newPath:String): Boolean {
+        return File(oldPath).renameTo(File(newPath))
+    }
 }

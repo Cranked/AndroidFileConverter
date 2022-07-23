@@ -63,5 +63,7 @@
     <string name="copy">Kopyala</string>
     <string name="duplicate">İki Nüsha</string>
     <string name="want_to_delete_file">Bu dosyayı silmek istiyormusunuz</string>
+    <string name="file_name_required">Dosya ismi boş olmamalı</string>
+    <string name="file_name_exist">Dosya ismi zaten mevcut</string>
 
 </resources>

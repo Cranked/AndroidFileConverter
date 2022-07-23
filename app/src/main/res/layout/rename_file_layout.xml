@@ -7,7 +7,7 @@
     android:theme="@style/Theme.MaterialComponents.Light">
 
     <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/textInputLayout"
+        android:id="@+id/renameTextInpuLayout"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -19,21 +19,23 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/folderNameEditText"
+            android:id="@+id/renameEditText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:maxLines="3"
-            android:text="@string/folder">
+            android:text="TextView">
 
         </com.google.android.material.textfield.TextInputEditText>
 
-        <include
-            layout="@layout/cancel_ok_button_layout"
-            android:layout_margin="@dimen/icon_margin_8dp"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            />
-
     </com.google.android.material.textfield.TextInputLayout>
+
+    <include
+        layout="@layout/cancel_ok_button_layout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/icon_margin_8dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/renameTextInpuLayout" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

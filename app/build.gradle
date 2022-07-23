@@ -95,7 +95,7 @@ dependencies {
     implementation 'androidx.recyclerview:recyclerview:1.2.1'
 
     // My Library
-    implementation 'com.github.Cranked:AndroidCoreLibrary:1.1.2'
+    implementation 'com.github.Cranked:AndroidCoreLibrary:1.1.3'
 
     // Dagger 2
     implementation "com.google.dagger:dagger:2.22"

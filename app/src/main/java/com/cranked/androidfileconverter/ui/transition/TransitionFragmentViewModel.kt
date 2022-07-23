@@ -8,6 +8,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -42,6 +43,7 @@ import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.google.android.material.textfield.TextInputEditText
+import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 
@@ -168,8 +170,6 @@ class TransitionFragmentViewModel @Inject constructor(
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
                     context.getString(R.string.copy), TaskType.COPYTASK.value)
             }
-
-
         }
         val adapter = OptionsAdapter()
         adapter.setListener(object :
@@ -206,6 +206,42 @@ class TransitionFragmentViewModel @Inject constructor(
                                 FileUtility.deleteFile(transitionModel.filePath)
                                 dialog.getDialog().dismiss()
                                 itemsChangedState.postValue(true)
+                            }
+                            dialog.getDialog().show()
+                        }
+                        TaskType.RENAMETASK.value -> {
+                            val dialog = BaseDialog(it.context, R.layout.rename_file_layout)
+                            val fileNameEditText =
+                                dialog.view.findViewById<TextInputEditText>(R.id.renameEditText)
+                            fileNameEditText.setText(transitionModel.fileName)
+                            dialog.view.background = context.getDrawable(R.drawable.custom_dialog)
+                            dialog.view.findViewById<TextView>(R.id.cancelButton)
+                                .setOnClickListener {
+                                    dialog.getDialog().dismiss()
+                                }
+                            dialog.view.findViewById<TextView>(R.id.okButton).setOnClickListener {
+                                val realPath = transitionModel.filePath.substring(0,
+                                    transitionModel.filePath.lastIndexOf(transitionModel.fileName))
+                                val existNewFileName =
+                                    File(realPath + fileNameEditText.text.toString()).exists() && transitionModel.fileName != fileNameEditText.text.toString()
+                                if (existNewFileName) {
+                                    Toast.makeText(context,
+                                        context.getString(R.string.file_name_exist),
+                                        Toast.LENGTH_SHORT)
+                                        .show()
+                                    return@setOnClickListener
+                                }
+                                if (fileNameEditText.text!!.isNotEmpty()) {
+                                    val result = FileUtility.renameFile(transitionModel.filePath,
+                                        realPath + fileNameEditText.text.toString())
+                                    dialog.getDialog().dismiss()
+                                    itemsChangedState.postValue(true)
+                                } else {
+                                    Toast.makeText(rowBinding.root.context,
+                                        context.getString(R.string.file_name_required),
+                                        Toast.LENGTH_SHORT)
+                                        .show()
+                                }
                             }
                             dialog.getDialog().show()
                         }
