@@ -62,5 +62,6 @@
     <string name="delete">Sil</string>
     <string name="copy">Kopyala</string>
     <string name="duplicate">İki Nüsha</string>
+    <string name="want_to_delete_file">Bu dosyayı silmek istiyormusunuz</string>
 
 </resources>

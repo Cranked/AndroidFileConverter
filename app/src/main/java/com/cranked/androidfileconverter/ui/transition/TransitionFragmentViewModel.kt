@@ -7,7 +7,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.Button
+import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
+import com.cranked.androidcorelibrary.dialog.BaseDialog
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.FileConvertApp
@@ -39,6 +40,7 @@ import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
+import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.google.android.material.textfield.TextInputEditText
 import java.text.SimpleDateFormat
 import javax.inject.Inject
@@ -47,7 +49,7 @@ class TransitionFragmentViewModel @Inject constructor(
     private val favoritesDao: FavoritesDao,
     private val context: Context,
     private val homeFragmentViewModel: HomeFragmentViewModel,
-    private val mainViewModel: MainViewModel
+    private val mainViewModel: MainViewModel,
 ) :
     BaseViewModel() {
 
@@ -139,7 +141,7 @@ class TransitionFragmentViewModel @Inject constructor(
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_rename)!!,
                     context.getString(R.string.rename), TaskType.RENAMETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_delete)!!,
-                    context.getString(R.string.delete), TaskType.REMOVETASK.value)
+                    context.getString(R.string.delete), TaskType.DELETETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_move)!!,
                     context.getString(R.string.move), TaskType.MOVETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
@@ -160,7 +162,7 @@ class TransitionFragmentViewModel @Inject constructor(
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_rename)!!,
                     context.getString(R.string.rename), TaskType.RENAMETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_delete)!!,
-                    context.getString(R.string.delete), TaskType.REMOVETASK.value)
+                    context.getString(R.string.delete), TaskType.DELETETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_move)!!,
                     context.getString(R.string.move), TaskType.MOVETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
@@ -192,13 +194,26 @@ class TransitionFragmentViewModel @Inject constructor(
                             }
                             homeFragmentViewModel.notifyFavoriteAdapterItems()
                         }
+                        TaskType.DELETETASK.value -> {
+                            val dialog =
+                                BaseDialog(it.context, R.layout.delete_file_dialog)
+                            dialog.view.background = context.getDrawable(R.drawable.custom_dialog)
+                            dialog.view.findViewById<TextView>(R.id.cancelButton)
+                                .setOnClickListener {
+                                    dialog.getDialog().dismiss()
+                                }
+                            dialog.view.findViewById<TextView>(R.id.okButton).setOnClickListener {
+                                FileUtility.deleteFile(transitionModel.filePath)
+                                dialog.getDialog().dismiss()
+                                itemsChangedState.postValue(true)
+                            }
+                            dialog.getDialog().show()
+                        }
                     }
                     optionsBottomDialog.dismiss()
                     itemsChangedState.postValue(true)
                 }
-
             }
-
         })
         adapter.setItems(list)
         optionsBottomDialog = OptionsBottomDialog(adapter, transitionModel.fileName)
@@ -285,7 +300,6 @@ class TransitionFragmentViewModel @Inject constructor(
                 binding.sortSpinner.setSelection(3)
             }
         }
-
         binding.sortSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(
                 parent: AdapterView<*>?,
@@ -301,8 +315,7 @@ class TransitionFragmentViewModel @Inject constructor(
                 }
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) {
-            }
+            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
         }
     }
 
@@ -354,8 +367,8 @@ class TransitionFragmentViewModel @Inject constructor(
         val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)
         val view =
             (layoutInflater as LayoutInflater).inflate(R.layout.create_folder_dialog_layout, null)
-        val cancelButton = view.findViewById<Button>(R.id.cancelButton)
-        val okButton = view.findViewById<Button>(R.id.okButton)
+        val cancelButton = view.findViewById<TextView>(R.id.cancelButton)
+        val okButton = view.findViewById<TextView>(R.id.okButton)
         val dialog = AlertDialog.Builder(context)
             .setView(view)
             .setCancelable(true)

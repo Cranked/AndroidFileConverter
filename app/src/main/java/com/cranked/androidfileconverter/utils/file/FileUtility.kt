@@ -65,4 +65,12 @@ object FileUtility {
             }
         return FileType.OTHERS.type
     }
+
+    fun deleteFile(path: String): Boolean {
+        val fileDelete = File(path)
+        if (fileDelete.exists()) {
+            return fileDelete.delete()
+        }
+        return true
+    }
 }

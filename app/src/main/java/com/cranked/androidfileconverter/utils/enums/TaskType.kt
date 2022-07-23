@@ -6,7 +6,7 @@ enum class TaskType(val value: Int) {
     CREATEFOLDERWITHSELECTIONTASK(3),
     MARKFAVORITETASK(4),
     RENAMETASK(5),
-    REMOVETASK(6),
+    DELETETASK(6),
     MOVETASK(7),
     COPYTASK(8)
 }

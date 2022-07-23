@@ -80,8 +80,6 @@ class HomeFragment @Inject constructor() :
                     viewModel.goToTransitionFragmentWithIntent(it, item.path)
                 }
             }
-
-
         })
         recentFileAdapter = recentFileAdapterViewModel.setAdapter(
             this.context!!, binding.recentFileRecylerView,
