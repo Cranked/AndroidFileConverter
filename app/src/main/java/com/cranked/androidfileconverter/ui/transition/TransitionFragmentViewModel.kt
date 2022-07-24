@@ -203,7 +203,12 @@ class TransitionFragmentViewModel @Inject constructor(
                                     dialog.getDialog().dismiss()
                                 }
                             dialog.view.findViewById<TextView>(R.id.okButton).setOnClickListener {
-                                FileUtility.deleteFile(transitionModel.filePath)
+                                if (transitionModel.isFavorite) {
+                                    removeFavorite(transitionModel.filePath,
+                                        transitionModel.fileName,
+                                        transitionModel.fileType)
+                                }
+                                val result=FileUtility.deleteFile(transitionModel.filePath)
                                 dialog.getDialog().dismiss()
                                 itemsChangedState.postValue(true)
                             }
