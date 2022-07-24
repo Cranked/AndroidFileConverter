@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Bundle
 import android.view.View
 import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.R
@@ -18,13 +17,13 @@ class HomeFragmentViewModel @Inject constructor(
     private val favoritesDao: FavoritesDao,
     processedFilesDao: ProcessedFilesDao,
     private val mContext: Context,
-    private val homeFragment: HomeFragment
+    private var homeFragment: HomeFragment,
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
     val storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
-    val favoritesList = favoritesDao.getAll().toList()
-    val favoritesState = favoritesList.size > 0
+    var favoritesList = favoritesDao.getAll().toList()
+    var favoritesState = favoritesList.isNotEmpty()
     fun goToTransitionFragmentWithIntent(view: View, path: String) {
         val bundle = Bundle()
         bundle.putString(Constants.DESTINATION_PATH_ACTION, path)
@@ -47,7 +46,9 @@ class HomeFragmentViewModel @Inject constructor(
     fun processedFolderPath(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getProcessedPath())
 
-    fun notifyFavoriteAdapterItems() {
-        homeFragment.favoritesAdapter.setItems(favoritesDao.getAll())
+
+    @JvmName("setFavoritesState1")
+    fun setFavoritesState(value: Boolean) {
+        favoritesState = value
     }
 }

@@ -13,7 +13,7 @@ import javax.inject.Inject
 
 class FavoritesAdapterViewModel @Inject constructor() :
     BaseViewModel() {
-    fun setAdapter(
+    fun  setAdapter(
         context: Context,
         recyclerView: RecyclerView,
         favoritesAdapter: FavoritesAdapter,

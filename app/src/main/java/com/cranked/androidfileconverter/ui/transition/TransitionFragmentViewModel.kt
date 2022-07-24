@@ -35,7 +35,6 @@ import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
-import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.FilterState
@@ -49,9 +48,7 @@ import javax.inject.Inject
 
 class TransitionFragmentViewModel @Inject constructor(
     private val favoritesDao: FavoritesDao,
-    private val context: Context,
-    private val homeFragmentViewModel: HomeFragmentViewModel,
-    private val mainViewModel: MainViewModel,
+    private val context: Context
 ) :
     BaseViewModel() {
 
@@ -192,7 +189,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     transitionModel.fileName,
                                     transitionModel.fileType)
                             }
-                            homeFragmentViewModel.notifyFavoriteAdapterItems()
                         }
                         TaskType.DELETETASK.value -> {
                             val dialog =
@@ -208,7 +204,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                         transitionModel.fileName,
                                         transitionModel.fileType)
                                 }
-                                val result=FileUtility.deleteFile(transitionModel.filePath)
+                                val result = FileUtility.deleteFile(transitionModel.filePath)
                                 dialog.getDialog().dismiss()
                                 itemsChangedState.postValue(true)
                             }
