@@ -16,8 +16,7 @@ import javax.inject.Inject
 class HomeFragmentViewModel @Inject constructor(
     private val favoritesDao: FavoritesDao,
     processedFilesDao: ProcessedFilesDao,
-    private val mContext: Context,
-    private var homeFragment: HomeFragment,
+    private val mContext: Context
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
@@ -45,7 +44,6 @@ class HomeFragmentViewModel @Inject constructor(
 
     fun processedFolderPath(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getProcessedPath())
-
 
     @JvmName("setFavoritesState1")
     fun setFavoritesState(value: Boolean) {
