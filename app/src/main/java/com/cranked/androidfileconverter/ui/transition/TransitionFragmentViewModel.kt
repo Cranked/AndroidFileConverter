@@ -222,13 +222,20 @@ class TransitionFragmentViewModel @Inject constructor(
                             dialog.view.findViewById<TextView>(R.id.okButton).setOnClickListener {
                                 val realPath = transitionModel.filePath.substring(0,
                                     transitionModel.filePath.lastIndexOf(transitionModel.fileName))
+                                val editTextString = fileNameEditText.text.toString()
+                                if (editTextString.equals(transitionModel.fileName)) {
+                                    dialog.getDialog().dismiss()
+                                    return@setOnClickListener
+                                }
+                                if (editTextString.isEmpty()) {
+                                    showToast(context.getString(R.string.file_name_required))
+                                    return@setOnClickListener
+                                }
                                 val existNewFileName =
-                                    File(realPath + fileNameEditText.text.toString()).exists() && transitionModel.fileName != fileNameEditText.text.toString()
+                                    File(realPath + fileNameEditText.text.toString()).exists() and !transitionModel.fileName.equals(
+                                        editTextString)
                                 if (existNewFileName) {
-                                    Toast.makeText(context,
-                                        context.getString(R.string.file_name_exist),
-                                        Toast.LENGTH_SHORT)
-                                        .show()
+                                    showToast(context.getString(R.string.file_name_exist))
                                     return@setOnClickListener
                                 }
                                 if (fileNameEditText.text!!.isNotEmpty()) {
@@ -247,15 +254,13 @@ class TransitionFragmentViewModel @Inject constructor(
                                     dialog.getDialog().dismiss()
                                     itemsChangedState.postValue(true)
                                 } else {
-                                    Toast.makeText(rowBinding.root.context,
-                                        context.getString(R.string.file_name_required),
-                                        Toast.LENGTH_SHORT)
-                                        .show()
+                                    showToast(context.getString(R.string.file_name_required))
                                 }
                             }
                             dialog.getDialog().show()
                         }
                     }
+                    itemsChangedState.postValue(true)
                     optionsBottomDialog.dismiss()
                 }
             }
@@ -366,6 +371,10 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun backStack(view: View) {
         view.findNavController().navigateUp()
+    }
+
+    fun showToast(msg: String) {
+        Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
 
     fun getFilesFromPath(path: String, state: Int): MutableList<TransitionModel> {
