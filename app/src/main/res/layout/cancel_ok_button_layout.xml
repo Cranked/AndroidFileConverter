@@ -9,22 +9,22 @@
 
     <TextView
         android:id="@+id/cancelButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
         android:layout_marginRight="@dimen/side_margin"
         android:backgroundTint="@color/white"
         android:clickable="true"
+        android:gravity="center"
         android:text="@string/cancel"
         android:textColor="@color/primary_color_dark" />
 
     <TextView
         android:id="@+id/okButton"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_marginLeft="@dimen/side_margin"
-
-        android:layout_marginRight="@dimen/side_margin"
+        android:layout_width="80dp"
+        android:layout_height="40dp"
         android:backgroundTint="@color/white"
+        android:clickable="true"
+        android:gravity="center"
         android:text="@string/ok"
         android:textColor="@color/primary_color_dark" />
 
