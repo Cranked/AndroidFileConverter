@@ -6,10 +6,10 @@ import androidx.room.PrimaryKey
 
 @Entity(tableName = "FavoriteFiles")
 data class FavoriteFile(
-    @ColumnInfo(name = FILE_NAME) val fileName: String,
+    @ColumnInfo(name = FILE_NAME) var fileName: String,
     @ColumnInfo(name = FILE_EXTENSION) val fileExtension: String,
     @ColumnInfo(name = FILE_TYPE) val fileType: Int,
-    @ColumnInfo(name = FILE_PATH) val path: String
+    @ColumnInfo(name = FILE_PATH) var path: String
 
     ) {
     @PrimaryKey(autoGenerate = true)

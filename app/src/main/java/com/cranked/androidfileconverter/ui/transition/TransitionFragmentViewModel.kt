@@ -232,8 +232,18 @@ class TransitionFragmentViewModel @Inject constructor(
                                     return@setOnClickListener
                                 }
                                 if (fileNameEditText.text!!.isNotEmpty()) {
+                                    val newPath = realPath + fileNameEditText.text.toString()
+                                    val favoriteFile =
+                                        favoritesDao.getFavorite(transitionModel.filePath,
+                                            transitionModel.fileName,
+                                            transitionModel.fileType)
+                                    if (favoriteFile != null) {
+                                        favoriteFile.fileName = fileNameEditText.text.toString()
+                                        favoriteFile.path = newPath
+                                        favoritesDao.update(favoriteFile)
+                                    }
                                     val result = FileUtility.renameFile(transitionModel.filePath,
-                                        realPath + fileNameEditText.text.toString())
+                                        newPath)
                                     dialog.getDialog().dismiss()
                                     itemsChangedState.postValue(true)
                                 } else {
@@ -247,7 +257,6 @@ class TransitionFragmentViewModel @Inject constructor(
                         }
                     }
                     optionsBottomDialog.dismiss()
-                    itemsChangedState.postValue(true)
                 }
             }
         })
