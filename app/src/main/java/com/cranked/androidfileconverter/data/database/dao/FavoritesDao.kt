@@ -11,7 +11,7 @@ abstract class FavoritesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(favoriteFile: FavoriteFile)
 
-    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME}")
+    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME} ORDER BY id DESC")
     abstract fun getAll(): List<FavoriteFile>
 
     @Query("DELETE FROM ${FavoriteFile.TABLE_NAME}")

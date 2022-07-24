@@ -63,7 +63,7 @@ class HomeFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        val favoritesList = favoritesDao.getAll().reversed()
+        val favoritesList = favoritesDao.getAll()
         viewModel.setFavoritesState(favoritesList.isNotEmpty())
         favoritesAdapter = favoritesAdapterViewModel.setAdapter(this.context!!,
             binding.favoritesRecylerView,
