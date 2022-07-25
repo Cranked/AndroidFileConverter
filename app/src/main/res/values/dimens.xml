@@ -10,4 +10,5 @@
     <dimen name="icon_margin_8dp">8dp</dimen>
     <dimen name="tool_bar_height">55dp</dimen>
     <dimen name="fav_icon_size">30dp</dimen>
+    <dimen name="margin_2dp">2dp</dimen>
 </resources>

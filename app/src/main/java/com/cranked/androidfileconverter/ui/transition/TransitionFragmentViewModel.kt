@@ -34,7 +34,6 @@ import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
-import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.FilterState
@@ -48,7 +47,7 @@ import javax.inject.Inject
 
 class TransitionFragmentViewModel @Inject constructor(
     private val favoritesDao: FavoritesDao,
-    private val context: Context
+    private val context: Context,
 ) :
     BaseViewModel() {
 
@@ -56,6 +55,8 @@ class TransitionFragmentViewModel @Inject constructor(
     val noDataState = MutableLiveData<Boolean>()
     val filterState = MutableLiveData<Int>()
     val itemsChangedState = MutableLiveData<Boolean>()
+    var selectedRowList = arrayListOf<TransitionModel>()
+    val longListenerActivated = MutableLiveData<Boolean>(false)
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     fun setAdapter(
@@ -73,8 +74,33 @@ class TransitionFragmentViewModel @Inject constructor(
                     position: Int,
                     rowBinding: RowTransitionListItemBinding,
                 ) {
+                    rowBinding.transitionLinearLayout.setOnLongClickListener {
+                        longListenerActivated.value = true
+                        if (!selectedRowList.contains(item)) {
+                            selectedRowList.add(item)
+                            rowBinding.transitionLinearLayout.background =
+                                context.getDrawable(R.drawable.custom_adapter_selected_background)
+                        }
+                        return@setOnLongClickListener true
+                    }
                     rowBinding.transitionLinearLayout.setOnClickListener {
-                        sendIntentToTransitionFragmentWithIntent(it, getItems()[position].filePath)
+                        if (!longListenerActivated.value!!) {
+                            sendIntentToTransitionFragmentWithIntent(it,
+                                getItems()[position].filePath)
+                        } else {
+                            if (!selectedRowList.contains(item)) {
+                                selectedRowList.add(item)
+                                rowBinding.transitionLinearLayout.background =
+                                    context.getDrawable(R.drawable.custom_adapter_selected_background)
+                            } else {
+                                selectedRowList.remove(item)
+                                rowBinding.transitionLinearLayout.background =
+                                    context.getDrawable(R.drawable.custom_adapter_unselected_background)
+                            }
+                            if (selectedRowList.isEmpty()) {
+                                longListenerActivated.value = false
+                            }
+                        }
                     }
                     rowBinding.optionsImageView.setOnClickListener {
                         showOptionsBottomDialog(supportFragmentManager, item)
@@ -106,14 +132,40 @@ class TransitionFragmentViewModel @Inject constructor(
                     position: Int,
                     rowBinding: RowTransitionGridItemBinding,
                 ) {
+                    rowBinding.transitionGridLinearLayout.setOnLongClickListener {
+                        longListenerActivated.value = true
+                        if (!selectedRowList.contains(item)) {
+                            selectedRowList.add(item)
+                            rowBinding.transitionGridLinearLayout.background =
+                                context.getDrawable(R.drawable.custom_adapter_selected_background)
+                        }
+                        return@setOnLongClickListener true
+                    }
                     rowBinding.transitionGridLinearLayout.setOnClickListener {
-                        sendIntentToTransitionFragmentWithIntent(it, getItems()[position].filePath)
+                        if (!longListenerActivated.value!!) {
+                            sendIntentToTransitionFragmentWithIntent(it,
+                                getItems()[position].filePath)
+                        } else {
+                            if (!selectedRowList.contains(item)) {
+                                selectedRowList.add(item)
+                                rowBinding.transitionGridLinearLayout.background =
+                                    context.getDrawable(R.drawable.custom_adapter_selected_background)
+                            } else {
+                                selectedRowList.remove(item)
+                                rowBinding.transitionGridLinearLayout.background =
+                                    context.getDrawable(R.drawable.custom_adapter_unselected_background)
+                            }
+                            if (selectedRowList.isEmpty()) {
+                                longListenerActivated.value = false
+                            }
+                        }
                     }
                     rowBinding.optionsGridImageView.setOnClickListener {
                         showOptionsBottomDialog(supportFragmentManager, item)
                     }
                 }
             })
+
         }
         recylerView.apply {
             adapter = transitionGridAdapter
@@ -371,7 +423,9 @@ class TransitionFragmentViewModel @Inject constructor(
     }
 
     fun backStack(view: View) {
-        view.findNavController().navigateUp()
+        if (!longListenerActivated.value!!) {
+            view.findNavController().navigateUp()
+        }
     }
 
     fun showToast(msg: String) {

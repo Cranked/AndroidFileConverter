@@ -14,6 +14,7 @@ import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
 import com.cranked.androidfileconverter.ui.model.NavigationModel
+import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import io.reactivex.rxjava3.disposables.Disposable
 import javax.inject.Inject
@@ -28,6 +29,9 @@ class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, Act
     private val app by lazy {
         (application as FileConvertApp)
     }
+
+    @Inject
+    lateinit var transitionFragmentViewModel: TransitionFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,6 +142,13 @@ class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, Act
                 }
                 builder.show()
             }
+    }
+
+    override fun onBackPressed() {
+        if (!transitionFragmentViewModel.longListenerActivated.value!!)
+            super.onBackPressed()
+        else
+            println("view kapat")
     }
 
     override fun onDestroy() {

@@ -111,6 +111,13 @@ class TransitionFragment @Inject constructor() :
             transitionGridAdapter.setItems(list)
             transitionListAdapter.setItems(list)
         }
+        viewModel.longListenerActivated.observe(viewLifecycleOwner) {
+            if (it!!) {
+                println("Multiple layout göster")
+            } else {
+                println("kapat")
+            }
+        }
     }
 
     fun createFolder() {

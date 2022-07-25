@@ -13,7 +13,10 @@
         android:id="@+id/transitionGridLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2dp"
+        android:background="@drawable/custom_adapter_unselected_background"
         android:clickable="true"
+        android:longClickable="true"
         android:orientation="vertical">
 
         <LinearLayout
