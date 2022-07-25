@@ -9,7 +9,7 @@ import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewMode
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 import com.cranked.androidfileconverter.utils.enums.FileType
 
-class TransitionGridAdapter (private val transitionFragmentViewModel: TransitionFragmentViewModel) :
+class TransitionGridAdapter(private val transitionFragmentViewModel: TransitionFragmentViewModel) :
     BaseViewBindingRecyclerViewAdapter<TransitionModel, RowTransitionGridItemBinding>(
         R.layout.row_transition_grid_item) {
     override fun setBindingModel(
@@ -19,6 +19,7 @@ class TransitionGridAdapter (private val transitionFragmentViewModel: Transition
     ) {
         binding.optionsGridImageView.visibility =
             if (transitionFragmentViewModel.longListenerActivated.value!!) View.INVISIBLE else View.VISIBLE
+
         if (transitionFragmentViewModel.selectedRowList.contains(item)) {
             binding.transitionGridLinearLayout.background =
                 binding.root.context.getDrawable(R.drawable.custom_adapter_selected_background)

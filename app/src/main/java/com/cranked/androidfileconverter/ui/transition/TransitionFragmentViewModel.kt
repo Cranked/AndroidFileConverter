@@ -32,6 +32,7 @@ import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.databinding.RowOptionsItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
+import com.cranked.androidfileconverter.dialog.DeleteDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
@@ -54,7 +55,7 @@ class TransitionFragmentViewModel @Inject constructor(
     val folderPath = MutableLiveData<String>()
     val noDataState = MutableLiveData<Boolean>()
     val filterState = MutableLiveData<Int>()
-    val itemsChangedState = MutableLiveData<Boolean>()
+    private val itemsChangedState = MutableLiveData<Boolean>()
     var selectedRowList = arrayListOf<TransitionModel>()
     val longListenerActivated = MutableLiveData<Boolean>(false)
     val selectedRowSize = MutableLiveData<Int>()
@@ -150,8 +151,12 @@ class TransitionFragmentViewModel @Inject constructor(
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
+                                rowBinding.transitionGridLinearLayout.background =
+                                    context.getDrawable(R.drawable.custom_adapter_selected_background)
                             } else {
                                 selectedRowList.remove(item)
+                                rowBinding.transitionGridLinearLayout.background =
+                                    context.getDrawable(R.drawable.custom_adapter_unselected_background)
                             }
                             selectedRowSize.postValue(selectedRowList.size)
                             if (selectedRowList.isEmpty()) {
@@ -164,7 +169,6 @@ class TransitionFragmentViewModel @Inject constructor(
                     }
                 }
             })
-
         }
         recylerView.apply {
             adapter = transitionGridAdapter
@@ -242,24 +246,10 @@ class TransitionFragmentViewModel @Inject constructor(
                             }
                         }
                         TaskType.DELETETASK.value -> {
-                            val dialog =
-                                BaseDialog(it.context, R.layout.delete_file_dialog)
-                            dialog.view.background = context.getDrawable(R.drawable.custom_dialog)
-                            dialog.view.findViewById<TextView>(R.id.cancelButton)
-                                .setOnClickListener {
-                                    dialog.getDialog().dismiss()
-                                }
-                            dialog.view.findViewById<TextView>(R.id.okButton).setOnClickListener {
-                                if (transitionModel.isFavorite) {
-                                    removeFavorite(transitionModel.filePath,
-                                        transitionModel.fileName,
-                                        transitionModel.fileType)
-                                }
-                                val result = FileUtility.deleteFile(transitionModel.filePath)
-                                dialog.getDialog().dismiss()
-                                itemsChangedState.postValue(true)
-                            }
-                            dialog.getDialog().show()
+                            val dialog = DeleteDialog(this@TransitionFragmentViewModel,
+                                arrayListOf(transitionModel),
+                                favoritesDao)
+                            dialog.show(supportFragmentManager, "DeleteTaskDialog")
                         }
                         TaskType.RENAMETASK.value -> {
                             val dialog = BaseDialog(it.context, R.layout.rename_file_layout)
@@ -355,6 +345,16 @@ class TransitionFragmentViewModel @Inject constructor(
     ) {
         supportFragmentManager = activity.supportFragmentManager
         binding.transitionToolbarMenu.backImageView.setOnClickListener { backStack(it) }
+        binding.multipleSelectionMenu.backButtonMultiple.setOnClickListener { closeLongClick() }
+        binding.createFolderButton.setOnClickListener {
+            showCreateFolderBottomDialog(supportFragmentManager,
+                folderPath.value.toString())
+        }
+        binding.multipleSelectionMenu.deleteMultiple.setOnClickListener {
+            showDeleteFialog(supportFragmentManager,
+                selectedRowList)
+        }
+
         setMenuVisibility(binding.transitionToolbarMenu.root,
             !longListenerActivated.value!!)
         setMenuVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
@@ -443,6 +443,11 @@ class TransitionFragmentViewModel @Inject constructor(
         }
     }
 
+    fun closeLongClick() {
+        selectedRowList.clear()
+        sendLongListenerActivated(false)
+    }
+
     fun showToast(msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
     }
@@ -491,6 +496,14 @@ class TransitionFragmentViewModel @Inject constructor(
         longListenerActivated.postValue(state)
     }
 
+    fun showDeleteFialog(
+        supportFragmentManager: FragmentManager,
+        list: ArrayList<TransitionModel>,
+    ) {
+        val deleteDialogFragment = DeleteDialog(this, list, favoritesDao)
+        deleteDialogFragment.show(supportFragmentManager, "DeleteDialogFragment")
+    }
+
     fun setMenuVisibility(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
     }
@@ -516,4 +529,6 @@ class TransitionFragmentViewModel @Inject constructor(
             dialog.dismiss()
         }
     }
+
+    fun getItemsChangedStateMutableLiveData() = this.itemsChangedState
 }

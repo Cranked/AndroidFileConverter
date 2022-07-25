@@ -14,11 +14,13 @@ import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapter
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
+import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.data.database.entity.RecentFile
 import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
+import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 
@@ -34,6 +36,8 @@ class HomeFragment @Inject constructor() :
     @Inject
     lateinit var favoritesDao: FavoritesDao
 
+    @Inject
+    lateinit var processedFilesDao: ProcessedFilesDao
     val app by lazy {
         activity!!.application as FileConvertApp
     }
@@ -64,6 +68,7 @@ class HomeFragment @Inject constructor() :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val favoritesList = favoritesDao.getAll()
+        viewModel.storageModel = FileUtility.getMenuFolderSizes(context!!, processedFilesDao)
         viewModel.setFavoritesState(favoritesList.isNotEmpty())
         favoritesAdapter = favoritesAdapterViewModel.setAdapter(this.context!!,
             binding.favoritesRecylerView,

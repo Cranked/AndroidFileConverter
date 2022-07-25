@@ -20,7 +20,7 @@ class HomeFragmentViewModel @Inject constructor(
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
-    val storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
+    var storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
     var favoritesList = favoritesDao.getAll()
     var favoritesState = favoritesList.isNotEmpty()
     fun goToTransitionFragmentWithIntent(view: View, path: String) {
