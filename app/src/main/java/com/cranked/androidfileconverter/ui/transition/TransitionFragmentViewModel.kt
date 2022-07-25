@@ -294,7 +294,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                     val result = FileUtility.renameFile(transitionModel.filePath,
                                         newPath)
                                     dialog.getDialog().dismiss()
-                                    itemsChangedState.postValue(true)
+                                    sendItemsChangedSate(true)
                                 } else {
                                     showToast(context.getString(R.string.file_name_required))
                                 }
@@ -302,7 +302,7 @@ class TransitionFragmentViewModel @Inject constructor(
                             dialog.getDialog().show()
                         }
                     }
-                    itemsChangedState.postValue(true)
+                    sendItemsChangedSate(true)
                     optionsBottomDialog.dismiss()
                 }
             }
@@ -490,6 +490,10 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun sendNoDataState(state: Boolean) {
         noDataState.postValue(state)
+    }
+
+    fun sendItemsChangedSate(value: Boolean) {
+        itemsChangedState.postValue(value)
     }
 
     fun sendLongListenerActivated(state: Boolean) {

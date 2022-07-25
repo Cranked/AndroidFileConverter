@@ -1,5 +1,6 @@
 package com.cranked.androidfileconverter.dialog
 
+import com.cranked.androidcorelibrary.dialog.BaseViewBindingDialogFragment
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
 import com.cranked.androidfileconverter.databinding.DialogDeleteFilesBinding
@@ -13,13 +14,16 @@ class DeleteDialog(
     private val list: ArrayList<TransitionModel>,
     private val favoritesDao: FavoritesDao,
 ) :
-    BaseDialogFragment<DialogDeleteFilesBinding>(R.layout.dialog_delete_files) {
+    BaseViewBindingDialogFragment<DialogDeleteFilesBinding>(R.layout.dialog_delete_files) {
     private val TAG = DeleteDialog::class.java.name.toString()
     override fun onBindingCreate(binding: DialogDeleteFilesBinding) {
         try {
             binding.deleteContentDescription.text = context!!.getString(R.string.wantToDeleteFile)
             binding.deleteDialogLayout.cancelButton.setOnClickListener {
                 dismiss()
+                viewModel.selectedRowList.clear()
+                viewModel.sendLongListenerActivated(false)
+                viewModel.sendItemsChangedSate(true)
             }
             binding.deleteDialogLayout.okButton.setOnClickListener {
                 list.forEach {
@@ -31,6 +35,7 @@ class DeleteDialog(
                         }
                     }
                 }
+                viewModel.selectedRowList.clear()
                 viewModel.getItemsChangedStateMutableLiveData().postValue(true)
                 viewModel.sendLongListenerActivated(false)
                 dismiss()
