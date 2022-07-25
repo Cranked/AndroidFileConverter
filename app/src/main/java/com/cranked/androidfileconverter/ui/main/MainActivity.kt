@@ -143,14 +143,6 @@ class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, Act
                 builder.show()
             }
     }
-
-    override fun onBackPressed() {
-        if (!transitionFragmentViewModel.longListenerActivated.value!!)
-            super.onBackPressed()
-        else
-            println("view kapat")
-    }
-
     override fun onDestroy() {
         super.onDestroy()
         onBindingClear(binding)

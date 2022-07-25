@@ -5,16 +5,26 @@ import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
+import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 import com.cranked.androidfileconverter.utils.enums.FileType
 
-class TransitionListAdapter :
+class TransitionListAdapter(private val transitionFragmentViewModel: TransitionFragmentViewModel) :
     BaseViewBindingRecyclerViewAdapter<TransitionModel, RowTransitionListItemBinding>(R.layout.row_transition_list_item) {
     override fun setBindingModel(
         item: TransitionModel,
         binding: RowTransitionListItemBinding,
         position: Int,
     ) {
+        binding.optionsImageView.visibility =
+            if (transitionFragmentViewModel.longListenerActivated.value!!) View.INVISIBLE else View.VISIBLE
+        if (transitionFragmentViewModel.selectedRowList.contains(item)) {
+            binding.transitionLinearLayout.background =
+                binding.root.context.getDrawable(R.drawable.custom_adapter_selected_background)
+        } else {
+            binding.transitionLinearLayout.background =
+                binding.root.context.getDrawable(R.drawable.custom_adapter_unselected_background)
+        }
         binding.transitionFileName.text = item.fileName
         binding.lastModifiedTextView.text = item.lastModified
         when (item.fileType) {

@@ -50,13 +50,14 @@ class TransitionFragmentViewModel @Inject constructor(
     private val context: Context,
 ) :
     BaseViewModel() {
-
+    val TAG = TransitionFragmentViewModel::class.java.name
     val folderPath = MutableLiveData<String>()
     val noDataState = MutableLiveData<Boolean>()
     val filterState = MutableLiveData<Int>()
     val itemsChangedState = MutableLiveData<Boolean>()
     var selectedRowList = arrayListOf<TransitionModel>()
     val longListenerActivated = MutableLiveData<Boolean>(false)
+    val selectedRowSize = MutableLiveData<Int>()
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     fun setAdapter(
@@ -75,18 +76,18 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding: RowTransitionListItemBinding,
                 ) {
                     rowBinding.transitionLinearLayout.setOnLongClickListener {
-                        longListenerActivated.value = true
-                        if (!selectedRowList.contains(item)) {
+                        if (!longListenerActivated.value!!) {
+                            selectedRowList.clear()
                             selectedRowList.add(item)
-                            rowBinding.transitionLinearLayout.background =
-                                context.getDrawable(R.drawable.custom_adapter_selected_background)
+                            selectedRowSize.postValue(selectedRowList.size)
+                            sendLongListenerActivated(true)
                         }
                         return@setOnLongClickListener true
                     }
                     rowBinding.transitionLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
                             sendIntentToTransitionFragmentWithIntent(it,
-                                getItems()[position].filePath)
+                                item.filePath)
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
@@ -97,8 +98,9 @@ class TransitionFragmentViewModel @Inject constructor(
                                 rowBinding.transitionLinearLayout.background =
                                     context.getDrawable(R.drawable.custom_adapter_unselected_background)
                             }
+                            selectedRowSize.postValue(selectedRowList.size)
                             if (selectedRowList.isEmpty()) {
-                                longListenerActivated.value = false
+                                sendLongListenerActivated(false)
                             }
                         }
                     }
@@ -133,28 +135,25 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding: RowTransitionGridItemBinding,
                 ) {
                     rowBinding.transitionGridLinearLayout.setOnLongClickListener {
-                        longListenerActivated.value = true
-                        if (!selectedRowList.contains(item)) {
+                        if (!longListenerActivated.value!!) {
+                            sendLongListenerActivated(true)
+                            selectedRowList.clear()
                             selectedRowList.add(item)
-                            rowBinding.transitionGridLinearLayout.background =
-                                context.getDrawable(R.drawable.custom_adapter_selected_background)
+                            selectedRowSize.postValue(selectedRowList.size)
                         }
                         return@setOnLongClickListener true
                     }
                     rowBinding.transitionGridLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
                             sendIntentToTransitionFragmentWithIntent(it,
-                                getItems()[position].filePath)
+                                item.filePath)
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
-                                rowBinding.transitionGridLinearLayout.background =
-                                    context.getDrawable(R.drawable.custom_adapter_selected_background)
                             } else {
                                 selectedRowList.remove(item)
-                                rowBinding.transitionGridLinearLayout.background =
-                                    context.getDrawable(R.drawable.custom_adapter_unselected_background)
                             }
+                            selectedRowSize.postValue(selectedRowList.size)
                             if (selectedRowList.isEmpty()) {
                                 longListenerActivated.value = false
                             }
@@ -355,19 +354,27 @@ class TransitionFragmentViewModel @Inject constructor(
         spinnerList: List<String>,
     ) {
         supportFragmentManager = activity.supportFragmentManager
+        binding.transitionToolbarMenu.backImageView.setOnClickListener { backStack(it) }
+        setMenuVisibility(binding.transitionToolbarMenu.root,
+            !longListenerActivated.value!!)
+        setMenuVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
+
         val title = path.split("/").last { it.isNotEmpty() }
-        binding.titleToolBar.text = title
+        binding.transitionToolbarMenu.titleToolBar.text = title
         when (app.getLayoutState()) {
-            LayoutState.LIST_LAYOUT.value -> binding.layoutImageView.setImageDrawable(context.getDrawable(
-                R.drawable.icon_grid))
-            LayoutState.GRID_LAYOUT.value -> binding.layoutImageView.setImageDrawable(context.getDrawable(
-                R.drawable.icon_list))
+            LayoutState.LIST_LAYOUT.value -> binding.transitionToolbarMenu.layoutImageView.setImageDrawable(
+                context.getDrawable(
+                    R.drawable.icon_grid))
+            LayoutState.GRID_LAYOUT.value -> binding.transitionToolbarMenu.layoutImageView.setImageDrawable(
+                context.getDrawable(
+                    R.drawable.icon_list))
         }
-        binding.layoutImageView.setOnClickListener {
+        binding.transitionToolbarMenu.layoutImageView.setOnClickListener {
             when (app.getLayoutState()) {
                 LayoutState.LIST_LAYOUT.value -> {
                     app.setLayoutState(LayoutState.GRID_LAYOUT.value)
-                    binding.layoutImageView.setImageDrawable(context.getDrawable(R.drawable.icon_list))
+                    binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
+                        R.drawable.icon_list))
                     setAdapter(context,
                         binding.transitionRecylerView,
                         transitionFragment.transitionGridAdapter,
@@ -375,7 +382,8 @@ class TransitionFragmentViewModel @Inject constructor(
                 }
                 LayoutState.GRID_LAYOUT.value -> {
                     app.setLayoutState(LayoutState.LIST_LAYOUT.value)
-                    binding.layoutImageView.setImageDrawable(context.getDrawable(R.drawable.icon_grid))
+                    binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
+                        R.drawable.icon_grid))
                     setAdapter(context,
                         binding.transitionRecylerView,
                         transitionFragment.transitionListAdapter,
@@ -388,43 +396,50 @@ class TransitionFragmentViewModel @Inject constructor(
                 R.layout.row_spinner_item_child,
                 spinnerList)
         arrayAdapter.setDropDownViewResource(R.layout.row_spinner_item)
-        binding.sortSpinner.adapter = arrayAdapter
+        binding.transitionToolbarMenu.sortSpinner.adapter = arrayAdapter
         when (app.getFilterState()) {
             FilterState.ORDERBYNAME_A_TO_Z.value -> {
-                binding.sortSpinner.setSelection(0)
+                binding.transitionToolbarMenu.sortSpinner.setSelection(0)
             }
             FilterState.ORDERBYNAME_Z_TO_A.value -> {
-                binding.sortSpinner.setSelection(1)
+                binding.transitionToolbarMenu.sortSpinner.setSelection(1)
             }
             FilterState.ORDERBY_LAST_MODIFIED_NEWEST.value -> {
-                binding.sortSpinner.setSelection(2)
+                binding.transitionToolbarMenu.sortSpinner.setSelection(2)
             }
             FilterState.ORDERBY_LAST_MODIFIED_OLDEST.value -> {
-                binding.sortSpinner.setSelection(3)
+                binding.transitionToolbarMenu.sortSpinner.setSelection(3)
             }
         }
-        binding.sortSpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>?,
-                view: View?,
-                position: Int,
-                id: Long,
-            ) {
-                try {
-                    app.setFilterState(position + 1)
-                    sendFilterState(position + 1)
-                } catch (e: Exception) {
-                    println(e.toString())
+        binding.transitionToolbarMenu.sortSpinner.onItemSelectedListener =
+            object : AdapterView.OnItemSelectedListener {
+                override fun onItemSelected(
+                    parent: AdapterView<*>?,
+                    view: View?,
+                    position: Int,
+                    id: Long,
+                ) {
+                    try {
+                        app.setFilterState(position + 1)
+                        sendFilterState(position + 1)
+                    } catch (e: Exception) {
+                        println(e.toString())
+                    }
                 }
-            }
 
-            override fun onNothingSelected(parent: AdapterView<*>?) = Unit
-        }
+                override fun onNothingSelected(parent: AdapterView<*>?) = Unit
+            }
     }
 
     fun backStack(view: View) {
-        if (!longListenerActivated.value!!) {
-            view.findNavController().navigateUp()
+        try {
+            if (view.isEnabled)
+                if (!longListenerActivated.value!!) {
+                    view.findNavController().navigateUp()
+                } else {
+                    sendLongListenerActivated(false)
+                }
+        } catch (e: Exception) {
         }
     }
 
@@ -470,6 +485,14 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun sendNoDataState(state: Boolean) {
         noDataState.postValue(state)
+    }
+
+    fun sendLongListenerActivated(state: Boolean) {
+        longListenerActivated.postValue(state)
+    }
+
+    fun setMenuVisibility(view: View, visible: Boolean) {
+        view.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
     fun showDialog(context: Context, path: String) {
