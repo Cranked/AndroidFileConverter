@@ -69,7 +69,7 @@ object FileUtility {
     fun deleteFile(path: String): Boolean {
         val fileDelete = File(path)
         if (fileDelete.exists()) {
-            return fileDelete.canonicalFile.delete()
+            return fileDelete.canonicalFile.deleteRecursively()
         }
         return true
     }
