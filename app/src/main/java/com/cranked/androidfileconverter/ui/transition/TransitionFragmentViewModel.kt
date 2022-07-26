@@ -35,6 +35,7 @@ import com.cranked.androidfileconverter.databinding.RowOptionsItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
 import com.cranked.androidfileconverter.dialog.DeleteDialog
+import com.cranked.androidfileconverter.dialog.RenameDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
@@ -251,55 +252,10 @@ class TransitionFragmentViewModel @Inject constructor(
                             dialog.show(supportFragmentManager, "DeleteTaskDialog")
                         }
                         TaskType.RENAMETASK.value -> {
-                            val dialog = BaseDialog(it.context, R.layout.rename_file_layout)
-                            val fileNameEditText =
-                                dialog.view.findViewById<TextInputEditText>(R.id.renameEditText)
-                            fileNameEditText.setText(transitionModel.fileName)
-                            dialog.view.background = context.getDrawable(R.drawable.custom_dialog)
-                            dialog.view.findViewById<TextView>(R.id.cancelButton)
-                                .setOnClickListener {
-                                    dialog.getDialog().dismiss()
-                                }
-                            dialog.view.findViewById<TextView>(R.id.okButton).setOnClickListener {
-                                val realPath = transitionModel.filePath.substring(0,
-                                    transitionModel.filePath.lastIndexOf(transitionModel.fileName))
-                                val editTextString = fileNameEditText.text.toString()
-                                if (editTextString.equals(transitionModel.fileName)) {
-                                    dialog.getDialog().dismiss()
-                                    return@setOnClickListener
-                                }
-                                if (editTextString.isEmpty()) {
-                                    showToast(context.getString(R.string.file_name_required))
-                                    return@setOnClickListener
-                                }
-                                val existNewFileName =
-                                    File(realPath + fileNameEditText.text.toString()).exists() and !transitionModel.fileName.equals(
-                                        editTextString)
-                                if (existNewFileName) {
-                                    showToast(context.getString(R.string.file_name_exist))
-                                    return@setOnClickListener
-                                }
-                                if (fileNameEditText.text!!.isNotEmpty()) {
-                                    val newPath = realPath + fileNameEditText.text.toString()
-                                    val favoriteFile =
-                                        favoritesDao.getFavorite(transitionModel.filePath,
-                                            transitionModel.fileName,
-                                            transitionModel.fileType)
-                                    if (favoriteFile != null) {
-                                        favoriteFile.fileName = fileNameEditText.text.toString()
-                                        favoriteFile.path = newPath
-                                        favoritesDao.update(favoriteFile)
-                                    }
-                                    val result = FileUtility.renameFile(transitionModel.filePath,
-                                        newPath)
-                                    dialog.getDialog().dismiss()
-                                    sendItemsChangedSate(true)
-                                } else {
-                                    showToast(context.getString(R.string.file_name_required))
-                                }
-                            }
-                            dialog.getDialog().show()
+                            val dialog = RenameDialog(this@TransitionFragmentViewModel,transitionModel,favoritesDao)
+                            dialog.show(supportFragmentManager, "RenameTaskDialog")
                         }
+
                     }
                     sendItemsChangedSate(true)
                     optionsBottomDialog.dismiss()
@@ -530,29 +486,6 @@ class TransitionFragmentViewModel @Inject constructor(
             AnimationXUtils.zoomInRight(view, AnimationX().getNewAnimatorSet())
         view.animationStart(700, animatorSetX, bounceAnimator)
     }
-
-    fun showDialog(context: Context, path: String) {
-        val layoutInflater = context.getSystemService(Context.LAYOUT_INFLATER_SERVICE)
-        val view =
-            (layoutInflater as LayoutInflater).inflate(R.layout.create_folder_dialog_layout, null)
-        val cancelButton = view.findViewById<TextView>(R.id.cancelButton)
-        val okButton = view.findViewById<TextView>(R.id.okButton)
-        val dialog = AlertDialog.Builder(context)
-            .setView(view)
-            .setCancelable(true)
-            .create()
-        dialog.show()
-        cancelButton.setOnClickListener { dialog.dismiss() }
-        okButton.setOnClickListener {
-            val folderName =
-                view.findViewById<TextInputEditText>(R.id.folderNameEditText).text!!.trim()
-                    .toString()
-            FileUtils.createfolder(path, folderName)
-            sendPath(path)
-            dialog.dismiss()
-        }
-    }
-
     fun getItemsChangedStateMutableLiveData() = this.itemsChangedState
     fun getSelectedRowSizeMutableLiveData() = this.selectedRowSize
     fun getLongListenerActivatedMutableLiveData() = this.longListenerActivated

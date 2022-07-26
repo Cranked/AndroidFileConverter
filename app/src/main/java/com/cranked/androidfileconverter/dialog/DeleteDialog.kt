@@ -1,5 +1,6 @@
 package com.cranked.androidfileconverter.dialog
 
+import android.view.ViewGroup
 import com.cranked.androidcorelibrary.dialog.BaseViewBindingDialogFragment
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
@@ -18,6 +19,7 @@ class DeleteDialog(
     private val TAG = DeleteDialog::class.java.name.toString()
     override fun onBindingCreate(binding: DialogDeleteFilesBinding) {
         try {
+            getDialog()!!.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
             binding.deleteContentDescription.text = context!!.getString(R.string.wantToDeleteFile)
             binding.deleteDialogLayout.cancelButton.setOnClickListener {
                 dismiss()

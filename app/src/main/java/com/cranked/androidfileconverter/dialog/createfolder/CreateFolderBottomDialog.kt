@@ -14,7 +14,8 @@ class CreateFolderBottomDialog @Inject constructor(
     override fun onBindingCreate(binding: CreateFolderBottomLayoutBinding) {
         binding.createFolderConstraint.setOnClickListener {
             dismiss()
-            transitionFragmentViewModel.showDialog(it.context, path)
+            val dialog=CreateFolderDialogFragment(transitionFragmentViewModel,path)
+            dialog.show(transitionFragmentViewModel.supportFragmentManager,"CreateFolderDialogFragment")
         }
     }
 }
