@@ -2,6 +2,7 @@ package com.cranked.androidfileconverter.dialog
 
 import android.view.ViewGroup
 import com.cranked.androidcorelibrary.dialog.BaseViewBindingDialogFragment
+import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
 import com.cranked.androidfileconverter.databinding.DialogDeleteFilesBinding
@@ -28,12 +29,14 @@ class DeleteDialog(
                 viewModel.sendItemsChangedSate(true)
             }
             binding.deleteDialogLayout.okButton.setOnClickListener {
-                list.forEach {
-                    if (FileUtility.deleteFile(it.filePath)) {
-                        val favoriteFile =
-                            favoritesDao.getFavorite(it.filePath, it.fileName, it.fileType)
-                        if (favoriteFile != null) {
-                            favoritesDao.delete(favoriteFile)
+                list.forEach { transition ->
+                    FileUtils.getFolderFiles(transition.filePath, 10000, 0).forEach {
+                        if (FileUtility.deleteFile(it.path)) {
+                            val favoriteFile =
+                                favoritesDao.getFavorite(it.path, it.name, transition.fileType)
+                            if (favoriteFile != null) {
+                                favoritesDao.delete(favoriteFile)
+                            }
                         }
                     }
                 }

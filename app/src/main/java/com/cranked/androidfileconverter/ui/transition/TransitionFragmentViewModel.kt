@@ -2,14 +2,11 @@ package com.cranked.androidfileconverter.ui.transition
 
 import android.animation.Animator
 import android.animation.AnimatorSet
-import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
-import android.view.LayoutInflater
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
-import android.widget.TextView
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
@@ -20,7 +17,6 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
-import com.cranked.androidcorelibrary.dialog.BaseDialog
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.FileConvertApp
@@ -34,6 +30,7 @@ import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.databinding.RowOptionsItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
+import com.cranked.androidfileconverter.dialog.CreateFolderWithSelectionDialog
 import com.cranked.androidfileconverter.dialog.DeleteDialog
 import com.cranked.androidfileconverter.dialog.RenameDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
@@ -46,9 +43,6 @@ import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
-import com.cranked.androidfileconverter.utils.file.FileUtility
-import com.google.android.material.textfield.TextInputEditText
-import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 
@@ -252,8 +246,15 @@ class TransitionFragmentViewModel @Inject constructor(
                             dialog.show(supportFragmentManager, "DeleteTaskDialog")
                         }
                         TaskType.RENAMETASK.value -> {
-                            val dialog = RenameDialog(this@TransitionFragmentViewModel,transitionModel,favoritesDao)
+                            val dialog = RenameDialog(this@TransitionFragmentViewModel, transitionModel, favoritesDao)
                             dialog.show(supportFragmentManager, "RenameTaskDialog")
+                        }
+                        TaskType.CREATEFOLDERWITHSELECTIONTASK.value -> {
+                            val dialog = CreateFolderWithSelectionDialog(this@TransitionFragmentViewModel,
+                                arrayListOf(transitionModel),
+                                folderPath.value!!,
+                                favoritesDao)
+                            dialog.show(supportFragmentManager, "CreateFolderWithSelection")
                         }
 
                     }
@@ -486,6 +487,7 @@ class TransitionFragmentViewModel @Inject constructor(
             AnimationXUtils.zoomInRight(view, AnimationX().getNewAnimatorSet())
         view.animationStart(700, animatorSetX, bounceAnimator)
     }
+
     fun getItemsChangedStateMutableLiveData() = this.itemsChangedState
     fun getSelectedRowSizeMutableLiveData() = this.selectedRowSize
     fun getLongListenerActivatedMutableLiveData() = this.longListenerActivated
