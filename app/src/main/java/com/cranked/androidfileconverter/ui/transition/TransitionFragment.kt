@@ -57,7 +57,8 @@ class TransitionFragment @Inject constructor() :
         }
         app.rxBus.send(ToolbarState(false))
         viewModel.init(binding, this, activity!!, app, path, spinnerList)
-        activity!!.onBackPressedDispatcher.addCallback(object : OnBackPressedCallback(true) {
+
+        activity!!.onBackPressedDispatcher.addCallback(viewLifecycleOwner,object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 viewModel.backStack(binding.transitionToolbarMenu.backImageView)
                 viewModel.sendLongListenerActivated(false)
