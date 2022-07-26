@@ -17,8 +17,8 @@ class TransitionListAdapter(private val transitionFragmentViewModel: TransitionF
         position: Int,
     ) {
         binding.optionsImageView.visibility =
-            if (transitionFragmentViewModel.longListenerActivated.value!!) View.INVISIBLE else View.VISIBLE
-        if (transitionFragmentViewModel.selectedRowList.contains(item)) {
+            if (transitionFragmentViewModel.getLongListenerActivatedMutableLiveData().value!!) View.INVISIBLE else View.VISIBLE
+        if (transitionFragmentViewModel.getSelectedRowList().contains(item)) {
             binding.transitionLinearLayout.background =
                 binding.root.context.getDrawable(R.drawable.custom_adapter_selected_background)
         } else {

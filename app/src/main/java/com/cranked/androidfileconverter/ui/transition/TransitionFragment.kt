@@ -61,7 +61,7 @@ class TransitionFragment @Inject constructor() :
             override fun handleOnBackPressed() {
                 viewModel.backStack(binding.transitionToolbarMenu.backImageView)
                 viewModel.sendLongListenerActivated(false)
-                viewModel.selectedRowList.clear()
+                viewModel.getSelectedRowList().clear()
                 setLayoutSate(app.getLayoutState(),
                     viewModel.getFilesFromPath(path, app.getFilterState()))
                 binding.createFolderButton.visibility = View.VISIBLE
@@ -89,18 +89,18 @@ class TransitionFragment @Inject constructor() :
 
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
-        viewModel.folderPath.observe(viewLifecycleOwner)
+        viewModel.getFolderPathMutableLiveData().observe(viewLifecycleOwner)
         {
             val list = viewModel.getFilesFromPath(it!!, app.getFilterState())
             viewModel.sendNoDataState(list.size > 0)
             setLayoutSate(app.getLayoutState(), list)
         }
-        viewModel.noDataState.observe(viewLifecycleOwner) {
+        viewModel.getNoDataStateMutableLiveData().observe(viewLifecycleOwner) {
             binding.emptyFolder.visibility = if (it) View.GONE else View.VISIBLE
             binding.noDataImageView.visibility = if (it) View.GONE else View.VISIBLE
             binding.emptyFolderDescription.visibility = if (it) View.GONE else View.VISIBLE
         }
-        viewModel.filterState.observe(viewLifecycleOwner) {
+        viewModel.getFilterStateMutableLiveData().observe(viewLifecycleOwner) {
             app.setFilterState(it)
             val list = viewModel.getFilesFromPath(path, app.getFilterState())
             transitionGridAdapter.setItems(list)
@@ -111,7 +111,7 @@ class TransitionFragment @Inject constructor() :
             transitionGridAdapter.setItems(list)
             transitionListAdapter.setItems(list)
         }
-        viewModel.longListenerActivated.observe(viewLifecycleOwner) {
+        viewModel.getLongListenerActivatedMutableLiveData().observe(viewLifecycleOwner) {
             viewModel.setMenuVisibility(binding.multipleSelectionMenu.root, it)
             viewModel.setMenuVisibility(binding.transitionToolbarMenu.root, !it)
             val list = viewModel.getFilesFromPath(path, app.getFilterState())
@@ -119,9 +119,10 @@ class TransitionFragment @Inject constructor() :
             transitionListAdapter.setItems(list)
             binding.createFolderButton.visibility = if (!it) View.VISIBLE else View.GONE
         }
-        viewModel.selectedRowSize.observe(viewLifecycleOwner) {
+        viewModel.getSelectedRowSizeMutableLiveData().observe(viewLifecycleOwner) {
             if (it == 0) {
                 binding.createFolderButton.visibility = View.VISIBLE
+                viewModel.sendLongListenerActivated(false)
             } else
                 binding.createFolderButton.visibility = View.INVISIBLE
             binding.multipleSelectionMenu.selectedItemsMultiple.text = it.toString()
@@ -155,8 +156,9 @@ class TransitionFragment @Inject constructor() :
 
     fun createFolder() {
         viewModel.showCreateFolderBottomDialog(activity!!.supportFragmentManager,
-            viewModel.folderPath.value.toString())
+            viewModel.getFolderPathMutableLiveData().value.toString())
     }
+
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
         binding.viewModel = viewModel
     }

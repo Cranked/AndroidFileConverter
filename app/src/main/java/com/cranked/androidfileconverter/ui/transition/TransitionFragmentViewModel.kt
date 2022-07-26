@@ -7,7 +7,10 @@ import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.*
+import android.widget.AdapterView
+import android.widget.ArrayAdapter
+import android.widget.TextView
+import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -54,13 +57,13 @@ class TransitionFragmentViewModel @Inject constructor(
 ) :
     BaseViewModel() {
     val TAG = TransitionFragmentViewModel::class.java.name
-    val folderPath = MutableLiveData<String>()
-    val noDataState = MutableLiveData<Boolean>()
-    val filterState = MutableLiveData<Int>()
+    private val folderPath = MutableLiveData<String>()
+    private val noDataState = MutableLiveData<Boolean>()
+    private val filterState = MutableLiveData<Int>()
     private val itemsChangedState = MutableLiveData<Boolean>()
-    var selectedRowList = arrayListOf<TransitionModel>()
-    val longListenerActivated = MutableLiveData<Boolean>(false)
-    val selectedRowSize = MutableLiveData<Int>()
+    private var selectedRowList = arrayListOf<TransitionModel>()
+    private val longListenerActivated = MutableLiveData(false)
+    private val selectedRowSize = MutableLiveData<Int>()
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     fun setAdapter(
@@ -82,7 +85,7 @@ class TransitionFragmentViewModel @Inject constructor(
                         if (!longListenerActivated.value!!) {
                             selectedRowList.clear()
                             selectedRowList.add(item)
-                            selectedRowSize.postValue(selectedRowList.size)
+                            sendSelectedRowSize(selectedRowList.size)
                             sendLongListenerActivated(true)
                         }
                         return@setOnLongClickListener true
@@ -101,10 +104,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                 rowBinding.transitionLinearLayout.background =
                                     context.getDrawable(R.drawable.custom_adapter_unselected_background)
                             }
-                            selectedRowSize.postValue(selectedRowList.size)
-                            if (selectedRowList.isEmpty()) {
-                                sendLongListenerActivated(false)
-                            }
+                            sendSelectedRowSize(selectedRowList.size)
                         }
                     }
                     rowBinding.optionsImageView.setOnClickListener {
@@ -142,7 +142,7 @@ class TransitionFragmentViewModel @Inject constructor(
                             sendLongListenerActivated(true)
                             selectedRowList.clear()
                             selectedRowList.add(item)
-                            selectedRowSize.postValue(selectedRowList.size)
+                            sendSelectedRowSize(selectedRowList.size)
                         }
                         return@setOnLongClickListener true
                     }
@@ -160,10 +160,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                 rowBinding.transitionGridLinearLayout.background =
                                     context.getDrawable(R.drawable.custom_adapter_unselected_background)
                             }
-                            selectedRowSize.postValue(selectedRowList.size)
-                            if (selectedRowList.isEmpty()) {
-                                longListenerActivated.value = false
-                            }
+                            sendSelectedRowSize(selectedRowList.size)
                         }
                     }
                     rowBinding.optionsGridImageView.setOnClickListener {
@@ -352,6 +349,13 @@ class TransitionFragmentViewModel @Inject constructor(
             showCreateFolderBottomDialog(supportFragmentManager,
                 folderPath.value.toString())
         }
+        binding.multipleSelectionMenu.selectAllMultiple.setOnClickListener {
+            val list: List<TransitionModel> = getFilesFromPath(path,
+                app.getFilterState()).filter { !selectedRowList.contains(it) }
+            selectedRowList.addAll(list)
+            sendItemsChangedSate(true)
+            sendSelectedRowSize(selectedRowList.size)
+        }
         binding.multipleSelectionMenu.deleteMultiple.setOnClickListener {
             showDeleteFialog(supportFragmentManager,
                 selectedRowList)
@@ -494,6 +498,10 @@ class TransitionFragmentViewModel @Inject constructor(
         noDataState.postValue(state)
     }
 
+    fun sendSelectedRowSize(size: Int) {
+        selectedRowSize.postValue(size)
+    }
+
     fun sendItemsChangedSate(value: Boolean) {
         itemsChangedState.postValue(value)
     }
@@ -546,4 +554,10 @@ class TransitionFragmentViewModel @Inject constructor(
     }
 
     fun getItemsChangedStateMutableLiveData() = this.itemsChangedState
+    fun getSelectedRowSizeMutableLiveData() = this.selectedRowSize
+    fun getLongListenerActivatedMutableLiveData() = this.longListenerActivated
+    fun getSelectedRowList() = this.selectedRowList
+    fun getFilterStateMutableLiveData() = this.filterState
+    fun getNoDataStateMutableLiveData() = this.noDataState
+    fun getFolderPathMutableLiveData() = this.folderPath
 }

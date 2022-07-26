@@ -21,7 +21,7 @@ class DeleteDialog(
             binding.deleteContentDescription.text = context!!.getString(R.string.wantToDeleteFile)
             binding.deleteDialogLayout.cancelButton.setOnClickListener {
                 dismiss()
-                viewModel.selectedRowList.clear()
+                viewModel.getSelectedRowList().clear()
                 viewModel.sendLongListenerActivated(false)
                 viewModel.sendItemsChangedSate(true)
             }
@@ -35,7 +35,7 @@ class DeleteDialog(
                         }
                     }
                 }
-                viewModel.selectedRowList.clear()
+                viewModel.getSelectedRowList().clear()
                 viewModel.getItemsChangedStateMutableLiveData().postValue(true)
                 viewModel.sendLongListenerActivated(false)
                 dismiss()

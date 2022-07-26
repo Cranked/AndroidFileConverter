@@ -18,9 +18,9 @@ class TransitionGridAdapter(private val transitionFragmentViewModel: TransitionF
         position: Int,
     ) {
         binding.optionsGridImageView.visibility =
-            if (transitionFragmentViewModel.longListenerActivated.value!!) View.INVISIBLE else View.VISIBLE
+            if (transitionFragmentViewModel.getLongListenerActivatedMutableLiveData().value!!) View.INVISIBLE else View.VISIBLE
 
-        if (transitionFragmentViewModel.selectedRowList.contains(item)) {
+        if (transitionFragmentViewModel.getSelectedRowList().contains(item)) {
             binding.transitionGridLinearLayout.background =
                 binding.root.context.getDrawable(R.drawable.custom_adapter_selected_background)
         } else {
