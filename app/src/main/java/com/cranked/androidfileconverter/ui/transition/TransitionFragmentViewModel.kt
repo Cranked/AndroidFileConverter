@@ -1,14 +1,13 @@
 package com.cranked.androidfileconverter.ui.transition
 
+import android.animation.Animator
+import android.animation.AnimatorSet
 import android.app.AlertDialog
 import android.content.Context
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.TextView
-import android.widget.Toast
+import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -36,7 +35,10 @@ import com.cranked.androidfileconverter.dialog.DeleteDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
+import com.cranked.androidfileconverter.utils.AnimationX
+import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
@@ -509,7 +511,16 @@ class TransitionFragmentViewModel @Inject constructor(
     }
 
     fun setMenuVisibility(view: View, visible: Boolean) {
+        val bounceAnimator = object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) = Unit
+            override fun onAnimationEnd(animation: Animator?) = Unit
+            override fun onAnimationCancel(animation: Animator?) = Unit
+            override fun onAnimationRepeat(animation: Animator?) = Unit
+        }
         view.visibility = if (visible) View.VISIBLE else View.GONE
+        val animatorSetX: AnimatorSet =
+            AnimationXUtils.zoomInRight(view, AnimationX().getNewAnimatorSet())
+        view.animationStart(700, animatorSetX, bounceAnimator)
     }
 
     fun showDialog(context: Context, path: String) {

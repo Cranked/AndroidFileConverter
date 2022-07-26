@@ -12,6 +12,6 @@
     <color name="light_gray">#cccccc</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorSecondaryDark">#cccccc</color>
-    <color name="long_listener_backgroung_color">#98FFF2</color>
+    <color name="long_listener_backgroung_color">#9999FF</color>
 
 </resources>
