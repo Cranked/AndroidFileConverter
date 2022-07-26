@@ -40,7 +40,6 @@ class DataBaseModule {
         return dataBase.favoritesDao()
     }
 
-
     @Singleton
     @Provides
     fun provideRecentFilesDao(dataBase: AppDataBase): RecentFilesDao {

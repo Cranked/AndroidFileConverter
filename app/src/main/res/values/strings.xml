@@ -48,4 +48,20 @@
     <string name="ask_before_using_mobiledata">Ask before using mobile data</string>
     <string name="dark_mode">Dark mode</string>
 
+    <!--    OptionsBottomDialogStrings-->
+
+    <string name="share">Share</string>
+    <string name="rename">Rename</string>
+    <string name="create_folder_with_selections">Create Folder with selection</string>
+    <string name="mark_as_favorite">Mark as favorite</string>
+    <string name="remove_favorite">Remove favorite</string>
+    <string name="move">Move</string>
+    <string name="delete">Delete</string>
+    <string name="copy">Copy</string>
+    <string name="duplicate">duplicate</string>
+    <string name="wantToDeleteFile">Do you really want to delete</string>
+    <string name="file_name_required">Filename must not be null</string>
+    <string name="file_name_exist">FileName is already exist</string>
+
+
 </resources>

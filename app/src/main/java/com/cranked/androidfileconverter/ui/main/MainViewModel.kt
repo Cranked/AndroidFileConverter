@@ -14,14 +14,16 @@ import com.cranked.androidfileconverter.ui.model.NavigationModel
 import com.cranked.androidfileconverter.ui.search.SearchActivity
 import com.cranked.androidfileconverter.utils.Constants
 import net.codecision.startask.permissions.Permission
+import java.io.File
 import javax.inject.Inject
 
-class MainViewModel @Inject constructor() : BaseViewModel() {
+class MainViewModel @Inject constructor(private val mainActivity: MainActivity) : BaseViewModel() {
     val TAG = MainViewModel::class.java.name.toString()
     val barIconsVisibleState = MutableLiveData<NavigationModel>()
     fun setImageViewsState(model: NavigationModel) {
         barIconsVisibleState.postValue(model)
     }
+
 
     val permissionTemp by lazy {
         Permission.Builder(
@@ -58,13 +60,14 @@ class MainViewModel @Inject constructor() : BaseViewModel() {
         }
     }
 
-    fun createFileConverterFolder() = try {
-        FileUtils.createfolder(
-            Environment.getExternalStorageDirectory().absolutePath,
-            Constants.folderName
-        )
-    } catch (e: Exception) {
-        Log.e(TAG, e.toString())
+    fun createFileConverterFolder() {
+        try {
+            if (!File(Environment.getExternalStorageDirectory().absolutePath + File.separator + Constants.folderName).exists())
+                FileUtils.createfolder(Environment.getExternalStorageDirectory().absolutePath,
+                    Constants.folderName)
+        } catch (e: Exception) {
+            Log.e(TAG, e.toString())
+        }
     }
 
     public override fun onCleared() {

@@ -7,6 +7,7 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.ui.home.StorageModel
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.enums.FileType
 import java.io.File
 
 object FileUtility {
@@ -17,15 +18,15 @@ object FileUtility {
         val fileTransformerPath = base_path + Constants.folderName
         val fileTransformSize = FileUtils.getFolderFiles(fileTransformerPath, 1, 1).size.toString()
         val internalStorageSize = FileUtils.getFolderFiles(base_path, 1, 1)
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val downloadSize = FileUtils.getFolderFiles(downloads_path, 1, 1)
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val sdCardSize = FileUtils.getFolderFiles(
             sdcard_path,
             1,
             1
         )
-            .filter { it.isDirectory or Constants.VALID_TYPES.contains(FileUtils.getExtension(it.name)) }.size.toString()
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val processedSize = processedFilesDao.getAll().size.toString()
         return StorageModel(
             internalStorageSize,
@@ -53,8 +54,27 @@ object FileUtility {
 
     fun getType(file: File): Int {
         if (file.isDirectory)
-            return 1
+            return FileType.FOLDER.type
         else
-            return 2
+            when (file.extension) {
+                "pdf" -> return FileType.PDF.type
+                "xlxs" -> return FileType.EXCEL.type
+                "docx" -> return FileType.WORD.type
+                "png" -> return FileType.PNG.type
+                "jpg" -> return FileType.JPG.type
+            }
+        return FileType.OTHERS.type
+    }
+
+    fun deleteFile(path: String): Boolean {
+        val fileDelete = File(path)
+        if (fileDelete.exists()) {
+            return fileDelete.canonicalFile.delete()
+        }
+        return true
+    }
+
+    fun renameFile(oldPath: String, newPath:String): Boolean {
+        return File(oldPath).renameTo(File(newPath))
     }
 }

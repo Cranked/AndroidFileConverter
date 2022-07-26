@@ -10,8 +10,11 @@
     </data>
 
     <LinearLayout
-        android:layout_width="wrap_content"
+        android:id="@+id/recentFileLinearLayout"
+        android:layout_width="150dp"
         android:layout_height="wrap_content"
+        android:clickable="true"
+        android:contextClickable="true"
         android:orientation="vertical">
 
         <ImageView
@@ -24,9 +27,13 @@
         <TextView
             android:id="@+id/recentFileName"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_height="match_parent"
             android:layout_weight="1"
-            android:text="TextView" />
+            android:ellipsize="end"
+            android:maxWidth="150dp"
+            android:maxLines="1"
+            android:singleLine="true"
+            android:text="TextViewawdawdawdawdawdawd" />
 
 
     </LinearLayout>

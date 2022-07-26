@@ -14,15 +14,15 @@ import com.cranked.androidfileconverter.utils.file.FileUtility
 import javax.inject.Inject
 
 class HomeFragmentViewModel @Inject constructor(
-    favoritesDao: FavoritesDao,
+    private val favoritesDao: FavoritesDao,
     processedFilesDao: ProcessedFilesDao,
-    mContext: Context,
+    private val mContext: Context
 ) :
     BaseViewModel() {
     val sdCardState = FileUtils.isSdCardMounted(mContext)
-    val storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
-    val favoritesList = favoritesDao.getAll().toList()
-    val favoritesState = favoritesList.size > 0
+    var storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
+    var favoritesList = favoritesDao.getAll()
+    var favoritesState = favoritesList.isNotEmpty()
     fun goToTransitionFragmentWithIntent(view: View, path: String) {
         val bundle = Bundle()
         bundle.putString(Constants.DESTINATION_PATH_ACTION, path)
@@ -45,8 +45,8 @@ class HomeFragmentViewModel @Inject constructor(
     fun processedFolderPath(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getProcessedPath())
 
-
-    override fun onCleared() {
-        super.onCleared()
+    @JvmName("setFavoritesState1")
+    fun setFavoritesState(value: Boolean) {
+        favoritesState = value
     }
 }

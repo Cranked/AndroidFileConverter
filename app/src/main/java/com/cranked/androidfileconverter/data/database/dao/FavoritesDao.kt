@@ -11,14 +11,15 @@ abstract class FavoritesDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     abstract fun insert(favoriteFile: FavoriteFile)
 
-    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME}")
+    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME} ORDER BY id DESC")
     abstract fun getAll(): List<FavoriteFile>
 
     @Query("DELETE FROM ${FavoriteFile.TABLE_NAME}")
     abstract fun deleteAll()
 
-    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME} WHERE ${FavoriteFile.FILE_NAME}=:fileName AND ${FavoriteFile.FILE_TYPE}=:fileType LIMIT 1 ")
+    @Query("SELECT * FROM ${FavoriteFile.TABLE_NAME} WHERE ${FavoriteFile.FILE_PATH}=:filePath AND ${FavoriteFile.FILE_NAME}=:fileName AND ${FavoriteFile.FILE_TYPE}=:fileType LIMIT 1 ")
     abstract fun getFavorite(
+        filePath: String,
         fileName: String,
         fileType: Int,
     ): FavoriteFile

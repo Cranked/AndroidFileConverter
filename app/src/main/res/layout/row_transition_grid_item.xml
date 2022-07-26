@@ -3,7 +3,6 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
-
         <variable
             name="viewModel"
             type="com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel" />
@@ -13,7 +12,10 @@
         android:id="@+id/transitionGridLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_2dp"
+        android:background="@drawable/custom_adapter_unselected_background"
         android:clickable="true"
+        android:longClickable="true"
         android:orientation="vertical">
 
         <LinearLayout
@@ -29,10 +31,10 @@
 
             <ImageView
                 android:id="@+id/favoriteGridImageView"
-                android:layout_width="40dp"
-                android:layout_height="40dp"
+                android:layout_width="@dimen/fav_icon_size"
+                android:layout_height="@dimen/fav_icon_size"
                 android:layout_weight="1"
-                app:srcCompat="@drawable/custom_radius_favorite" />
+                android:background="@drawable/custom_radius_favorite" />
 
         </LinearLayout>
 
@@ -50,9 +52,11 @@
 
                 <TextView
                     android:id="@+id/fileNameGridTextView"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="@dimen/icon_margin_8dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
                     android:text="Filename" />
 
                 <TextView

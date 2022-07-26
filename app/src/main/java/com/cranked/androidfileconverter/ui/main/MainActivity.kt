@@ -14,11 +14,13 @@ import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.ActivityMainBinding
 import com.cranked.androidfileconverter.ui.model.NavigationModel
+import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import io.reactivex.rxjava3.disposables.Disposable
+import javax.inject.Inject
 import kotlin.system.exitProcess
 
-class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
+class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     MainViewModel::class.java,
     R.layout.activity_main
 ) {
@@ -27,6 +29,9 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
     private val app by lazy {
         (application as FileConvertApp)
     }
+
+    @Inject
+    lateinit var transitionFragmentViewModel: TransitionFragmentViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -138,7 +143,6 @@ class MainActivity : BaseDaggerActivity<MainViewModel, ActivityMainBinding>(
                 builder.show()
             }
     }
-
     override fun onDestroy() {
         super.onDestroy()
         onBindingClear(binding)

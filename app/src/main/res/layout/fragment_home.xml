@@ -48,7 +48,7 @@
                 android:id="@+id/internalStorageConstraintLayout"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/title_margin"
+                android:layout_marginTop="28dp"
                 android:clickable="true"
                 android:onClick="@{v -> viewModel.internalStoragePath(v)}"
                 android:padding="@dimen/side_margin"

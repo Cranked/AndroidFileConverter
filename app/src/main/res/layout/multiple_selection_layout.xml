@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="46dp"
+    android:padding="@dimen/icon_margin_8dp">
+
+    <TextView
+        android:id="@+id/backButtonMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginLeft="@dimen/icon_margin_8dp"
+        android:layout_marginRight="@dimen/icon_margin_8dp"
+        android:background="@drawable/icon_cancel"
+        android:backgroundTint="@color/long_listener_background_color"
+        android:clickable="true" />
+
+    <TextView
+        android:id="@+id/selectedItemsMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:text="TextView"
+        android:textColor="@color/long_listener_background_color" />
+
+    <TextView
+        android:id="@+id/selectAllMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/icon_check_all"
+        android:backgroundTint="@color/long_listener_background_color"
+        android:clickable="true" />
+
+    <TextView
+        android:id="@+id/deleteMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/icon_delete"
+        android:backgroundTint="@color/long_listener_background_color"
+        android:clickable="true" />
+
+    <TextView
+        android:id="@+id/optionsMultiple"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:background="@drawable/icon_vertical_dots"
+        android:backgroundTint="@color/long_listener_background_color"
+        android:clickable="true" />
+
+</LinearLayout>
