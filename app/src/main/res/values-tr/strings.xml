@@ -64,6 +64,7 @@
     <string name="duplicate">İki Nüsha</string>
     <string name="wantToDeleteFile">Gerçekten silmek istiyormusunuz</string>
     <string name="file_name_required">Dosya ismi boş olmamalı</string>
+    <string name="folder_name_required">Klasör ismi boş olmamalı</string>
     <string name="file_name_exist">Dosya ismi zaten mevcut</string>
 
 </resources>
