@@ -66,6 +66,10 @@ object FileUtility {
         return FileType.OTHERS.type
     }
 
+    fun duplicate(sourcePath: String, targetPath: String): Boolean {
+        return File(sourcePath).copyRecursively(File(targetPath))
+    }
+
     fun deleteFile(path: String): Boolean {
         val fileDelete = File(path)
         if (fileDelete.exists()) {
@@ -74,7 +78,7 @@ object FileUtility {
         return true
     }
 
-    fun renameFile(oldPath: String, newPath:String): Boolean {
+    fun renameFile(oldPath: String, newPath: String): Boolean {
         return File(oldPath).renameTo(File(newPath))
     }
 }
