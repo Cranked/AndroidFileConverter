@@ -8,5 +8,6 @@ enum class TaskType(val value: Int) {
     RENAMETASK(5),
     DELETETASK(6),
     MOVETASK(7),
-    COPYTASK(8)
+    COPYTASK(8),
+    DUPLICATE(9)
 }
