@@ -18,34 +18,34 @@ class CreateFolderWithSelectionDialog(
     private val path: String,
     private val favoritesDao: FavoritesDao,
 ) : BaseViewBindingDialogFragment<CreateFolderDialogLayoutBinding>(R.layout.create_folder_dialog_layout) {
-    private val TAG = DeleteDialog::class.java.name.toString()
+    private val TAG = CreateFolderWithSelectionDialog::class.java.name.toString()
 
     override fun onBindingCreate(binding: CreateFolderDialogLayoutBinding) {
         try {
             getDialog()!!.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            binding.createFolderCancelOkLayout.cancelButton.setOnClickListener { dismiss() }
+            binding.createFolderCancelOkLayout.cancelButton.setOnClickListener {
+                viewModel.getSelectedRowList().clear()
+                viewModel.sendLongListenerActivated(false)
+                viewModel.sendItemsChangedSate(true)
+                dismiss()
+            }
             binding.createFolderCancelOkLayout.okButton.setOnClickListener {
                 if (binding.folderNameEditText.text!!.isEmpty()) {
                     viewModel.showToast(context!!.getString(R.string.folder_name_required))
                     return@setOnClickListener
                 }
-                var folderName =
+                val folderName =
                     binding.folderNameEditText.text!!.toString()
                 val finalCreatedFolder = FileUtils.createfolder(path, folderName)
-                folderName = finalCreatedFolder.split("/").last()
                 list.forEach { transitionModel ->
                     try {
-                        val realPath = finalCreatedFolder.substring(0,
-                            finalCreatedFolder.lastIndexOf(transitionModel.fileName))
-                        val newPath = realPath + folderName + File.separator + transitionModel.fileName
+                        val newPath = finalCreatedFolder+File.separator+ transitionModel.fileName
                         val result = FileUtility.renameFile(transitionModel.filePath, newPath)
                         if (result) {
                             favoritesDao.getAll().forEach {
                                 if (it.path.contains(transitionModel.filePath)) {
-                                    val tempFilePath = it.path.substring(0, transitionModel.filePath.length)
                                     val result =
-                                        realPath + folderName + File.separator + transitionModel.fileName +
-                                                it.path.substring(tempFilePath.length)
+                                        finalCreatedFolder+ File.separator+transitionModel.fileName
                                     it.path = result
                                     favoritesDao.update(it)
                                 }
@@ -55,8 +55,10 @@ class CreateFolderWithSelectionDialog(
                         println(e.toString())
                     }
                 }
-                viewModel.sendPath(path)
-                dialog.dismiss()
+                viewModel.getSelectedRowList().clear()
+                viewModel.sendLongListenerActivated(false)
+                viewModel.sendItemsChangedSate(true)
+                dismiss()
             }
         } catch (e: Exception) {
             LogManager.log(TAG, e.toString())

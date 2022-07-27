@@ -58,7 +58,7 @@ class TransitionFragment @Inject constructor() :
         app.rxBus.send(ToolbarState(false))
         viewModel.init(binding, this, activity!!, app, path, spinnerList)
 
-        activity!!.onBackPressedDispatcher.addCallback(viewLifecycleOwner,object : OnBackPressedCallback(true) {
+        activity!!.onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 viewModel.backStack(binding.transitionToolbarMenu.backImageView)
                 viewModel.sendLongListenerActivated(false)
@@ -153,11 +153,6 @@ class TransitionFragment @Inject constructor() :
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }
-    }
-
-    fun createFolder() {
-        viewModel.showCreateFolderBottomDialog(activity!!.supportFragmentManager,
-            viewModel.getFolderPathMutableLiveData().value.toString())
     }
 
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
