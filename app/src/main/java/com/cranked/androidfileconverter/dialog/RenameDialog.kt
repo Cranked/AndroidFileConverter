@@ -13,7 +13,7 @@ import java.io.File
 class RenameDialog(
     private val viewModel: TransitionFragmentViewModel,
     val transitionModel: TransitionModel,
-    val favoritesDao: FavoritesDao,
+    var favoritesDao: FavoritesDao,
 ) : BaseViewBindingDialogFragment<RenameFileLayoutBinding>(R.layout.rename_file_layout) {
     override fun onBindingCreate(binding: RenameFileLayoutBinding) {
         getDialog()!!.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
@@ -48,6 +48,7 @@ class RenameDialog(
                             val tempFilePath = it.path.substring(0, transitionModel.filePath.length)
                             val result = realPath + editTextString + it.path.substring(tempFilePath.length)
                             it.path = result
+                            it.fileName = editTextString
                             favoritesDao.update(it)
                             println("hebele")
                         }

@@ -257,8 +257,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                 dialog.show(supportFragmentManager, "DeleteTaskDialog")
                             }
                             TaskType.RENAMETASK.value -> {
-                                val dialog =
-                                    RenameDialog(this@TransitionFragmentViewModel, model, favoritesDao)
+                                val dialog = RenameDialog(this@TransitionFragmentViewModel, model, favoritesDao)
                                 dialog.show(supportFragmentManager, "RenameTaskDialog")
                             }
                             TaskType.CREATEFOLDERWITHSELECTIONTASK.value -> {
@@ -272,7 +271,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                 val targetFolderName =
                                     FileUtils.createfolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
                                         model.fileName)
-                                    FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
+                                FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
 
                             }
                         }
