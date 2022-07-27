@@ -194,6 +194,8 @@ class TransitionFragmentViewModel @Inject constructor(
                     context.getString(R.string.move), TaskType.MOVETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
                     context.getString(R.string.copy), TaskType.COPYTASK.value)
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_duplicate)!!,
+                    context.getString(R.string.duplicate), TaskType.DUPLICATE.value)
             }
             else -> {
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_tools)!!,
@@ -215,6 +217,8 @@ class TransitionFragmentViewModel @Inject constructor(
                     context.getString(R.string.move), TaskType.MOVETASK.value)
                 list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
                     context.getString(R.string.copy), TaskType.COPYTASK.value)
+                list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_duplicate)!!,
+                    context.getString(R.string.duplicate), TaskType.DUPLICATE.value)
             }
         }
         val adapter = OptionsAdapter()
@@ -255,6 +259,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                 folderPath.value!!,
                                 favoritesDao)
                             dialog.show(supportFragmentManager, "CreateFolderWithSelection")
+                        }
+                        TaskType.DUPLICATE.value -> {
+
+                            FileUtils.createfolder(transitionModel.filePath.substring(0,
+                                transitionModel.filePath.lastIndexOf("/")), transitionModel.fileName)
                         }
 
                     }
