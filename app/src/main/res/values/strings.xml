@@ -58,7 +58,7 @@
     <string name="move">Move</string>
     <string name="delete">Delete</string>
     <string name="copy">Copy</string>
-    <string name="duplicate">duplicate</string>
+    <string name="duplicate">Duplicate</string>
     <string name="wantToDeleteFile">Do you really want to delete</string>
     <string name="file_name_required">Filename must not be null</string>
     <string name="folder_name_required">Foldername must not be null</string>
