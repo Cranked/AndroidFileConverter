@@ -73,9 +73,4 @@ class MainViewModel @Inject constructor(private val mainActivity: MainActivity) 
             Log.e(TAG, e.toString())
         }
     }
-
-    public override fun onCleared() {
-        super.onCleared()
-    }
-
 }
