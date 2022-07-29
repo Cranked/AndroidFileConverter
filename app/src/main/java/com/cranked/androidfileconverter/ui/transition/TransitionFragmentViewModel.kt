@@ -169,6 +169,7 @@ class TransitionFragmentViewModel @Inject constructor(
             layoutManager =
                 GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
         }
+
         return transitionGridAdapter
     }
 
@@ -370,9 +371,9 @@ class TransitionFragmentViewModel @Inject constructor(
             showOptionsBottomDialog(supportFragmentManager, selectedRowList)
         }
 
-        setMenuVisibility(binding.transitionToolbarMenu.root,
+        setViewVisibility(binding.transitionToolbarMenu.root,
             !longListenerActivated.value!!)
-        setMenuVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
+        setViewVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
 
         val title = path.split("/").last { it.isNotEmpty() }
         binding.transitionToolbarMenu.titleToolBar.text = title
@@ -529,7 +530,7 @@ class TransitionFragmentViewModel @Inject constructor(
         deleteDialogFragment.show(supportFragmentManager, "DeleteDialogFragment")
     }
 
-    fun setMenuVisibility(view: View, visible: Boolean) {
+    fun setViewVisibility(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
     }
 
