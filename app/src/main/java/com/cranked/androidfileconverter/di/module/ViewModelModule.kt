@@ -7,11 +7,15 @@ import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.languages.LanguageActivityViewModel
 import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.ui.settings.SettingsFragmentViewModel
+import com.cranked.androidfileconverter.ui.task.TaskActivityViewModel
+import com.cranked.androidfileconverter.ui.task.TaskFragmentViewModel
+import com.cranked.androidfileconverter.ui.task.TaskTransitionFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import dagger.Binds
 import dagger.MapKey
 import dagger.Module
 import dagger.multibindings.IntoMap
+import javax.inject.Singleton
 import kotlin.reflect.KClass
 
 @Target(
@@ -63,5 +67,20 @@ abstract class ViewModelModule {
     @ViewModelKey(LanguageActivityViewModel::class)
     abstract fun languagesActivityViewModel(viewModel: LanguageActivityViewModel): ViewModel
 
+    @Singleton
+    @Binds
+    @IntoMap
+    @ViewModelKey(TaskActivityViewModel::class)
+    abstract fun taskActivityViewModel(viewModel: TaskActivityViewModel): ViewModel
 
+    @Binds
+    @IntoMap
+    @ViewModelKey(TaskFragmentViewModel::class)
+    abstract fun taskFragmentViewModel(viewModel: TaskFragmentViewModel): ViewModel
+
+    @Singleton
+    @Binds
+    @IntoMap
+    @ViewModelKey(TaskTransitionFragmentViewModel::class)
+    abstract fun taskTransitionFragmentViewModel(viewModel: TaskTransitionFragmentViewModel): ViewModel
 }

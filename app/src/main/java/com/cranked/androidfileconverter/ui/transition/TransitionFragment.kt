@@ -17,6 +17,7 @@ import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
+import com.cranked.androidfileconverter.utils.junk.Title
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 

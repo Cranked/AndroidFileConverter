@@ -34,7 +34,6 @@
     <string name="internal_storage">Dahili Depolama</string>
     <string name="sd_card">SD Kart</string>
     <string name="downloads">İndirilenler</string>
-    <string name="file_converter">FileConverter</string>
     <string name="processed_files">İşlem görmüş dosyalar</string>
     <string name="favorites">Favoriler</string>
     <string name="favorites_description">Favori dosyalarınız burada gözükecektir.</string>
@@ -67,4 +66,9 @@
     <string name="folder_name_required">Klasör ismi boş olmamalı</string>
     <string name="file_name_exist">Dosya ismi zaten mevcut</string>
     <string name="item">Öğe</string>
+    <string name="files">Dosyalar</string>
+    <string name="file_moved">%1$d dosya taşındı</string>
+    <string name="file_copied">%1$d dosya kopyalandı</string>
+    <string name="files_moved">%1$d dosya taşındı</string>
+    <string name="files_copied">%1$d dosya kopyalandı</string>
 </resources>

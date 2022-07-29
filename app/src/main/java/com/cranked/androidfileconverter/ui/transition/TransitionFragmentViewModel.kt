@@ -1,8 +1,7 @@
 package com.cranked.androidfileconverter.ui.transition
 
-import android.animation.Animator
-import android.animation.AnimatorSet
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
@@ -35,11 +34,9 @@ import com.cranked.androidfileconverter.dialog.RenameDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
-import com.cranked.androidfileconverter.utils.AnimationX
-import com.cranked.androidfileconverter.utils.AnimationXUtils
+import com.cranked.androidfileconverter.ui.task.TaskActivity
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
-import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
@@ -279,8 +276,27 @@ class TransitionFragmentViewModel @Inject constructor(
                                             model.fileName)
                                     FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
                                 }
+                                selectedRowList.clear()
                                 if (getLongListenerActivatedMutableLiveData().value!!)
                                     sendLongListenerActivated(false)
+                            }
+                            TaskType.MOVETASK.value -> {
+                                optionsBottomDialog.dismiss()
+                                sendLongListenerActivated(false)
+                                val intent = Intent(context, TaskActivity::class.java)
+                                intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.MOVETASK.value)
+                                intent.putParcelableArrayListExtra(Constants.SELECTED_LIST, transitionList)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                context.startActivity(intent)
+                            }
+                            TaskType.COPYTASK.value -> {
+                                optionsBottomDialog.dismiss()
+                                sendLongListenerActivated(false)
+                                val intent = Intent(context, TaskActivity::class.java)
+                                intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.COPYTASK.value)
+                                intent.putParcelableArrayListExtra(Constants.SELECTED_LIST, transitionList)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                context.startActivity(intent)
                             }
                         }
                         optionsBottomDialog.dismiss()

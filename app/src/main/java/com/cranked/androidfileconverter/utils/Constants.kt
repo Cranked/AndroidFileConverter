@@ -7,8 +7,11 @@ import android.Manifest.permission.WRITE_EXTERNAL_STORAGE
 object Constants {
 
     const val folderName = "FileTransformer"
+    const val processedFolderName = "processed"
     const val PERMISSION_REQUEST_CODE = 4545
     const val DESTINATION_PATH_ACTION = "DestinationPath"
+    const val FILE_TASK_TYPE = "FileTaskType"
+    const val SELECTED_LIST = "SelectedList"
     val VALID_TYPES = arrayListOf("pdf", "xlsx", "docx", "png", "jpg")
     var PERMISSIONS = arrayOf(
         CAMERA,
