@@ -98,9 +98,6 @@ class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, Act
         }
     }
 
-    override fun onBindingClear(binding: ActivityMainBinding) {
-        viewModel.onCleared()
-    }
 
     fun initRxBus() {
         disposable = app.rxBus.toObservable().subscribe {

@@ -46,7 +46,9 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
-            app:navigationIcon="@drawable/icon_back" />
+            app:navigationIcon="@drawable/icon_back"
+            app:title="@string/files"
+            app:titleTextColor="#000000" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
