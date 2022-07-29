@@ -5,6 +5,9 @@ import com.cranked.androidfileconverter.di.module.*
 import com.cranked.androidfileconverter.ui.home.HomeFragment
 import com.cranked.androidfileconverter.ui.languages.LanguagesActivity
 import com.cranked.androidfileconverter.ui.main.MainActivity
+import com.cranked.androidfileconverter.ui.task.TaskActivity
+import com.cranked.androidfileconverter.ui.task.TaskFragment
+import com.cranked.androidfileconverter.ui.task.TaskTransitionFragment
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule

@@ -4,8 +4,8 @@
 
         <item>@drawable/icon_tools</item>
         <item>@drawable/icon_share</item>
-        <item>@drawable/icon_selection</item>
         <item>@drawable/icon_favorite</item>
+        <item>@drawable/icon_selection</item>
         <item>@drawable/icon_rename</item>
         <item>@drawable/icon_delete</item>
         <item>@drawable/icon_move</item>

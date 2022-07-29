@@ -13,6 +13,7 @@ import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.ui.model.NavigationModel
 import com.cranked.androidfileconverter.ui.search.SearchActivity
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.file.FileUtility
 import net.codecision.startask.permissions.Permission
 import java.io.File
 import javax.inject.Inject
@@ -65,6 +66,9 @@ class MainViewModel @Inject constructor(private val mainActivity: MainActivity) 
             if (!File(Environment.getExternalStorageDirectory().absolutePath + File.separator + Constants.folderName).exists())
                 FileUtils.createfolder(Environment.getExternalStorageDirectory().absolutePath,
                     Constants.folderName)
+            if (!File(FileUtility.getProcessedPath()).exists()) {
+                FileUtils.createfolder(FileUtility.getFileTransformerPath(), Constants.processedFolderName)
+            }
         } catch (e: Exception) {
             Log.e(TAG, e.toString())
         }

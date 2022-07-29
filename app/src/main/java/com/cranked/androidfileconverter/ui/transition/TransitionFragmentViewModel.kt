@@ -1,14 +1,12 @@
 package com.cranked.androidfileconverter.ui.transition
 
-import android.animation.Animator
-import android.animation.AnimatorSet
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -36,10 +34,9 @@ import com.cranked.androidfileconverter.dialog.RenameDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
-import com.cranked.androidfileconverter.utils.AnimationX
-import com.cranked.androidfileconverter.utils.AnimationXUtils
+import com.cranked.androidfileconverter.ui.task.TaskActivity
 import com.cranked.androidfileconverter.utils.Constants
-import com.cranked.androidfileconverter.utils.animation.animationStart
+import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
@@ -177,57 +174,54 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun showOptionsBottomDialog(
         supportFragmentManager: FragmentManager,
-        transitionModel: ArrayList<TransitionModel>,
+        transitionList: ArrayList<TransitionModel>,
     ) {
-        val list = arrayListOf<OptionsModel>()
-        transitionModel.forEach { model ->
+        try {
+            val list = arrayListOf<OptionsModel>()
+            val stringList = context.resources.getStringArray(R.array.optionsMenuStringArray).toList()
+            val drawableList = context.resources.obtainTypedArray(R.array.imagesArray)
+            val taskTypeList = TaskType.values().toList()
+            when (transitionList.size) {
 
-            when (model.fileType) {
-                FileType.FOLDER.type -> {
-                    list += OptionsModel(ContextCompat.getDrawable(context,
-                        R.drawable.icon_selection)!!,
-                        context.getString(R.string.create_folder_with_selections),
-                        TaskType.CREATEFOLDERWITHSELECTIONTASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_favorite)!!,
-                        if (!model.isFavorite) context.getString(R.string.mark_as_favorite) else context.getString(
-                            R.string.remove_favorite), TaskType.MARKFAVORITETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_rename)!!,
-                        context.getString(R.string.rename), TaskType.RENAMETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_delete)!!,
-                        context.getString(R.string.delete), TaskType.DELETETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_move)!!,
-                        context.getString(R.string.move), TaskType.MOVETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
-                        context.getString(R.string.copy), TaskType.COPYTASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_duplicate)!!,
-                        context.getString(R.string.duplicate), TaskType.DUPLICATE.value)
+                0, 1 -> {
+                    transitionList.forEach {
+                        when (it.fileType) {
+                            FileType.FOLDER.type -> {
+                                taskTypeList.forEachIndexed { index, s ->
+                                    if (s.value != TaskType.SHARETASK.value && s.value != TaskType.TOOLSTASK.value)
+                                        list += OptionsModel(drawableList.getDrawable(index)!!,
+                                            stringList.get(index).toString(),
+                                            s.value)
+                                }
+                            }
+                            else -> {
+                                taskTypeList.forEachIndexed { index, s ->
+                                    list += OptionsModel(drawableList.getDrawable(index)!!,
+                                        stringList.get(index).toString(),
+                                        s.value)
+                                }
+                            }
+                        }
+                    }
                 }
                 else -> {
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_tools)!!,
-                        context.getString(R.string.tools), TaskType.TOOLSTASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_share)!!,
-                        context.getString(R.string.share), TaskType.SHARETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context,
-                        R.drawable.icon_selection)!!,
-                        context.getString(R.string.create_folder_with_selections),
-                        TaskType.CREATEFOLDERWITHSELECTIONTASK.value)
-                    if (transitionModel.size <= 1)
-                        list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_favorite)!!,
-                            if (!model.isFavorite) context.getString(R.string.mark_as_favorite) else context.getString(
-                                R.string.remove_favorite), TaskType.MARKFAVORITETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_rename)!!,
-                        context.getString(R.string.rename), TaskType.RENAMETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_delete)!!,
-                        context.getString(R.string.delete), TaskType.DELETETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_move)!!,
-                        context.getString(R.string.move), TaskType.MOVETASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_copy)!!,
-                        context.getString(R.string.copy), TaskType.COPYTASK.value)
-                    list += OptionsModel(ContextCompat.getDrawable(context, R.drawable.icon_duplicate)!!,
-                        context.getString(R.string.duplicate), TaskType.DUPLICATE.value)
+                    if (transitionList.filter { it.fileType == FileType.FOLDER.type }.isNotEmpty()) {
+                        taskTypeList.forEachIndexed { index, s ->
+                            if (s.value != TaskType.TOOLSTASK.value && s.value != TaskType.SHARETASK.value &&
+                                s.value != TaskType.RENAMETASK.value && s.value != TaskType.MARKFAVORITETASK.value
+                            )
+                                list += OptionsModel(drawableList.getDrawable(index)!!, stringList.get(index).toString(), s.value)
+                        }
+                    } else {
+                        taskTypeList.forEachIndexed { index, s ->
+                            if (s.value != TaskType.RENAMETASK.value && s.value != TaskType.MARKFAVORITETASK.value)
+                                list += OptionsModel(drawableList.getDrawable(index)!!,
+                                    stringList.get(index).toString(),
+                                    s.value)
+                        }
+                    }
                 }
             }
-
             val adapter = OptionsAdapter()
             adapter.setListener(object :
                 BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
@@ -239,51 +233,87 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding.optionsBottomLinearLayout.setOnClickListener {
                         when (item.tasktype) {
                             TaskType.MARKFAVORITETASK.value -> {
-                                if (model.isFavorite) {
-                                    removeFavorite(model.filePath,
-                                        model.fileName,
-                                        model.fileType)
-                                } else {
-                                    markFavorite(model.filePath,
-                                        model.fileExtension,
-                                        model.fileName,
-                                        model.fileType)
+                                when (transitionList.size) {
+                                    1 -> {
+                                        val model = transitionList.get(0)
+                                        if (model.isFavorite) {
+                                            removeFavorite(model.filePath,
+                                                model.fileName,
+                                                model.fileType)
+                                        } else {
+                                            markFavorite(model.filePath,
+                                                model.fileExtension,
+                                                model.fileName,
+                                                model.fileType)
+                                        }
+                                    }
+                                }
+                            }
+                            TaskType.RENAMETASK.value -> {
+                                when (transitionList.size) {
+                                    1 -> {
+                                        val model = transitionList.get(0)
+                                        val dialog = RenameDialog(this@TransitionFragmentViewModel, model, favoritesDao)
+                                        dialog.show(supportFragmentManager, "RenameTaskDialog")
+                                    }
                                 }
                             }
                             TaskType.DELETETASK.value -> {
-                                val dialog = DeleteDialog(this@TransitionFragmentViewModel,
-                                    arrayListOf(model),
-                                    favoritesDao)
-                                dialog.show(supportFragmentManager, "DeleteTaskDialog")
+                                showDeleteFialog(supportFragmentManager, transitionList)
                             }
-                            TaskType.RENAMETASK.value -> {
-                                val dialog = RenameDialog(this@TransitionFragmentViewModel, model, favoritesDao)
-                                dialog.show(supportFragmentManager, "RenameTaskDialog")
-                            }
+
                             TaskType.CREATEFOLDERWITHSELECTIONTASK.value -> {
                                 val dialog = CreateFolderWithSelectionDialog(this@TransitionFragmentViewModel,
-                                    arrayListOf(model),
+                                    transitionList,
                                     folderPath.value!!,
                                     favoritesDao)
                                 dialog.show(supportFragmentManager, "CreateFolderWithSelection")
                             }
                             TaskType.DUPLICATE.value -> {
-                                val targetFolderName =
-                                    FileUtils.createfolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
-                                        model.fileName)
-                                FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
-
+                                transitionList.forEach { model ->
+                                    val targetFolderName =
+                                        FileUtils.createfolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
+                                            model.fileName)
+                                    FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
+                                }
+                                selectedRowList.clear()
+                                if (getLongListenerActivatedMutableLiveData().value!!)
+                                    sendLongListenerActivated(false)
+                            }
+                            TaskType.MOVETASK.value -> {
+                                optionsBottomDialog.dismiss()
+                                sendLongListenerActivated(false)
+                                val intent = Intent(context, TaskActivity::class.java)
+                                intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.MOVETASK.value)
+                                intent.putParcelableArrayListExtra(Constants.SELECTED_LIST, transitionList)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                context.startActivity(intent)
+                            }
+                            TaskType.COPYTASK.value -> {
+                                optionsBottomDialog.dismiss()
+                                sendLongListenerActivated(false)
+                                val intent = Intent(context, TaskActivity::class.java)
+                                intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.COPYTASK.value)
+                                intent.putParcelableArrayListExtra(Constants.SELECTED_LIST, transitionList)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                context.startActivity(intent)
                             }
                         }
-                        sendItemsChangedSate(true)
                         optionsBottomDialog.dismiss()
+                        sendItemsChangedSate(true)
+                        sendLongListenerActivated(false)
                     }
                 }
             })
 
             adapter.setItems(list)
-            optionsBottomDialog = OptionsBottomDialog(adapter, model.fileName)
+            val title =
+                if (transitionList.size > 1) transitionList.size.toString() + "  " + context!!.getString(R.string.item) else transitionList.get(
+                    0).fileName
+            optionsBottomDialog = OptionsBottomDialog(adapter, title)
             optionsBottomDialog.show(supportFragmentManager, "OptionsBottomDialog")
+        } catch (e: Exception) {
+            LogManager.log(TAG, e.toString())
         }
     }
 
@@ -335,6 +365,9 @@ class TransitionFragmentViewModel @Inject constructor(
         binding.multipleSelectionMenu.deleteMultiple.setOnClickListener {
             showDeleteFialog(supportFragmentManager,
                 selectedRowList)
+        }
+        binding.multipleSelectionMenu.optionsMultiple.setOnClickListener {
+            showOptionsBottomDialog(supportFragmentManager, selectedRowList)
         }
 
         setMenuVisibility(binding.transitionToolbarMenu.root,
@@ -419,7 +452,8 @@ class TransitionFragmentViewModel @Inject constructor(
                 if (!longListenerActivated.value!!) {
                     view.findNavController().navigateUp()
                 } else {
-                    sendLongListenerActivated(false)
+                    if (getLongListenerActivatedMutableLiveData().value!!)
+                        sendLongListenerActivated(false)
                 }
         } catch (e: Exception) {
         }
@@ -427,7 +461,8 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun closeLongClick() {
         selectedRowList.clear()
-        sendLongListenerActivated(false)
+        if (getLongListenerActivatedMutableLiveData().value!!)
+            sendLongListenerActivated(false)
     }
 
     fun showToast(msg: String) {
@@ -490,21 +525,12 @@ class TransitionFragmentViewModel @Inject constructor(
         supportFragmentManager: FragmentManager,
         list: ArrayList<TransitionModel>,
     ) {
-        val deleteDialogFragment = DeleteDialog(this, list, favoritesDao)
+        val deleteDialogFragment = DeleteDialog(this@TransitionFragmentViewModel, list, favoritesDao)
         deleteDialogFragment.show(supportFragmentManager, "DeleteDialogFragment")
     }
 
     fun setMenuVisibility(view: View, visible: Boolean) {
-        val bounceAnimator = object : Animator.AnimatorListener {
-            override fun onAnimationStart(animation: Animator?) = Unit
-            override fun onAnimationEnd(animation: Animator?) = Unit
-            override fun onAnimationCancel(animation: Animator?) = Unit
-            override fun onAnimationRepeat(animation: Animator?) = Unit
-        }
         view.visibility = if (visible) View.VISIBLE else View.GONE
-        val animatorSetX: AnimatorSet =
-            AnimationXUtils.zoomInRight(view, AnimationX().getNewAnimatorSet())
-        view.animationStart(700, animatorSetX, bounceAnimator)
     }
 
     fun getItemsChangedStateMutableLiveData() = this.itemsChangedState

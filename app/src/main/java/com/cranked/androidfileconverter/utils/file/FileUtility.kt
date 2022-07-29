@@ -16,7 +16,8 @@ object FileUtility {
         val downloads_path = getDownloadsPath()
         val sdcard_path = getSdCarPath(context)
         val fileTransformerPath = base_path + Constants.folderName
-        val fileTransformSize = FileUtils.getFolderFiles(fileTransformerPath, 1, 1).size.toString()
+        val fileTransformSize = FileUtils.getFolderFiles(fileTransformerPath, 1, 1)
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val internalStorageSize = FileUtils.getFolderFiles(base_path, 1, 1)
             .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         val downloadSize = FileUtils.getFolderFiles(downloads_path, 1, 1)
@@ -27,7 +28,8 @@ object FileUtility {
             1
         )
             .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
-        val processedSize = processedFilesDao.getAll().size.toString()
+        val processedSize = FileUtils.getFolderFiles(getProcessedPath(), 1, 1)
+            .filter { it.isDirectory or Constants.VALID_TYPES.contains(it.extension) }.size.toString()
         return StorageModel(
             internalStorageSize,
             sdCardSize,
@@ -50,7 +52,7 @@ object FileUtility {
     fun getDownloadsPath() =
         getInternalStoragePath() + Environment.DIRECTORY_DOWNLOADS + File.separator
 
-    fun getProcessedPath() = getFileTransformerPath() + "processed" + File.separator
+    fun getProcessedPath() = getFileTransformerPath() + Constants.processedFolderName + File.separator
 
     fun getType(file: File): Int {
         if (file.isDirectory)

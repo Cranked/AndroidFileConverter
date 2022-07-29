@@ -31,7 +31,6 @@
     <string name="internal_storage">Internal Storage</string>
     <string name="sd_card">SD Card</string>
     <string name="downloads">Downloads</string>
-    <string name="file_converter">FileConverter</string>
     <string name="processed_files">Processed Files</string>
     <string name="favorites">Favorites</string>
     <string name="favorites_description">Your Favorite files will appear here</string>
@@ -63,8 +62,8 @@
     <string-array name="optionsMenuStringArray">
         <item>@string/tools</item>
         <item>@string/share</item>
-        <item>@string/create_folder_with_selections</item>
         <item>@string/mark_as_favorite</item>
+        <item>@string/create_folder_with_selections</item>
         <item>@string/rename</item>
         <item>@string/delete</item>
         <item>@string/move</item>
@@ -76,6 +75,12 @@
     <string name="file_name_required">Filename must not be null</string>
     <string name="folder_name_required">Foldername must not be null</string>
     <string name="file_name_exist">FileName is already exist</string>
+    <string name="item">Items</string>
+    <string name="files">Files</string>
+    <string name="file_moved">%1$d file moved.</string>
+    <string name="file_copied">%1$d file copied.</string>
+    <string name="files_moved">%1$d files moved.</string>
+    <string name="files_copied">%1$d files copied.</string>
 
 
 </resources>

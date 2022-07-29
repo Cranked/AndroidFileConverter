@@ -3,6 +3,8 @@ package com.cranked.androidfileconverter.di.module
 import com.cranked.androidfileconverter.ui.camera.CameraFragment
 import com.cranked.androidfileconverter.ui.home.HomeFragment
 import com.cranked.androidfileconverter.ui.settings.SettingsFragment
+import com.cranked.androidfileconverter.ui.task.TaskFragment
+import com.cranked.androidfileconverter.ui.task.TaskTransitionFragment
 import com.cranked.androidfileconverter.ui.tools.ToolsFragment
 import com.cranked.androidfileconverter.ui.transition.TransitionFragment
 import dagger.Module
@@ -25,5 +27,11 @@ abstract class FragmentModule {
 
     @ContributesAndroidInjector
     abstract fun bindTransitionFragment(): TransitionFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindTaskFragment(): TaskFragment
+
+    @ContributesAndroidInjector
+    abstract fun bindTaskTransitionFragment(): TaskTransitionFragment
 
 }

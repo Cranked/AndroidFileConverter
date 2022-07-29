@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+
+    android:id="@+id/task_navigation"
+    android:label="taskFragment"
+    app:startDestination="@id/taskFragment">
+
+    <fragment
+        android:id="@+id/taskFragment"
+        android:name="com.cranked.androidfileconverter.ui.task.TaskFragment"
+        android:label="TaskFragment"
+        tools:layout="@layout/fragment_task"
+        >
+        <action
+            android:id="@+id/action_taskFragment_to_taskTransitionFragment"
+            app:destination="@id/taskTransitionFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/taskTransitionFragment"
+        android:name="com.cranked.androidfileconverter.ui.task.TaskTransitionFragment"
+        android:label="fragment_task_transition"
+        tools:layout="@layout/fragment_task_transition" >
+        <action
+            android:id="@+id/action_taskTransitionFragment_self"
+            app:destination="@id/taskTransitionFragment" />
+    </fragment>
+</navigation>

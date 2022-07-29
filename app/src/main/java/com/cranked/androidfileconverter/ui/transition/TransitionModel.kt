@@ -31,8 +31,25 @@ fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionMo
     )
 }
 
+fun File.toTransitionModel(file: File): TransitionModel {
+    val fileType = FileUtility.getType(file)
+    return TransitionModel(file.name,
+        file.extension,
+        fileType,
+        file.absolutePath,
+        DateUtils.getDatefromTime(file.lastModified(), Constants.dateFormat),
+        false
+    )
+}
+
 fun List<File>.toTransitionList(favoritesDao: FavoritesDao): List<TransitionModel> {
     return this.parallelStream().map { transition ->
         transition.toTransitionModel(transition, favoritesDao)
+    }.toList()
+}
+
+fun List<File>.toTransitionList(): List<TransitionModel> {
+    return this.parallelStream().map { transition ->
+        transition.toTransitionModel(transition)
     }.toList()
 }

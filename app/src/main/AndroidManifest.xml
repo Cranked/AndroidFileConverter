@@ -21,6 +21,11 @@
         android:theme="@style/Theme.AndroidFileConverter"
         tools:targetApi="31">
         <activity
+            android:name=".ui.task.TaskActivity"
+            android:configChanges="orientation|keyboard|screenSize"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="false" />
+        <activity
             android:name=".ui.languages.LanguagesActivity"
             android:configChanges="orientation|keyboard|screenSize"
             android:exported="false"
