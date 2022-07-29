@@ -1,13 +1,17 @@
 package com.cranked.androidfileconverter.ui.transition
 
+import android.animation.Animator
+import android.animation.AnimatorSet
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
+import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
@@ -15,9 +19,10 @@ import com.cranked.androidfileconverter.adapter.transition.TransitionGridAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.ui.main.MainViewModel
+import com.cranked.androidfileconverter.utils.AnimationX
+import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
-import com.cranked.androidfileconverter.utils.junk.Title
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 
@@ -114,8 +119,8 @@ class TransitionFragment @Inject constructor() :
             transitionListAdapter.setItems(list)
         }
         viewModel.getLongListenerActivatedMutableLiveData().observe(viewLifecycleOwner) {
-            viewModel.setMenuVisibility(binding.multipleSelectionMenu.root, it)
-            viewModel.setMenuVisibility(binding.transitionToolbarMenu.root, !it)
+            viewModel.setViewVisibility(binding.multipleSelectionMenu.root, it)
+            viewModel.setViewVisibility(binding.transitionToolbarMenu.root, !it)
             val list = viewModel.getFilesFromPath(path, app.getFilterState())
             transitionGridAdapter.setItems(list)
             transitionListAdapter.setItems(list)
@@ -158,5 +163,22 @@ class TransitionFragment @Inject constructor() :
 
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
         binding.viewModel = viewModel
+    }
+
+    override fun createListeners() {
+        binding.transitionRecylerView.apply {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (recyclerView.canScrollVertically(1) && dy > 0) {
+                        viewModel.setViewVisibility(binding.createFolderButton, false)
+                    } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
+                        if (!viewModel.getLongListenerActivatedMutableLiveData().value!!)
+                            if (!binding.createFolderButton.isVisible)
+                                viewModel.setViewVisibility(binding.createFolderButton, true)
+                        //scrolled to TOP
+                    }
+                }
+            })
+        }
     }
 }
