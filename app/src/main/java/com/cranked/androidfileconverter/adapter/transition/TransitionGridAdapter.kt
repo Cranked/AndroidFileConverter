@@ -1,7 +1,7 @@
 package com.cranked.androidfileconverter.adapter.transition
 
 import android.view.View
-import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
@@ -31,32 +31,26 @@ class TransitionGridAdapter(private val transitionFragmentViewModel: TransitionF
         binding.lastModifiedGridTextView.text = item.lastModified
         when (item.fileType) {
             FileType.FOLDER.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    R.drawable.icon_folder))
+                Glide.with(binding.root.context).load(R.drawable.icon_folder).placeholder(R.drawable.custom_dialog)
+                    .into(binding.transitionGridImageView)
             }
             FileType.PDF.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_pdf))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf).placeholder(R.drawable.custom_dialog).into(binding.transitionGridImageView)
+
             }
-            FileType.PNG.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_png))
-            }
-            FileType.JPG.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_jpg))
+            FileType.PNG.type,FileType.JPG.type -> {
+                Glide.with(binding.root.context).load(item.filePath).placeholder(R.drawable.custom_dialog).into(binding.transitionGridImageView)
             }
             FileType.WORD.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_doc))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_doc).placeholder(R.drawable.custom_dialog).into(binding.transitionGridImageView)
+
             }
             FileType.EXCEL.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_psd))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_psd).placeholder(R.drawable.custom_dialog).into(binding.transitionGridImageView)
+
             }
             FileType.OTHERS.type -> {
-                binding.transitionGridImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_default))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_default).placeholder(R.drawable.custom_dialog).into(binding.transitionGridImageView)
             }
         }
         binding.favoriteGridImageView.visibility = if (item.isFavorite) View.VISIBLE else View.GONE

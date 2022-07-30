@@ -1,7 +1,7 @@
 package com.cranked.androidfileconverter.adapter.transition
 
 import android.view.View
-import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
@@ -29,32 +29,23 @@ class TransitionListAdapter(private val transitionFragmentViewModel: TransitionF
         binding.lastModifiedTextView.text = item.lastModified
         when (item.fileType) {
             FileType.FOLDER.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    R.drawable.icon_folder))
+                Glide.with(binding.root.context).load(R.drawable.icon_folder).placeholder(R.drawable.custom_dialog)
+                    .into(binding.transitionListImageView)
             }
             FileType.PDF.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_pdf))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf).placeholder(R.drawable.custom_dialog).into(binding.transitionListImageView)
             }
-            FileType.PNG.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_png))
-            }
-            FileType.JPG.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_jpg))
+            FileType.PNG.type,FileType.JPG.type -> {
+                Glide.with(binding.root.context).load(item.filePath).placeholder(R.drawable.custom_dialog).into(binding.transitionListImageView)
             }
             FileType.WORD.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_doc))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_doc).placeholder(R.drawable.custom_dialog).into(binding.transitionListImageView)
             }
             FileType.EXCEL.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_psd))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_psd).placeholder(R.drawable.custom_dialog).into(binding.transitionListImageView)
             }
             FileType.OTHERS.type -> {
-                binding.transitionListImageView.setImageDrawable(ContextCompat.getDrawable(binding.root.context,
-                    com.cranked.androidcorelibrary.R.drawable.icon_default))
+                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_default).placeholder(R.drawable.custom_dialog).into(binding.transitionListImageView)
             }
         }
         binding.favoriteImageView.visibility =
