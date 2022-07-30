@@ -2,6 +2,7 @@ package com.cranked.androidfileconverter.adapter
 
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
+import com.bumptech.glide.Glide
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
@@ -26,10 +27,10 @@ class FavoritesAdapter(@LayoutRes layoutRes: Int) :
         when (item.fileType) {
             FileType.FOLDER.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
                 R.drawable.icon_folder))
-            FileType.JPG.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
-                com.cranked.androidcorelibrary.R.drawable.icon_jpg))
-            FileType.PNG.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
-                com.cranked.androidcorelibrary.R.drawable.icon_png))
+            FileType.JPG.type,FileType.PNG.type -> {
+                Glide.with(binding.root.context).load(item.path).placeholder(R.drawable.custom_dialog).into(binding.favImage)
+            }
+
             FileType.WORD.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
                 com.cranked.androidcorelibrary.R.drawable.icon_doc))
             FileType.PDF.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(

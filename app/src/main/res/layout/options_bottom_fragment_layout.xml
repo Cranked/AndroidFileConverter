@@ -13,7 +13,7 @@
             android:layout_height="wrap_content">
 
             <ImageView
-                android:id="@+id/imageView8"
+                android:id="@+id/optionBottomImageView"
                 android:layout_width="60dp"
                 android:layout_height="60dp"
                 android:layout_margin="@dimen/icon_margin_8dp"

@@ -119,6 +119,7 @@ class TransitionFragmentViewModel @Inject constructor(
             adapter = transitionListAdapter
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
         }
         return transitionListAdapter
     }
@@ -174,6 +175,7 @@ class TransitionFragmentViewModel @Inject constructor(
             adapter = transitionGridAdapter
             layoutManager =
                 GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
         }
 
         return transitionGridAdapter
@@ -317,7 +319,7 @@ class TransitionFragmentViewModel @Inject constructor(
             val title =
                 if (transitionList.size > 1) transitionList.size.toString() + "  " + context!!.getString(R.string.item) else transitionList.get(
                     0).fileName
-            optionsBottomDialog = OptionsBottomDialog(adapter, title)
+            optionsBottomDialog = OptionsBottomDialog(adapter, title, transitionList)
             optionsBottomDialog.show(supportFragmentManager, "OptionsBottomDialog")
         } catch (e: Exception) {
             LogManager.log(TAG, e.toString())

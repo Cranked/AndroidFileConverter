@@ -20,8 +20,8 @@
 
         <ImageView
             android:id="@+id/fav_image"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="@dimen/favorite_item_width"
+            android:layout_height="@dimen/favorite_item_height"
             android:backgroundTint="#BA1818"
             app:srcCompat="@drawable/custom_radius_folder" />
 
@@ -29,6 +29,7 @@
             android:id="@+id/fav_item_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_margin="@dimen/icon_margin_8dp"
             android:ellipsize="end"
             android:fontFamily="sans-serif-medium"
             android:maxWidth="200dp"
