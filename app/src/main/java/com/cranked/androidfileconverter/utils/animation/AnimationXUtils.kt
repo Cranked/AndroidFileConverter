@@ -30,6 +30,22 @@ object AnimationXUtils {
         return animatorSet
     }
 
+    fun slideInDown(view: View, animatorSet: AnimatorSet): AnimatorSet {
+        val distance = (view.top + view.height).toFloat()
+        val object1: ObjectAnimator = ObjectAnimator.ofFloat(view, "alpha", 0f, 0.2f, 0.4f, 0.6f, 0.8f, 1f)
+        val object2: ObjectAnimator = ObjectAnimator.ofFloat(view, "translationY", -distance, 0f)
+        animatorSet.playTogether(object1, object2)
+        return animatorSet
+    }
+
+    fun slideOutUp(view: View, animatorSet: AnimatorSet): AnimatorSet {
+        val bottom = -view.bottom.toFloat()
+        val object1: ObjectAnimator = ObjectAnimator.ofFloat(view, "alpha", 1f, 0f)
+        val object2: ObjectAnimator = ObjectAnimator.ofFloat(view, "translationY", 0f, bottom)
+        animatorSet.playTogether(object1, object2)
+        return animatorSet
+    }
+
     fun swing(view: View, animatorSet: AnimatorSet): AnimatorSet {
         val object1: ObjectAnimator =
             ObjectAnimator.ofFloat(view, "rotation", 0f, 10f, -10f, 6f, -6f, 3f, -3f, 0f)
@@ -47,6 +63,24 @@ object AnimationXUtils {
         animatorSet.playTogether(object1, object2, object3, object4)
         return animatorSet
     }
+
+    fun zoomIn(view: View, animatorSet: AnimatorSet): AnimatorSet {
+        val object1 = ObjectAnimator.ofFloat(view, "scaleX", 0.2f, 0.4f, 0.6f, 0.8f, 1f)
+        val object2 = ObjectAnimator.ofFloat(view, "scaleY", 0.2f, 0.4f, 0.6f, 0.8f, 1f)
+        val object3 = ObjectAnimator.ofFloat(view, "alpha", 0.2f, 0.4f, 0.6f, 0.8f, 1f)
+        animatorSet.playTogether(object1, object2, object3)
+        return animatorSet
+    }
+
+    fun zoomOut(view: View, animatorSet: AnimatorSet): AnimatorSet {
+        val object1 = ObjectAnimator.ofFloat(view, "alpha", 1f, 0.8f, 0.6f, 0.4f, 0.2f, 0f)
+        val object2 = ObjectAnimator.ofFloat(view, "scaleX", 1f, 0.8f, 0.6f, 0.4f, 0.2f)
+        val object3 = ObjectAnimator.ofFloat(view, "scaleY", 1f, 0.8f, 0.6f, 0.4f, 0.2f)
+
+        animatorSet.playTogether(object1, object2, object3)
+        return animatorSet
+    }
+
 
     fun pulse(view: View, animatorSet: AnimatorSet): AnimatorSet {
         val object1: ObjectAnimator = ObjectAnimator.ofFloat(view, "scaleY", 1f, 1.1f, 1f)

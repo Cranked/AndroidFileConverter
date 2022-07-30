@@ -1,5 +1,7 @@
 package com.cranked.androidfileconverter.ui.transition
 
+import android.animation.Animator
+import android.animation.AnimatorSet
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -7,6 +9,7 @@ import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -35,8 +38,11 @@ import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDi
 import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.ui.task.TaskActivity
+import com.cranked.androidfileconverter.utils.AnimationX
+import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
@@ -445,6 +451,7 @@ class TransitionFragmentViewModel @Inject constructor(
 
                 override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             }
+        setCreatefolderAnimations(binding)
     }
 
     fun backStack(view: View) {
@@ -532,6 +539,48 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun setViewVisibility(view: View, visible: Boolean) {
         view.visibility = if (visible) View.VISIBLE else View.GONE
+    }
+
+    fun setCreatefolderAnimations(binding: FragmentTransitionBinding) {
+        val slideOutUp: AnimatorSet = AnimationX().getNewAnimatorSet()
+        val slideInDown: AnimatorSet = AnimationX().getNewAnimatorSet()
+        val slideOutUpAnimator = object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) = Unit
+            override fun onAnimationEnd(animation: Animator?) {
+                setViewVisibility(binding.createFolderButton, false)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) = Unit
+            override fun onAnimationRepeat(animation: Animator?) = Unit
+        }
+        val slideInDownAnimator = object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) = Unit
+            override fun onAnimationEnd(animation: Animator?) {
+                setViewVisibility(binding.createFolderButton, true)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) = Unit
+            override fun onAnimationRepeat(animation: Animator?) = Unit
+        }
+        val animatorSetSlideInDown = AnimationXUtils.slideInDown(binding.createFolderButton, slideInDown)
+        val animatorSetSlideOutUp = AnimationXUtils.slideOutUp(binding.createFolderButton, slideOutUp)
+        binding.transitionRecylerView.apply {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (recyclerView.canScrollVertically(1) && dy > 0) {
+                        if (binding.createFolderButton.isVisible) {
+                            binding.createFolderButton.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
+                        }
+                    } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
+                        if (!getLongListenerActivatedMutableLiveData().value!!)
+                            if (!binding.createFolderButton.isVisible) {
+                                binding.createFolderButton.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
+                            }
+                        //scrolled to TOP
+                    }
+                }
+            })
+        }
     }
 
     fun getItemsChangedStateMutableLiveData() = this.itemsChangedState

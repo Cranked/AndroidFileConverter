@@ -22,6 +22,7 @@ import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.utils.AnimationX
 import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
@@ -160,25 +161,8 @@ class TransitionFragment @Inject constructor() :
             Log.e(TAG, e.toString())
         }
     }
-
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
         binding.viewModel = viewModel
     }
 
-    override fun createListeners() {
-        binding.transitionRecylerView.apply {
-            addOnScrollListener(object : RecyclerView.OnScrollListener() {
-                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
-                    if (recyclerView.canScrollVertically(1) && dy > 0) {
-                        viewModel.setViewVisibility(binding.createFolderButton, false)
-                    } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
-                        if (!viewModel.getLongListenerActivatedMutableLiveData().value!!)
-                            if (!binding.createFolderButton.isVisible)
-                                viewModel.setViewVisibility(binding.createFolderButton, true)
-                        //scrolled to TOP
-                    }
-                }
-            })
-        }
-    }
 }
