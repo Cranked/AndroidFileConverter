@@ -65,6 +65,7 @@ class TransitionFragmentViewModel @Inject constructor(
     private var selectedRowList = arrayListOf<TransitionModel>()
     private val longListenerActivated = MutableLiveData(false)
     private val selectedRowSize = MutableLiveData<Int>()
+    private val shareFiles = MutableLiveData<ArrayList<TransitionModel>>()
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     fun setAdapter(
@@ -307,6 +308,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
                                 context.startActivity(intent)
                             }
+                            TaskType.SHARETASK.value -> {
+                                sendShareFiles(transitionList)
+                                optionsBottomDialog.dismiss()
+                                sendLongListenerActivated(false)
+                            }
                         }
                         optionsBottomDialog.dismiss()
                         sendItemsChangedSate(true)
@@ -519,6 +525,10 @@ class TransitionFragmentViewModel @Inject constructor(
         noDataState.postValue(state)
     }
 
+    fun sendShareFiles(list: ArrayList<TransitionModel>) {
+        shareFiles.postValue(list)
+    }
+
     fun sendSelectedRowSize(size: Int) {
         selectedRowSize.postValue(size)
     }
@@ -573,6 +583,7 @@ class TransitionFragmentViewModel @Inject constructor(
                         if (binding.createFolderButton.isVisible) {
                             binding.createFolderButton.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
                         }
+                        //scrolled to BOTTOM
                     } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
                         if (!getLongListenerActivatedMutableLiveData().value!!)
                             if (!binding.createFolderButton.isVisible) {
@@ -592,4 +603,5 @@ class TransitionFragmentViewModel @Inject constructor(
     fun getFilterStateMutableLiveData() = this.filterState
     fun getNoDataStateMutableLiveData() = this.noDataState
     fun getFolderPathMutableLiveData() = this.folderPath
+    fun getShareFilesMutableLiveData() = this.shareFiles
 }
