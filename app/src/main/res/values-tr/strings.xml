@@ -61,6 +61,16 @@
     <string name="delete">Sil</string>
     <string name="copy">Kopyala</string>
     <string name="duplicate">İki Nüsha</string>
+    <string name="go_to_folder">Klasöre Git</string>
+
+    <string-array name="favorites_optionsmenu_string_array">
+        <item>@string/tools</item>
+        <item>@string/share</item>
+        <item>@string/go_to_folder</item>
+        <item>@string/remove_favorite</item>
+    </string-array>
+
+    <!--    Dialog warning strings-->
     <string name="wantToDeleteFile">Gerçekten silmek istiyormusunuz</string>
     <string name="file_name_required">Dosya ismi boş olmamalı</string>
     <string name="folder_name_required">Klasör ismi boş olmamalı</string>

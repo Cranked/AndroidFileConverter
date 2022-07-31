@@ -190,9 +190,9 @@ class TransitionFragmentViewModel @Inject constructor(
     ) {
         try {
             val list = arrayListOf<OptionsModel>()
-            val stringList = context.resources.getStringArray(R.array.optionsMenuStringArray).toList()
+            val stringList = context.resources.getStringArray(R.array.options_menu_string_array).toList()
             val drawableList = context.resources.obtainTypedArray(R.array.imagesArray)
-            val taskTypeList = TaskType.values().toList()
+            val taskTypeList = TaskType.values().copyOfRange(0, stringList.size).toList()
             when (transitionList.size) {
 
                 0, 1 -> {
@@ -200,17 +200,30 @@ class TransitionFragmentViewModel @Inject constructor(
                         when (it.fileType) {
                             FileType.FOLDER.type -> {
                                 taskTypeList.forEachIndexed { index, s ->
-                                    if (s.value != TaskType.SHARETASK.value && s.value != TaskType.TOOLSTASK.value)
-                                        list += OptionsModel(drawableList.getDrawable(index)!!,
-                                            stringList.get(index).toString(),
-                                            s.value)
+                                    if (s.value != TaskType.SHARETASK.value && s.value != TaskType.TOOLSTASK.value) {
+                                        if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
+                                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                                context.getString(R.string.remove_favorite),
+                                                s.value)
+                                        } else {
+                                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                                stringList.get(index).toString(),
+                                                s.value)
+                                        }
+                                    }
                                 }
                             }
                             else -> {
                                 taskTypeList.forEachIndexed { index, s ->
-                                    list += OptionsModel(drawableList.getDrawable(index)!!,
-                                        stringList.get(index).toString(),
-                                        s.value)
+                                    if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
+                                        list += OptionsModel(drawableList.getDrawable(index)!!,
+                                            context.getString(R.string.remove_favorite),
+                                            s.value)
+                                    } else {
+                                        list += OptionsModel(drawableList.getDrawable(index)!!,
+                                            stringList.get(index).toString(),
+                                            s.value)
+                                    }
                                 }
                             }
                         }
@@ -311,20 +324,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                 context.startActivity(intent)
                             }
                             TaskType.SHARETASK.value -> {
-                                val uriArrayList = arrayListOf<Uri>()
-                                transitionList.forEach {
-                                    uriArrayList += FileProvider.getUriForFile(context!!,
-                                        BuildConfig.APPLICATION_ID + ".provider",
-                                        File(it.filePath))
-                                }
-                                val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                                intent.setType("*/*")
-                                intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
-                                intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
-                                context.startActivity(intent)
+                                shareItemsList(context, transitionList)
                                 selectedRowList.clear()
                             }
                         }
@@ -345,6 +345,7 @@ class TransitionFragmentViewModel @Inject constructor(
             LogManager.log(TAG, e.toString())
         }
     }
+
 
     fun showCreateFolderBottomDialog(supportFragmentManager: FragmentManager, path: String) {
         val bottomDialog = CreateFolderBottomDialog(this, path)
@@ -497,6 +498,23 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun showToast(msg: String) {
         Toast.makeText(context, msg, Toast.LENGTH_SHORT).show()
+    }
+
+    fun shareItemsList(context: Context, transitionList: ArrayList<TransitionModel>) {
+        val uriArrayList = arrayListOf<Uri>()
+        transitionList.forEach {
+            uriArrayList += FileProvider.getUriForFile(context!!,
+                BuildConfig.APPLICATION_ID + ".provider",
+                File(it.filePath))
+        }
+        val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+        intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+        intent.setType("*/*")
+        intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+        context.startActivity(intent)
     }
 
     fun getFilesFromPath(path: String, state: Int): MutableList<TransitionModel> {
