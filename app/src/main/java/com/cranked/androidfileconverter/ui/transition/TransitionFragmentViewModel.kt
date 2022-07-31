@@ -4,11 +4,13 @@ import android.animation.Animator
 import android.animation.AnimatorSet
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.view.View
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -20,6 +22,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
+import com.cranked.androidfileconverter.BuildConfig
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.options.OptionsAdapter
@@ -65,7 +68,6 @@ class TransitionFragmentViewModel @Inject constructor(
     private var selectedRowList = arrayListOf<TransitionModel>()
     private val longListenerActivated = MutableLiveData(false)
     private val selectedRowSize = MutableLiveData<Int>()
-    private val shareFiles = MutableLiveData<ArrayList<TransitionModel>>()
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     fun setAdapter(
@@ -309,9 +311,21 @@ class TransitionFragmentViewModel @Inject constructor(
                                 context.startActivity(intent)
                             }
                             TaskType.SHARETASK.value -> {
-                                sendShareFiles(transitionList)
-                                optionsBottomDialog.dismiss()
-                                sendLongListenerActivated(false)
+                                val uriArrayList = arrayListOf<Uri>()
+                                transitionList.forEach {
+                                    uriArrayList += FileProvider.getUriForFile(context!!,
+                                        BuildConfig.APPLICATION_ID + ".provider",
+                                        File(it.filePath))
+                                }
+                                val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+                                intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+                                intent.setType("*/*")
+                                intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
+                                intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+                                context.startActivity(intent)
+                                selectedRowList.clear()
                             }
                         }
                         optionsBottomDialog.dismiss()
@@ -525,9 +539,6 @@ class TransitionFragmentViewModel @Inject constructor(
         noDataState.postValue(state)
     }
 
-    fun sendShareFiles(list: ArrayList<TransitionModel>) {
-        shareFiles.postValue(list)
-    }
 
     fun sendSelectedRowSize(size: Int) {
         selectedRowSize.postValue(size)
@@ -603,5 +614,4 @@ class TransitionFragmentViewModel @Inject constructor(
     fun getFilterStateMutableLiveData() = this.filterState
     fun getNoDataStateMutableLiveData() = this.noDataState
     fun getFolderPathMutableLiveData() = this.folderPath
-    fun getShareFilesMutableLiveData() = this.shareFiles
 }

@@ -133,21 +133,6 @@ class TransitionFragment @Inject constructor() :
                 binding.createFolderButton.visibility = View.INVISIBLE
             binding.multipleSelectionMenu.selectedItemsMultiple.text = it.toString()
         }
-        viewModel.getShareFilesMutableLiveData().observe(viewLifecycleOwner) {
-            val uriArrayList = arrayListOf<Uri>()
-            it.forEach {
-                uriArrayList += FileProvider.getUriForFile(this.context!!, BuildConfig.APPLICATION_ID + ".provider", File(it.filePath))
-            }
-            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
-            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-            intent.setType("*/*")
-            intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
-            intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
-            startActivity(intent)
-            viewModel.getSelectedRowList().clear()
-        }
     }
 
     fun setLayoutSate(state: Int, list: MutableList<TransitionModel>) {
