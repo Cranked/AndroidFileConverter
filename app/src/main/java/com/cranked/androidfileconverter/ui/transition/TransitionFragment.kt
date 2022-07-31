@@ -1,30 +1,28 @@
 package com.cranked.androidfileconverter.ui.transition
 
-import android.animation.Animator
-import android.animation.AnimatorSet
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.view.isVisible
+import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
-import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
+import com.cranked.androidfileconverter.BuildConfig
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.transition.TransitionGridAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.ui.main.MainViewModel
-import com.cranked.androidfileconverter.utils.AnimationX
-import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
-import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import java.io.File
 import javax.inject.Inject
 
 class TransitionFragment @Inject constructor() :
@@ -135,6 +133,21 @@ class TransitionFragment @Inject constructor() :
                 binding.createFolderButton.visibility = View.INVISIBLE
             binding.multipleSelectionMenu.selectedItemsMultiple.text = it.toString()
         }
+        viewModel.getShareFilesMutableLiveData().observe(viewLifecycleOwner) {
+            val uriArrayList = arrayListOf<Uri>()
+            it.forEach {
+                uriArrayList += FileProvider.getUriForFile(this.context!!, BuildConfig.APPLICATION_ID + ".provider", File(it.filePath))
+            }
+            val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
+            intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
+            intent.setType("*/*")
+            intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
+            intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+            startActivity(intent)
+            viewModel.getSelectedRowList().clear()
+        }
     }
 
     fun setLayoutSate(state: Int, list: MutableList<TransitionModel>) {
@@ -161,6 +174,7 @@ class TransitionFragment @Inject constructor() :
             Log.e(TAG, e.toString())
         }
     }
+
     override fun initViewModel(viewModel: TransitionFragmentViewModel) {
         binding.viewModel = viewModel
     }
