@@ -58,8 +58,9 @@
     <string name="delete">Delete</string>
     <string name="copy">Copy</string>
     <string name="duplicate">Duplicate</string>
+    <string name="go_to_folder">Go to Folder</string>
 
-    <string-array name="optionsMenuStringArray">
+    <string-array name="options_menu_string_array">
         <item>@string/tools</item>
         <item>@string/share</item>
         <item>@string/mark_as_favorite</item>
@@ -70,6 +71,13 @@
         <item>@string/copy</item>
         <item>@string/duplicate</item>
     </string-array>
+    <string-array name="favorites_optionsmenu_string_array">
+        <item>@string/tools</item>
+        <item>@string/share</item>
+        <item>@string/go_to_folder</item>
+        <item>@string/remove_favorite</item>
+    </string-array>
+    <!--    Dialog warning strings-->
 
     <string name="wantToDeleteFile">Do you really want to delete</string>
     <string name="file_name_required">Filename must not be null</string>

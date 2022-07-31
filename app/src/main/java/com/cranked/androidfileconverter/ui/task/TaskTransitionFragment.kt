@@ -13,6 +13,7 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.task.TaskListAdapter
+import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
 import com.cranked.androidfileconverter.databinding.FragmentTaskTransitionBinding
 import com.cranked.androidfileconverter.ui.transition.toTransitionList
 import com.cranked.androidfileconverter.utils.Constants
@@ -20,7 +21,7 @@ import com.cranked.androidfileconverter.utils.junk.Path
 import com.cranked.androidfileconverter.utils.junk.Title
 import javax.inject.Inject
 
-class TaskTransitionFragment @Inject constructor() :
+class TaskTransitionFragment @Inject constructor( private val favoritesDao: FavoritesDao) :
     BaseDaggerFragment<TaskTransitionFragmentViewModel, FragmentTaskTransitionBinding>(TaskTransitionFragmentViewModel::class.java) {
     lateinit var path: String
     val app by lazy {
@@ -57,7 +58,7 @@ class TaskTransitionFragment @Inject constructor() :
             val title = it.split("/").filter { it.isNotEmpty() }.last()
             app.rxBus.send(Title(title))
             app.rxBus.send(Path(it))
-            val list = FileUtils.getFolderFiles(it, 1, 1).filter { it.isDirectory }.toTransitionList()
+            val list = FileUtils.getFolderFiles(it, 1, 1).filter { it.isDirectory }.toTransitionList(favoritesDao)
             viewModel.setAdapter(context!!, binding.taskTransitionRecylerView, TaskListAdapter(), list.toMutableList())
         }
     }

@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
@@ -87,6 +88,15 @@ class HomeFragment @Inject constructor() :
                 }
             }
         })
+        favoritesAdapter.setLongClickListener(object :
+            BaseViewBindingRecyclerViewAdapter.LongClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
+            override fun onItemLongClick(item: FavoriteFile, position: Int, rowBinding: RowFavoriteAdapterItemBinding) {
+                rowBinding.favoriteLinearLayout.setOnLongClickListener {
+                    viewModel.showFavoritesBottomDialog(activity!!.supportFragmentManager, it, item)
+                    return@setOnLongClickListener true
+                }
+            }
+        })
         recentFileAdapter = recentFileAdapterViewModel.setAdapter(
             this.context!!, binding.recentFileRecylerView,
             recentFileAdapter, recentFileAdapterViewModel.recentFileList
@@ -103,5 +113,12 @@ class HomeFragment @Inject constructor() :
                 }
             }
         })
+    }
+
+    override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
+        viewModel.getFavItemsChangedMutableLiveData().observe(viewLifecycleOwner) {
+            val list = favoritesDao.getAll()
+            favoritesAdapter.setItems(list)
+        }
     }
 }
