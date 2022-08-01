@@ -20,7 +20,7 @@ class CreateFolderDialogFragment(private val viewModel: TransitionFragmentViewMo
             }
             val folderName =
                 binding.folderNameEditText.text!!.toString()
-            FileUtils.createfolder(path, folderName)
+            FileUtils.createFileAndFolder(path, folderName)
             viewModel.sendPath(path)
             dialog.dismiss()
         }

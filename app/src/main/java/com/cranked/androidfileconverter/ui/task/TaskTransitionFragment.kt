@@ -21,13 +21,14 @@ import com.cranked.androidfileconverter.utils.junk.Path
 import com.cranked.androidfileconverter.utils.junk.Title
 import javax.inject.Inject
 
-class TaskTransitionFragment @Inject constructor( private val favoritesDao: FavoritesDao) :
+class TaskTransitionFragment @Inject constructor() :
     BaseDaggerFragment<TaskTransitionFragmentViewModel, FragmentTaskTransitionBinding>(TaskTransitionFragmentViewModel::class.java) {
     lateinit var path: String
     val app by lazy {
         activity!!.application as FileConvertApp
     }
-
+    @Inject
+    lateinit var favoritesDao: FavoritesDao
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -37,6 +38,7 @@ class TaskTransitionFragment @Inject constructor( private val favoritesDao: Favo
         arguments?.let {
             onBundle(it)
         }
+
         return binding.root
     }
 

@@ -296,10 +296,17 @@ class TransitionFragmentViewModel @Inject constructor(
                             }
                             TaskType.DUPLICATE.value -> {
                                 transitionList.forEach { model ->
-                                    val targetFolderName =
-                                        FileUtils.createfolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
-                                            model.fileName)
-                                    FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
+                                    if (File(model.filePath).isDirectory) {
+                                        val targetFolderName =
+                                            FileUtils.createFileAndFolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
+                                                model.fileName)
+                                        FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
+                                    } else {
+                                        val targetFolderName =
+                                            FileUtils.createFileAndFolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
+                                                model.fileName)
+
+                                    }
                                 }
                                 selectedRowList.clear()
                                 if (getLongListenerActivatedMutableLiveData().value!!)
