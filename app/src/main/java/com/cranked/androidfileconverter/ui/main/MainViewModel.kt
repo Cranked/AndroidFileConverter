@@ -64,10 +64,10 @@ class MainViewModel @Inject constructor(private val mainActivity: MainActivity) 
     fun createFileConverterFolder() {
         try {
             if (!File(Environment.getExternalStorageDirectory().absolutePath + File.separator + Constants.folderName).exists())
-                FileUtils.createfolder(Environment.getExternalStorageDirectory().absolutePath,
+                FileUtils.createFileAndFolder(Environment.getExternalStorageDirectory().absolutePath,
                     Constants.folderName)
             if (!File(FileUtility.getProcessedPath()).exists()) {
-                FileUtils.createfolder(FileUtility.getFileTransformerPath(), Constants.processedFolderName)
+                FileUtils.createFileAndFolder(FileUtility.getFileTransformerPath(), Constants.processedFolderName)
             }
         } catch (e: Exception) {
             Log.e(TAG, e.toString())

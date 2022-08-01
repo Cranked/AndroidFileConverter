@@ -36,7 +36,7 @@ class CreateFolderWithSelectionDialog(
                 }
                 val folderName =
                     binding.folderNameEditText.text!!.toString()
-                val finalCreatedFolder = FileUtils.createfolder(path, folderName)
+                val finalCreatedFolder = FileUtils.createFileAndFolder(path, folderName)
                 list.forEach { transitionModel ->
                     try {
                         val newPath = finalCreatedFolder+File.separator+ transitionModel.fileName
