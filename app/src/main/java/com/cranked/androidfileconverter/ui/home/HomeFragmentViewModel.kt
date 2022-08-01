@@ -20,6 +20,10 @@ import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.databinding.RowOptionsItemBinding
 import com.cranked.androidfileconverter.dialog.favorite.FavoriteOptionsBottomDialog
+import com.cranked.androidfileconverter.dialog.options.GoToFolderTask
+import com.cranked.androidfileconverter.dialog.options.RemoveFavoriteTask
+import com.cranked.androidfileconverter.dialog.options.ShareTask
+import com.cranked.androidfileconverter.dialog.options.ToolsTask
 import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
@@ -80,12 +84,18 @@ class HomeFragmentViewModel @Inject constructor(
                 it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                         it.value == TaskType.REMOVEFAVORITETASK.value || it.value == TaskType.GOTOFOLDER.value
             }.toList()
+            val taskList = arrayListOf(ToolsTask(),
+                ShareTask(context, this, arrayListOf(favoriteFile)),
+                GoToFolderTask(this, favoriteFile, view),
+                RemoveFavoriteTask(this, favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()
             when (favoriteFile.fileType) {
                 FileType.FOLDER.type -> {
                     taskTypeList.forEachIndexed { index, s ->
                         if (s.value == TaskType.REMOVEFAVORITETASK.value)
-                            list += OptionsModel(drawableList.getDrawable(index)!!, stringList.get(index).toString(), s.value)
+                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                stringList.get(index).toString(),
+                                taskList.get(index))
                     }
                 }
                 else -> {
@@ -95,7 +105,9 @@ class HomeFragmentViewModel @Inject constructor(
                             s.value == TaskType.REMOVEFAVORITETASK.value ||
                             s.value == TaskType.GOTOFOLDER.value
                         )
-                            list += OptionsModel(drawableList.getDrawable(index)!!, stringList.get(index).toString(), s.value)
+                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                stringList.get(index).toString(),
+                                taskList.get(index))
                     }
                 }
             }
@@ -103,22 +115,7 @@ class HomeFragmentViewModel @Inject constructor(
             optionsAdapter.setListener(object : BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
                 override fun onItemClick(item: OptionsModel, position: Int, rowBinding: RowOptionsItemBinding) {
                     rowBinding.root.setOnClickListener {
-                        when (item.tasktype) {
-                            TaskType.SHARETASK.value -> {
-                                shareItemsList(context, arrayListOf(favoriteFile))
-                            }
-                            TaskType.GOTOFOLDER.value -> {
-                                val path = favoriteFile.path.substring(0, favoriteFile.path.lastIndexOf("/")) + File.separator
-                                goToTransitionFragmentWithIntent(view, path)
-                            }
-                            TaskType.TOOLSTASK.value -> {
-
-                            }
-                            TaskType.REMOVEFAVORITETASK.value -> {
-                                favoritesDao.delete(favoriteFile)
-                                getFavItemsChangedMutableLiveData().postValue(true)
-                            }
-                        }
+                        item.task.doTask()
                         favoriteOptionsBottomDialog.dismiss()
                     }
                 }

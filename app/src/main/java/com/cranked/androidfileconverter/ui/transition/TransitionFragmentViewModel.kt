@@ -34,13 +34,10 @@ import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.databinding.RowOptionsItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
 import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
-import com.cranked.androidfileconverter.dialog.CreateFolderWithSelectionDialog
 import com.cranked.androidfileconverter.dialog.DeleteDialog
-import com.cranked.androidfileconverter.dialog.RenameDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
-import com.cranked.androidfileconverter.dialog.options.OptionsBottomDialog
+import com.cranked.androidfileconverter.dialog.options.*
 import com.cranked.androidfileconverter.ui.model.OptionsModel
-import com.cranked.androidfileconverter.ui.task.TaskActivity
 import com.cranked.androidfileconverter.utils.AnimationX
 import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
@@ -50,7 +47,6 @@ import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
-import com.cranked.androidfileconverter.utils.file.FileUtility
 import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject
@@ -190,9 +186,25 @@ class TransitionFragmentViewModel @Inject constructor(
     ) {
         try {
             val list = arrayListOf<OptionsModel>()
+            val adapter = OptionsAdapter()
+            val title =
+                if (transitionList.size > 1) transitionList.size.toString() + "  " + context!!.getString(R.string.item) else transitionList.get(
+                    0).fileName
+            optionsBottomDialog = OptionsBottomDialog(adapter, title, transitionList)
             val stringList = context.resources.getStringArray(R.array.options_menu_string_array).toList()
             val drawableList = context.resources.obtainTypedArray(R.array.imagesArray)
             val taskTypeList = TaskType.values().copyOfRange(0, stringList.size).toList()
+            val taskList = arrayListOf(
+                ToolsTask(),
+                ShareTask(context, this, transitionList, selectedRowList),
+                MarkFavoriteTask(this, transitionList),
+                CreateFolderWithSelectionTask(this, supportFragmentManager, transitionList, folderPath.value!!, favoritesDao),
+                RenameTask(this, supportFragmentManager, transitionList, favoritesDao),
+                DeleteTask(this, supportFragmentManager, transitionList),
+                MoveTask(context, this, optionsBottomDialog, transitionList),
+                CopyTask(context, this, optionsBottomDialog, transitionList),
+                DuplicateTask(this, transitionList, selectedRowList)
+            )
             when (transitionList.size) {
 
                 0, 1 -> {
@@ -204,11 +216,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                         if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
                                             list += OptionsModel(drawableList.getDrawable(index)!!,
                                                 context.getString(R.string.remove_favorite),
-                                                s.value)
+                                                taskList.get(index))
                                         } else {
                                             list += OptionsModel(drawableList.getDrawable(index)!!,
                                                 stringList.get(index).toString(),
-                                                s.value)
+                                                taskList.get(index))
                                         }
                                     }
                                 }
@@ -218,11 +230,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                     if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
                                         list += OptionsModel(drawableList.getDrawable(index)!!,
                                             context.getString(R.string.remove_favorite),
-                                            s.value)
+                                           taskList.get(index))
                                     } else {
                                         list += OptionsModel(drawableList.getDrawable(index)!!,
                                             stringList.get(index).toString(),
-                                            s.value)
+                                             taskList.get(index))
                                     }
                                 }
                             }
@@ -235,19 +247,20 @@ class TransitionFragmentViewModel @Inject constructor(
                             if (s.value != TaskType.TOOLSTASK.value && s.value != TaskType.SHARETASK.value &&
                                 s.value != TaskType.RENAMETASK.value && s.value != TaskType.MARKFAVORITETASK.value
                             )
-                                list += OptionsModel(drawableList.getDrawable(index)!!, stringList.get(index).toString(), s.value)
+                                list += OptionsModel(drawableList.getDrawable(index)!!,
+                                    stringList.get(index).toString(),
+                                    taskList.get(index))
                         }
                     } else {
                         taskTypeList.forEachIndexed { index, s ->
                             if (s.value != TaskType.RENAMETASK.value && s.value != TaskType.MARKFAVORITETASK.value)
                                 list += OptionsModel(drawableList.getDrawable(index)!!,
                                     stringList.get(index).toString(),
-                                    s.value)
+                                    taskList.get(index))
                         }
                     }
                 }
             }
-            val adapter = OptionsAdapter()
             adapter.setListener(object :
                 BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
                 override fun onItemClick(
@@ -256,85 +269,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding: RowOptionsItemBinding,
                 ) {
                     rowBinding.optionsBottomLinearLayout.setOnClickListener {
-                        when (item.tasktype) {
-                            TaskType.MARKFAVORITETASK.value -> {
-                                when (transitionList.size) {
-                                    1 -> {
-                                        val model = transitionList.get(0)
-                                        if (model.isFavorite) {
-                                            removeFavorite(model.filePath,
-                                                model.fileName,
-                                                model.fileType)
-                                        } else {
-                                            markFavorite(model.filePath,
-                                                model.fileExtension,
-                                                model.fileName,
-                                                model.fileType)
-                                        }
-                                    }
-                                }
-                            }
-                            TaskType.RENAMETASK.value -> {
-                                when (transitionList.size) {
-                                    1 -> {
-                                        val model = transitionList.get(0)
-                                        val dialog = RenameDialog(this@TransitionFragmentViewModel, model, favoritesDao)
-                                        dialog.show(supportFragmentManager, "RenameTaskDialog")
-                                    }
-                                }
-                            }
-                            TaskType.DELETETASK.value -> {
-                                showDeleteFialog(supportFragmentManager, transitionList)
-                            }
-
-                            TaskType.CREATEFOLDERWITHSELECTIONTASK.value -> {
-                                val dialog = CreateFolderWithSelectionDialog(this@TransitionFragmentViewModel,
-                                    transitionList,
-                                    folderPath.value!!,
-                                    favoritesDao)
-                                dialog.show(supportFragmentManager, "CreateFolderWithSelection")
-                            }
-                            TaskType.DUPLICATE.value -> {
-                                transitionList.forEach { model ->
-                                    if (File(model.filePath).isDirectory) {
-                                        val targetFolderName =
-                                            FileUtils.createFileAndFolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
-                                                model.fileName)
-                                        FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
-                                    } else {
-                                        val targetFolderName =
-                                            FileUtils.createFileAndFolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
-                                                model.fileName)
-
-                                    }
-                                }
-                                selectedRowList.clear()
-                                if (getLongListenerActivatedMutableLiveData().value!!)
-                                    sendLongListenerActivated(false)
-                            }
-                            TaskType.MOVETASK.value -> {
-                                optionsBottomDialog.dismiss()
-                                sendLongListenerActivated(false)
-                                val intent = Intent(context, TaskActivity::class.java)
-                                intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.MOVETASK.value)
-                                intent.putParcelableArrayListExtra(Constants.SELECTED_LIST, transitionList)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                context.startActivity(intent)
-                            }
-                            TaskType.COPYTASK.value -> {
-                                optionsBottomDialog.dismiss()
-                                sendLongListenerActivated(false)
-                                val intent = Intent(context, TaskActivity::class.java)
-                                intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.COPYTASK.value)
-                                intent.putParcelableArrayListExtra(Constants.SELECTED_LIST, transitionList)
-                                intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
-                                context.startActivity(intent)
-                            }
-                            TaskType.SHARETASK.value -> {
-                                shareItemsList(context, transitionList)
-                                selectedRowList.clear()
-                            }
-                        }
+                        item.task.doTask()
                         optionsBottomDialog.dismiss()
                         sendItemsChangedSate(true)
                         sendLongListenerActivated(false)
@@ -343,10 +278,7 @@ class TransitionFragmentViewModel @Inject constructor(
             })
 
             adapter.setItems(list)
-            val title =
-                if (transitionList.size > 1) transitionList.size.toString() + "  " + context!!.getString(R.string.item) else transitionList.get(
-                    0).fileName
-            optionsBottomDialog = OptionsBottomDialog(adapter, title, transitionList)
+
             optionsBottomDialog.show(supportFragmentManager, "OptionsBottomDialog")
         } catch (e: Exception) {
             LogManager.log(TAG, e.toString())

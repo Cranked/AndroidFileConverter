@@ -6,6 +6,7 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.CreateFolderDialogLayoutBinding
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
+import java.io.File
 
 class CreateFolderDialogFragment(private val viewModel: TransitionFragmentViewModel, private val path: String) :
     BaseViewBindingDialogFragment<CreateFolderDialogLayoutBinding>(R.layout.create_folder_dialog_layout) {
@@ -20,7 +21,8 @@ class CreateFolderDialogFragment(private val viewModel: TransitionFragmentViewMo
             }
             val folderName =
                 binding.folderNameEditText.text!!.toString()
-            FileUtils.createFileAndFolder(path, folderName)
+            val realPath = if (path.last().equals(File.separator.last())) path.substringBeforeLast("/") else path
+            FileUtils.createFileAndFolder(realPath, folderName)
             viewModel.sendPath(path)
             dialog.dismiss()
         }
