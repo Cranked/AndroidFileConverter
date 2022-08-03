@@ -13,5 +13,6 @@
     <color name="white">#FFFFFFFF</color>
     <color name="colorSecondaryDark">#cccccc</color>
     <color name="long_listener_background_color">#9999FF</color>
+    <color name="image_background_color">@color/black</color>
 
 </resources>

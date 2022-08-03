@@ -10,16 +10,17 @@
     <ImageView
         android:id="@+id/backImageView"
         android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_height="0dp"
+        android:layout_margin="@dimen/icon_margin_8dp"
         android:clickable="true"
-        android:src="@drawable/icon_back"
+        android:src="@drawable/icon_back_black"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <ImageView
         android:id="@+id/layoutImageView"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/icon_margin_8dp"
         android:layout_marginRight="@dimen/icon_margin_8dp"
@@ -32,7 +33,7 @@
 
     <Spinner
         android:id="@+id/sortSpinner"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/icon_margin_8dp"
         android:layout_marginRight="@dimen/icon_margin_8dp"
@@ -47,7 +48,7 @@
 
     <ImageView
         android:id="@+id/searchImageView"
-        android:layout_width="40dp"
+        android:layout_width="50dp"
         android:layout_height="0dp"
         android:layout_marginTop="@dimen/icon_margin_8dp"
         android:layout_marginEnd="@dimen/icon_margin_8dp"
@@ -57,15 +58,6 @@
         app:layout_constraintEnd_toStartOf="@+id/layoutImageView"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/icon_search" />
-
-    <TextView
-        android:id="@+id/titleTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginLeft="@dimen/icon_margin_8dp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/backImageView"
-        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/titleToolBar"

@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
+import com.cranked.androidcorelibrary.dialog.BaseDialog
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
@@ -21,13 +22,17 @@ import com.cranked.androidfileconverter.data.database.entity.RecentFile
 import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
+import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 
-@SuppressWarnings("unchecked")
+
 class HomeFragment @Inject constructor() :
     BaseDaggerFragment<HomeFragmentViewModel, FragmentHomeBinding>(HomeFragmentViewModel::class.java) {
+    val TAG = this::class.java.toString().substringAfterLast(".")
+
     @Inject
     lateinit var favoritesAdapterViewModel: FavoritesAdapterViewModel
 
@@ -44,6 +49,7 @@ class HomeFragment @Inject constructor() :
     }
     var favoritesAdapter: FavoritesAdapter = FavoritesAdapter(R.layout.row_favorite_adapter_item)
     var recentFileAdapter = RecentFileAdapter()
+    lateinit var dialog: BaseDialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -52,6 +58,7 @@ class HomeFragment @Inject constructor() :
         initViewModel(viewModel)
         app.rxBus.send(ToolbarState(true))
         app.appComponent.bindHomeFragment(this)
+
         return binding.root
     }
 
@@ -67,53 +74,67 @@ class HomeFragment @Inject constructor() :
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        val favoritesList = favoritesDao.getAll()
-        viewModel.storageModel = FileUtility.getMenuFolderSizes(context!!, processedFilesDao)
-        viewModel.setFavoritesState(favoritesList.isNotEmpty())
-        favoritesAdapter = favoritesAdapterViewModel.setAdapter(this.context!!,
-            binding.favoritesRecylerView,
-            favoritesAdapter,
-            favoritesList
-        )
-        favoritesAdapter.setListener(object :
-            BaseViewBindingRecyclerViewAdapter.ClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
-            override fun onItemClick(
-                item: FavoriteFile,
-                position: Int,
-                rowBinding: RowFavoriteAdapterItemBinding,
-            ) {
-                rowBinding.favoriteLinearLayout.setOnClickListener {
-                    viewModel.goToTransitionFragmentWithIntent(it, item.path)
+        try {
+            super.onViewCreated(view, savedInstanceState)
+            val favoritesList = favoritesDao.getAll()
+            viewModel.storageModel = FileUtility.getMenuFolderSizes(context!!, processedFilesDao)
+            viewModel.setFavoritesState(favoritesList.isNotEmpty())
+            favoritesAdapter = favoritesAdapterViewModel.setAdapter(this.context!!,
+                binding.favoritesRecylerView,
+                favoritesAdapter,
+                favoritesList
+            )
+            favoritesAdapter.setListener(object :
+                BaseViewBindingRecyclerViewAdapter.ClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
+                override fun onItemClick(
+                    item: FavoriteFile,
+                    position: Int,
+                    rowBinding: RowFavoriteAdapterItemBinding,
+                ) {
+                    rowBinding.favoriteLinearLayout.setOnClickListener {
+                        when (item.fileType) {
+                            FileType.FOLDER.type -> {
+                                viewModel.goToTransitionFragmentWithIntent(it, item.path)
+                            }
+                            FileType.PNG.type, FileType.JPG.type -> {
+                                val view = layoutInflater.inflate(R.layout.show_image_layout, null)
+                                dialog = BaseDialog(activity!!, view, R.style.fullscreenalert)
+                                viewModel.showDialog(activity!!, dialog, view, item.path)
+                            }
+                        }
+                    }
                 }
-            }
-        })
-        favoritesAdapter.setLongClickListener(object :
-            BaseViewBindingRecyclerViewAdapter.LongClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
-            override fun onItemLongClick(item: FavoriteFile, position: Int, rowBinding: RowFavoriteAdapterItemBinding) {
-                rowBinding.favoriteLinearLayout.setOnLongClickListener {
-                    viewModel.showFavoritesBottomDialog(activity!!.supportFragmentManager, it, item)
-                    return@setOnLongClickListener true
+            })
+            favoritesAdapter.setLongClickListener(object :
+                BaseViewBindingRecyclerViewAdapter.LongClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
+                override fun onItemLongClick(item: FavoriteFile, position: Int, rowBinding: RowFavoriteAdapterItemBinding) {
+                    rowBinding.favoriteLinearLayout.setOnLongClickListener {
+                        viewModel.showFavoritesBottomDialog(activity!!.supportFragmentManager, it, item)
+                        return@setOnLongClickListener true
+                    }
                 }
-            }
-        })
-        recentFileAdapter = recentFileAdapterViewModel.setAdapter(
-            this.context!!, binding.recentFileRecylerView,
-            recentFileAdapter, recentFileAdapterViewModel.recentFileList
-        )
-        recentFileAdapter.setListener(object :
-            BaseViewBindingRecyclerViewAdapter.ClickListener<RecentFile, RowRecentfileItemBinding> {
-            override fun onItemClick(
-                item: RecentFile,
-                position: Int,
-                rowBinding: RowRecentfileItemBinding,
-            ) {
-                rowBinding.recentFileLinearLayout.setOnClickListener {
-                    viewModel.goToTransitionFragmentWithIntent(it, item.path)
+            })
+            recentFileAdapter = recentFileAdapterViewModel.setAdapter(
+                this.context!!, binding.recentFileRecylerView,
+                recentFileAdapter, recentFileAdapterViewModel.recentFileList
+            )
+            recentFileAdapter.setListener(object :
+                BaseViewBindingRecyclerViewAdapter.ClickListener<RecentFile, RowRecentfileItemBinding> {
+                override fun onItemClick(
+                    item: RecentFile,
+                    position: Int,
+                    rowBinding: RowRecentfileItemBinding,
+                ) {
+                    rowBinding.recentFileLinearLayout.setOnClickListener {
+                        viewModel.goToTransitionFragmentWithIntent(it, item.path)
+                    }
                 }
-            }
-        })
+            })
+        } catch (e: Exception) {
+            LogManager.log(TAG, e)
+        }
     }
+
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
         viewModel.getFavItemsChangedMutableLiveData().observe(viewLifecycleOwner) {

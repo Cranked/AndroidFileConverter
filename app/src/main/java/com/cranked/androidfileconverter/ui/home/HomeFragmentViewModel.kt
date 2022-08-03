@@ -2,14 +2,21 @@ package com.cranked.androidfileconverter.ui.home
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.View
+import android.view.WindowManager
+import android.widget.ImageView
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
+import com.cranked.androidcorelibrary.dialog.BaseDialog
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.BuildConfig
@@ -40,14 +47,13 @@ class HomeFragmentViewModel @Inject constructor(
     private val mContext: Context,
 ) :
     BaseViewModel() {
-    val TAG = HomeFragmentViewModel::class.java.name
+    val TAG = this::class.java.toString().substringAfterLast(".")
     private val favItemsChanged = MutableLiveData<Boolean>()
     val sdCardState = FileUtils.isSdCardMounted(mContext)
     var storageModel = FileUtility.getMenuFolderSizes(mContext, processedFilesDao)
     private var favoritesList = favoritesDao.getAll()
     var favoritesState = favoritesList.isNotEmpty()
     private lateinit var favoriteOptionsBottomDialog: FavoriteOptionsBottomDialog
-
     fun goToTransitionFragmentWithIntent(view: View, path: String) {
         val bundle = Bundle()
         bundle.putString(Constants.DESTINATION_PATH_ACTION, path)
@@ -130,7 +136,7 @@ class HomeFragmentViewModel @Inject constructor(
     fun shareItemsList(context: Context, transitionList: ArrayList<FavoriteFile>) {
         val uriArrayList = arrayListOf<Uri>()
         transitionList.forEach {
-            uriArrayList += FileProvider.getUriForFile(context!!,
+            uriArrayList += FileProvider.getUriForFile(context,
                 BuildConfig.APPLICATION_ID + ".provider",
                 File(it.path))
         }
@@ -138,10 +144,37 @@ class HomeFragmentViewModel @Inject constructor(
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        intent.setType("*/*")
+        intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.")
         context.startActivity(intent)
+    }
+
+    fun showDialog(activity: FragmentActivity, dialog: BaseDialog, view: View, path: String) {
+        view.findViewById<ImageView>(R.id.backShowImageView)
+            .setOnClickListener {
+                dialog.getDialog().dismiss()
+            }
+        val bitmap = BitmapFactory.decodeFile(path)
+        val imageView = view.findViewById<ImageView>(R.id.showImageView)
+        imageView.setImageBitmap(bitmap)
+        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.black)
+        dialog.getDialog().setOnKeyListener { dialog, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                dialog.dismiss()
+            }
+            return@setOnKeyListener false
+        }
+        dialog.getDialog().setOnCancelListener {
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_color)
+        }
+        dialog.getDialog().setOnDismissListener {
+            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+            activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_color)
+        }
+        dialog.getDialog().show()
     }
 
     fun getFavItemsChangedMutableLiveData() = this.favItemsChanged
