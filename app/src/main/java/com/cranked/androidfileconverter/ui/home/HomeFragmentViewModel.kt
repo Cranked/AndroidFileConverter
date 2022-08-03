@@ -1,5 +1,6 @@
 package com.cranked.androidfileconverter.ui.home
 
+import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.graphics.BitmapFactory
@@ -150,14 +151,7 @@ class HomeFragmentViewModel @Inject constructor(
         context.startActivity(intent)
     }
 
-    fun showDialog(activity: FragmentActivity, dialog: BaseDialog, view: View, path: String) {
-        view.findViewById<ImageView>(R.id.backShowImageView)
-            .setOnClickListener {
-                dialog.getDialog().dismiss()
-            }
-        val bitmap = BitmapFactory.decodeFile(path)
-        val imageView = view.findViewById<ImageView>(R.id.showImageView)
-        imageView.setImageBitmap(bitmap)
+    fun showDialog(activity: Activity, dialog: BaseDialog) {
         activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
         activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.black)
         dialog.getDialog().setOnKeyListener { dialog, keyCode, _ ->

@@ -1,9 +1,11 @@
 package com.cranked.androidfileconverter.ui.home
 
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
@@ -98,8 +100,16 @@ class HomeFragment @Inject constructor() :
                             }
                             FileType.PNG.type, FileType.JPG.type -> {
                                 val view = layoutInflater.inflate(R.layout.show_image_layout, null)
+                                view.findViewById<ImageView>(R.id.backShowImageView)
+                                    .setOnClickListener {
+                                        dialog.getDialog().dismiss()
+                                    }
+                                val bitmap = BitmapFactory.decodeFile(item.path)
+                                val imageView = view.findViewById<ImageView>(R.id.showImageView)
+                                imageView.setImageBitmap(bitmap)
                                 dialog = BaseDialog(activity!!, view, R.style.fullscreenalert)
-                                viewModel.showDialog(activity!!, dialog, view, item.path)
+                                viewModel.showDialog(activity!!, dialog)
+
                             }
                         }
                     }

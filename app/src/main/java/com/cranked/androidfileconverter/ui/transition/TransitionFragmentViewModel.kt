@@ -230,11 +230,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                     if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
                                         list += OptionsModel(drawableList.getDrawable(index)!!,
                                             context.getString(R.string.remove_favorite),
-                                           taskList.get(index))
+                                            taskList.get(index))
                                     } else {
                                         list += OptionsModel(drawableList.getDrawable(index)!!,
                                             stringList.get(index).toString(),
-                                             taskList.get(index))
+                                            taskList.get(index))
                                     }
                                 }
                             }
