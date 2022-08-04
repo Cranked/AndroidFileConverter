@@ -1,5 +1,6 @@
 package com.cranked.androidfileconverter.adapter
 
+import android.view.View
 import androidx.annotation.LayoutRes
 import androidx.core.content.ContextCompat
 import com.bumptech.glide.Glide
@@ -10,6 +11,7 @@ import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import com.cranked.androidfileconverter.utils.enums.FileType
+import java.io.File
 
 class FavoritesAdapter(@LayoutRes layoutRes: Int) :
     BaseViewBindingRecyclerViewAdapter<FavoriteFile, RowFavoriteAdapterItemBinding>(layoutRes) {
@@ -27,19 +29,28 @@ class FavoritesAdapter(@LayoutRes layoutRes: Int) :
             )
         )
         when (item.fileType) {
-            FileType.FOLDER.type -> binding.favImage.setImageDrawable(binding.root.context.getDrawable(
-                R.drawable.icon_folder))
-            FileType.JPG.type, FileType.PNG.type -> {
+            FileType.FOLDER.type -> {
+                binding.favImage.visibility = View.VISIBLE
+                binding.pdfShowImage.visibility = View.GONE
+                binding.favImage.setImageDrawable(binding.root.context.getDrawable(R.drawable.icon_folder))
+            }
+            FileType.JPG.type,
+            FileType.PNG.type,
+            -> {
                 Glide.with(binding.root.context).load(item.path).placeholder(R.drawable.custom_dialog).apply(RequestOptions().transform(
                     RoundedCorners(10))).into(binding.favImage)
             }
-
             FileType.WORD.type -> Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_doc)
                 .placeholder(R.drawable.custom_dialog).apply(RequestOptions().transform(RoundedCorners(10)))
                 .into(binding.favImage)
-            FileType.PDF.type ->  Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf)
-                .placeholder(R.drawable.custom_dialog).apply(RequestOptions().transform(RoundedCorners(10)))
-                .into(binding.favImage)
+            FileType.PDF.type -> {
+                binding.favImage.visibility = View.GONE
+//                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf)
+//                    .placeholder(R.drawable.custom_dialog).apply(RequestOptions().transform(RoundedCorners(10)))
+//                    .into(binding.favImage)
+                binding.pdfShowImage.visibility = View.VISIBLE
+                binding.pdfShowImage.fromFile(File(item.path)).show()
+            }
             FileType.EXCEL.type -> {
                 Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_psd)
                     .placeholder(R.drawable.custom_dialog).apply(RequestOptions().transform(RoundedCorners(10)))

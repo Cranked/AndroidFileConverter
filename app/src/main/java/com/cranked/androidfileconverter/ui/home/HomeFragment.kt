@@ -1,15 +1,16 @@
 package com.cranked.androidfileconverter.ui.home
 
+import android.app.Dialog
 import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import androidx.core.view.drawToBitmap
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
-import com.cranked.androidcorelibrary.dialog.BaseDialog
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
@@ -51,7 +52,7 @@ class HomeFragment @Inject constructor() :
     }
     var favoritesAdapter: FavoritesAdapter = FavoritesAdapter(R.layout.row_favorite_adapter_item)
     var recentFileAdapter = RecentFileAdapter()
-    lateinit var dialog: BaseDialog
+    lateinit var dialog: Dialog
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -102,18 +103,34 @@ class HomeFragment @Inject constructor() :
                                 val view = layoutInflater.inflate(R.layout.show_image_layout, null)
                                 view.findViewById<ImageView>(R.id.backShowImageView)
                                     .setOnClickListener {
-                                        dialog.getDialog().dismiss()
+                                        dialog.dismiss()
                                     }
                                 val bitmap = BitmapFactory.decodeFile(item.path)
                                 val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                 imageView.setImageBitmap(bitmap)
-                                dialog = BaseDialog(activity!!, view, R.style.fullscreenalert)
+                                dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                dialog.setContentView(view)
                                 viewModel.showDialog(activity!!, dialog)
 
                             }
                         }
                     }
+                    rowBinding.pdfShowImage.setOnClickListener {
+                        val view = layoutInflater.inflate(R.layout.show_image_layout, null)
+                        view.findViewById<ImageView>(R.id.backShowImageView)
+                            .setOnClickListener {
+                                dialog.dismiss()
+                            }
+                        val bitmap = it.drawToBitmap()
+                        val imageView = view.findViewById<ImageView>(R.id.showImageView)
+                        imageView.setImageBitmap(bitmap)
+                        dialog = Dialog(activity!!, R.style.fullscreenalert)
+                        dialog.setContentView(view)
+                        viewModel.showDialog(activity!!, dialog)
+
+                    }
                 }
+
             })
             favoritesAdapter.setLongClickListener(object :
                 BaseViewBindingRecyclerViewAdapter.LongClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {

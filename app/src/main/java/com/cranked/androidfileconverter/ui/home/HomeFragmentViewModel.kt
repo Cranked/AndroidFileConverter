@@ -1,18 +1,16 @@
 package com.cranked.androidfileconverter.ui.home
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
-import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
 import android.view.WindowManager
-import android.widget.ImageView
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
@@ -40,6 +38,7 @@ import com.cranked.androidfileconverter.utils.enums.TaskType
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import java.io.File
 import javax.inject.Inject
+
 
 class HomeFragmentViewModel @Inject constructor(
     private val context: Context,
@@ -151,24 +150,23 @@ class HomeFragmentViewModel @Inject constructor(
         context.startActivity(intent)
     }
 
-    fun showDialog(activity: Activity, dialog: BaseDialog) {
-        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+    fun showDialog(activity: Activity, dialog: Dialog) {
         activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.black)
-        dialog.getDialog().setOnKeyListener { dialog, keyCode, _ ->
+        dialog.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
                 dialog.dismiss()
             }
             return@setOnKeyListener false
         }
-        dialog.getDialog().setOnCancelListener {
+        dialog.setOnCancelListener {
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_color)
+            activity.window.statusBarColor = activity!!.getColor(R.color.primary_color)
         }
-        dialog.getDialog().setOnDismissListener {
+        dialog.setOnDismissListener {
             activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.primary_color)
+            activity.window.statusBarColor = activity!!.getColor(R.color.primary_color)
         }
-        dialog.getDialog().show()
+        dialog.show()
     }
 
     fun getFavItemsChangedMutableLiveData() = this.favItemsChanged
