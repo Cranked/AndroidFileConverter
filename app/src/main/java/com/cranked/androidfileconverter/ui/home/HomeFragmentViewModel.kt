@@ -100,8 +100,8 @@ class HomeFragmentViewModel @Inject constructor(
                     taskTypeList.forEachIndexed { index, s ->
                         if (s.value == TaskType.REMOVEFAVORITETASK.value)
                             list += OptionsModel(drawableList.getDrawable(index)!!,
-                                stringList.get(index).toString(),
-                                taskList.get(index))
+                                stringList[index].toString(),
+                                taskList[index])
                     }
                 }
                 else -> {
@@ -112,8 +112,8 @@ class HomeFragmentViewModel @Inject constructor(
                             s.value == TaskType.GOTOFOLDER.value
                         )
                             list += OptionsModel(drawableList.getDrawable(index)!!,
-                                stringList.get(index).toString(),
-                                taskList.get(index))
+                                stringList[index].toString(),
+                                taskList[index])
                     }
                 }
             }
@@ -151,20 +151,12 @@ class HomeFragmentViewModel @Inject constructor(
     }
 
     fun showDialog(activity: Activity, dialog: Dialog) {
-        activity.window.statusBarColor = ContextCompat.getColor(activity!!, R.color.black)
+        activity.window.statusBarColor = ContextCompat.getColor(activity, R.color.black)
         dialog.setOnKeyListener { _, keyCode, _ ->
             if (keyCode == KeyEvent.KEYCODE_BACK) {
-                dialog.dismiss()
+                dialog.cancel()
             }
             return@setOnKeyListener false
-        }
-        dialog.setOnCancelListener {
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.window.statusBarColor = activity!!.getColor(R.color.primary_color)
-        }
-        dialog.setOnDismissListener {
-            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            activity.window.statusBarColor = activity!!.getColor(R.color.primary_color)
         }
         dialog.show()
     }

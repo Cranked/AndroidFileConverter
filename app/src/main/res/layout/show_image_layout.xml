@@ -2,73 +2,87 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-        <LinearLayout
-            android:id="@+id/showImageConstraintLayout"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:background="@color/image_background_color"
-            android:orientation="vertical">
+    <LinearLayout
+        android:id="@+id/showImageConstraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/image_background_color"
+        android:orientation="vertical">
 
-            <LinearLayout
+        <LinearLayout
+            android:id="@+id/showOptionsMenuLayout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:orientation="horizontal">
+
+            <androidx.constraintlayout.widget.ConstraintLayout
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
-                android:orientation="horizontal">
-
-                <androidx.constraintlayout.widget.ConstraintLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:padding="@dimen/icon_margin_8dp">
-
-                    <ImageView
-                        android:id="@+id/backShowImageView"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:src="@drawable/icon_back_white"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintStart_toStartOf="parent"
-                        app:layout_constraintTop_toTopOf="parent" />
-
-                    <ImageView
-                        android:id="@+id/imageView8"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        android:layout_marginRight="@dimen/icon_margin_8dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toStartOf="@+id/imageView9"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/icon_tool_white" />
-
-                    <ImageView
-                        android:id="@+id/imageView9"
-                        android:layout_width="40dp"
-                        android:layout_height="0dp"
-                        app:layout_constraintBottom_toBottomOf="parent"
-                        app:layout_constraintEnd_toEndOf="parent"
-                        app:layout_constraintTop_toTopOf="parent"
-                        app:srcCompat="@drawable/icon_vertical_dots_white" />
-                </androidx.constraintlayout.widget.ConstraintLayout>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="@dimen/favorite_item_height"
-                android:layout_margin="@dimen/side_margin"
-                android:layout_weight="1"
-                android:gravity="center"
-                android:padding="@dimen/side_margin"
-                android:visibility="visible">
+                android:padding="@dimen/icon_margin_8dp">
 
                 <ImageView
-                    android:id="@+id/showImageView"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:scaleType="fitXY"
-                    app:srcCompat="@drawable/custom_radius_filetransform" />
-            </LinearLayout>
+                    android:id="@+id/backShowImageView"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:src="@drawable/icon_back_white"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent" />
+
+                <ImageView
+                    android:id="@+id/imageView8"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    android:layout_marginRight="@dimen/icon_margin_8dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toStartOf="@+id/imageView9"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/icon_tool_white" />
+
+                <ImageView
+                    android:id="@+id/imageView9"
+                    android:layout_width="40dp"
+                    android:layout_height="0dp"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:srcCompat="@drawable/icon_vertical_dots_white" />
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/imageLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/favorite_item_height"
+            android:layout_margin="@dimen/side_margin"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:padding="@dimen/side_margin"
+            android:visibility="visible">
+
+            <ImageView
+                android:id="@+id/showImageView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                app:srcCompat="@drawable/custom_radius_filetransform" />
+
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="100dp">
 
             <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="40dp"></LinearLayout>
-        </LinearLayout>
-</layout>
+                android:id="@+id/footLinearLayout"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:padding="@dimen/side_margin" />
+        </HorizontalScrollView>
+
+    </LinearLayout>
+    </layout>

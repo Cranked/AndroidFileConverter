@@ -2,12 +2,15 @@ package com.cranked.androidfileconverter.ui.home
 
 import android.app.Dialog
 import android.graphics.BitmapFactory
+import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.ImageView
-import androidx.core.view.drawToBitmap
+import android.widget.LinearLayout
+import android.widget.RadioButton
+import android.widget.RadioGroup
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
@@ -25,10 +28,14 @@ import com.cranked.androidfileconverter.data.database.entity.RecentFile
 import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
+import com.cranked.androidfileconverter.databinding.ShowImageLayoutBinding
 import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.OnSwipeTouchListener
 import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.file.FileUtility
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import java.io.File
 import javax.inject.Inject
 
 
@@ -61,7 +68,8 @@ class HomeFragment @Inject constructor() :
         initViewModel(viewModel)
         app.rxBus.send(ToolbarState(true))
         app.appComponent.bindHomeFragment(this)
-
+        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
         return binding.root
     }
 
@@ -111,26 +119,105 @@ class HomeFragment @Inject constructor() :
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
                                 dialog.setContentView(view)
                                 viewModel.showDialog(activity!!, dialog)
+                                dialog.setOnCancelListener {
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                }
+                                dialog.setOnDismissListener {
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                }
 
+                            }
+                            FileType.PDF.type -> {
+                                rowBinding.favImage.visibility = View.GONE
+                                val bindingImage =
+                                    ShowImageLayoutBinding.inflate(layoutInflater)
+                                bindingImage.backShowImageView.setOnClickListener {
+                                    dialog.cancel()
+                                }
+                                dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.path), 0)
+                                bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(resources, showImageBitmap, 10f))
+                                val list = BitmapUtils.pdfToBitmap(binding.root.context, File(item.path))
+                                val radioGroup = RadioGroup(bindingImage.root.context)
+                                radioGroup.orientation = RadioGroup.HORIZONTAL
+                                radioGroup.clearCheck()
+                                list.forEachIndexed { index, imageBitmap ->
+                                    val drawable =
+                                        BitmapUtils.getRoundedBitmap(resources, showImageBitmap, 10f).toDrawable(resources)
+                                    val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                    var params = LinearLayout.LayoutParams(100,
+                                        100)
+                                    params.setMargins(0, 0, 0, 0)
+                                    val radioButton = RadioButton(binding.root.context)
+                                    params.gravity = Gravity.CENTER
+                                    radioButton.buttonDrawable = null
+                                    radioButton.id = index
+                                    radioButton.setOnCheckedChangeListener { _, isChecked ->
+                                        if (isChecked) {
+                                            params.width += 50
+                                            params.height += 50
+                                            radioButton.layoutParams = params
+                                            val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                            radioButton.background = layerDrawable
+                                            bindingImage.showImageView.setImageBitmap(imageBitmap)
+                                            bindingImage.executePendingBindings()
+                                        } else {
+                                            params.width -= 50
+                                            params.height -= 50
+                                            radioButton.layoutParams = params
+                                            val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                            radioButton.background = layerDrawable
+                                        }
+                                    }
+                                    radioButton.layoutParams = params
+                                    radioButton.background = layerDrawable
+                                    radioButton.setOnClickListener {
+                                        bindingImage.showImageView.setImageBitmap(imageBitmap)
+                                        bindingImage.executePendingBindings()
+                                    }
+                                    radioGroup.addView(radioButton)
+                                    bindingImage.executePendingBindings()
+                                }
+                                bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
+                                    View.OnTouchListener {
+                                    override fun onSwipeRight(): Boolean {
+                                        if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
+                                            (radioGroup[radioGroup.checkedRadioButtonId+1] as RadioButton).isChecked=true
+                                        } else
+                                            (radioGroup[0] as RadioButton).isChecked=true
+                                        return true
+                                    }
+
+                                    override fun onSwipeLeft(): Boolean {
+                                        if (radioGroup.checkedRadioButtonId > 0)
+                                            (radioGroup[radioGroup.checkedRadioButtonId-1] as RadioButton).isChecked=true
+                                        else
+                                            (radioGroup[radioGroup.childCount-1] as RadioButton).isChecked=true
+                                        return true
+                                    }
+                                })
+                                radioGroup.gravity = Gravity.CENTER
+                                (radioGroup.getChildAt(0) as RadioButton).isChecked = true
+
+                                bindingImage.footLinearLayout.addView(radioGroup)
+                                bindingImage.executePendingBindings()
+                                dialog.setContentView(bindingImage.root)
+                                viewModel.showDialog(activity!!, dialog)
+                                dialog.setOnDismissListener {
+                                    rowBinding.favImage.visibility = View.VISIBLE
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                }
+                                dialog.setOnCancelListener {
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                }
                             }
                         }
                     }
-                    rowBinding.pdfShowImage.setOnClickListener {
-                        val view = layoutInflater.inflate(R.layout.show_image_layout, null)
-                        view.findViewById<ImageView>(R.id.backShowImageView)
-                            .setOnClickListener {
-                                dialog.dismiss()
-                            }
-                        val bitmap = it.drawToBitmap()
-                        val imageView = view.findViewById<ImageView>(R.id.showImageView)
-                        imageView.setImageBitmap(bitmap)
-                        dialog = Dialog(activity!!, R.style.fullscreenalert)
-                        dialog.setContentView(view)
-                        viewModel.showDialog(activity!!, dialog)
-
-                    }
                 }
-
             })
             favoritesAdapter.setLongClickListener(object :
                 BaseViewBindingRecyclerViewAdapter.LongClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {

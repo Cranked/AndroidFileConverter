@@ -23,13 +23,7 @@ class FavoritesAdapterViewModel @Inject constructor() :
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.HORIZONTAL, false)
             adapter = favoritesAdapter
-            setOnScrollChangeListener { v, scrollX, scrollY, oldScrollX, oldScrollY ->
-                recyclerView.post {
-                    favoritesAdapter.setItems(list)
-                }
-            }
         }
-
         return favoritesAdapter
     }
 
