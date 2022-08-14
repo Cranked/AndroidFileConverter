@@ -2,15 +2,20 @@ package com.cranked.androidfileconverter.ui.transition
 
 import android.animation.Animator
 import android.animation.AnimatorSet
+import android.app.Activity
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
+import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.os.Bundle
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
-import android.widget.Toast
+import android.view.*
+import android.widget.*
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.core.graphics.drawable.toDrawable
+import androidx.core.view.get
 import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
@@ -30,23 +35,18 @@ import com.cranked.androidfileconverter.adapter.transition.TransitionGridAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
-import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
-import com.cranked.androidfileconverter.databinding.RowOptionsItemBinding
-import com.cranked.androidfileconverter.databinding.RowTransitionGridItemBinding
-import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
+import com.cranked.androidfileconverter.databinding.*
 import com.cranked.androidfileconverter.dialog.DeleteDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
 import com.cranked.androidfileconverter.dialog.options.*
 import com.cranked.androidfileconverter.ui.model.OptionsModel
-import com.cranked.androidfileconverter.utils.AnimationX
-import com.cranked.androidfileconverter.utils.AnimationXUtils
-import com.cranked.androidfileconverter.utils.Constants
-import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.*
 import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.FileType
 import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject
@@ -66,8 +66,11 @@ class TransitionFragmentViewModel @Inject constructor(
     private val selectedRowSize = MutableLiveData<Int>()
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
+    lateinit var dialog: Dialog
     fun setAdapter(
         context: Context,
+        activity: FragmentActivity,
+        layoutInflater: LayoutInflater,
         recylerView: RecyclerView,
         transitionListAdapter: TransitionListAdapter,
         list: MutableList<TransitionModel>,
@@ -92,8 +95,126 @@ class TransitionFragmentViewModel @Inject constructor(
                     }
                     rowBinding.transitionLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
-                            sendIntentToTransitionFragmentWithIntent(it,
-                                item.filePath)
+                            when (item.fileType) {
+                                FileType.FOLDER.type -> {
+                                    sendIntentToTransitionFragmentWithIntent(it,
+                                        item.filePath)
+                                }
+                                FileType.FOLDER.type -> {
+                                    sendIntentToTransitionFragmentWithIntent(it,
+                                        item.filePath)
+                                }
+                                FileType.PNG.type, FileType.JPG.type -> {
+                                    val view = layoutInflater.inflate(R.layout.show_image_layout, null)
+                                    view.findViewById<ImageView>(R.id.backShowImageView)
+                                        .setOnClickListener {
+                                            dialog.dismiss()
+                                        }
+                                    val bitmap = BitmapFactory.decodeFile(item.filePath)
+                                    val imageView = view.findViewById<ImageView>(R.id.showImageView)
+                                    imageView.setImageBitmap(bitmap)
+                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                    dialog.setContentView(view)
+                                    showDialog(activity!!, dialog)
+                                    dialog.setOnCancelListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+                                    dialog.setOnDismissListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+
+                                }
+                                FileType.PDF.type -> {
+                                    val bindingImage =
+                                        ShowImageLayoutBinding.inflate(layoutInflater)
+                                    bindingImage.backShowImageView.setOnClickListener {
+                                        dialog.cancel()
+                                    }
+                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.filePath), 0)
+                                    bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
+                                        showImageBitmap,
+                                        10f))
+                                    val list = BitmapUtils.pdfToBitmap(context, File(item.filePath))
+                                    val radioGroup = RadioGroup(bindingImage.root.context)
+                                    radioGroup.orientation = RadioGroup.HORIZONTAL
+                                    radioGroup.clearCheck()
+                                    list.forEachIndexed { index, imageBitmap ->
+                                        val drawable =
+                                            BitmapUtils.getRoundedBitmap(activity.resources, imageBitmap, 10f)
+                                                .toDrawable(activity.resources)
+                                        val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                        var params = LinearLayout.LayoutParams(100,
+                                            100)
+                                        params.setMargins(0, 0, 0, 0)
+                                        val radioButton = RadioButton(context)
+                                        params.gravity = Gravity.CENTER
+                                        radioButton.buttonDrawable = null
+                                        radioButton.id = index
+                                        radioButton.setOnCheckedChangeListener { _, isChecked ->
+                                            if (isChecked) {
+                                                params.width += 50
+                                                params.height += 50
+                                                radioButton.layoutParams = params
+                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                                radioButton.background = layerDrawable
+                                                bindingImage.showImageView.setImageBitmap(imageBitmap)
+                                                bindingImage.executePendingBindings()
+                                            } else {
+                                                params.width -= 50
+                                                params.height -= 50
+                                                radioButton.layoutParams = params
+                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                                radioButton.background = layerDrawable
+                                            }
+                                        }
+                                        radioButton.layoutParams = params
+                                        radioButton.background = layerDrawable
+                                        radioButton.setOnClickListener {
+                                            bindingImage.showImageView.setImageBitmap(imageBitmap)
+                                            bindingImage.executePendingBindings()
+                                        }
+                                        radioGroup.addView(radioButton)
+                                        bindingImage.executePendingBindings()
+                                    }
+                                    bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
+                                        View.OnTouchListener {
+                                        override fun onSwipeRight(): Boolean {
+                                            if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
+                                                (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
+                                            } else
+                                                (radioGroup[0] as RadioButton).isChecked = true
+                                            return true
+                                        }
+
+                                        override fun onSwipeLeft(): Boolean {
+                                            if (radioGroup.checkedRadioButtonId > 0)
+                                                (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
+                                            else
+                                                (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
+                                            return true
+                                        }
+                                    })
+                                    radioGroup.gravity = Gravity.CENTER
+                                    (radioGroup.getChildAt(0) as RadioButton).isChecked = true
+
+                                    bindingImage.footLinearLayout.addView(radioGroup)
+                                    bindingImage.executePendingBindings()
+                                    dialog.setContentView(bindingImage.root)
+                                    showDialog(activity!!, dialog)
+                                    dialog.setOnDismissListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+                                    dialog.setOnCancelListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+                                }
+                            }
+
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
@@ -125,6 +246,8 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun setAdapter(
         context: Context,
+        activity: FragmentActivity,
+        layoutInflater: LayoutInflater,
         recylerView: RecyclerView,
         transitionGridAdapter: TransitionGridAdapter,
         list: MutableList<TransitionModel>,
@@ -149,8 +272,122 @@ class TransitionFragmentViewModel @Inject constructor(
                     }
                     rowBinding.transitionGridLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
-                            sendIntentToTransitionFragmentWithIntent(it,
-                                item.filePath)
+                            when (item.fileType) {
+                                FileType.FOLDER.type -> {
+                                    sendIntentToTransitionFragmentWithIntent(it,
+                                        item.filePath)
+                                }
+                                FileType.PNG.type, FileType.JPG.type -> {
+                                    val view = layoutInflater.inflate(R.layout.show_image_layout, null)
+                                    view.findViewById<ImageView>(R.id.backShowImageView)
+                                        .setOnClickListener {
+                                            dialog.dismiss()
+                                        }
+                                    val bitmap = BitmapFactory.decodeFile(item.filePath)
+                                    val imageView = view.findViewById<ImageView>(R.id.showImageView)
+                                    imageView.setImageBitmap(bitmap)
+                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                    dialog.setContentView(view)
+                                    showDialog(activity!!, dialog)
+                                    dialog.setOnCancelListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+                                    dialog.setOnDismissListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+
+                                }
+                                FileType.PDF.type -> {
+                                    val bindingImage =
+                                        ShowImageLayoutBinding.inflate(layoutInflater)
+                                    bindingImage.backShowImageView.setOnClickListener {
+                                        dialog.cancel()
+                                    }
+                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.filePath), 0)
+                                    bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
+                                        showImageBitmap,
+                                        10f))
+                                    val list = BitmapUtils.pdfToBitmap(context, File(item.filePath))
+                                    val radioGroup = RadioGroup(bindingImage.root.context)
+                                    radioGroup.orientation = RadioGroup.HORIZONTAL
+                                    radioGroup.clearCheck()
+                                    list.forEachIndexed { index, imageBitmap ->
+                                        val drawable =
+                                            BitmapUtils.getRoundedBitmap(activity.resources, imageBitmap, 10f)
+                                                .toDrawable(activity.resources)
+                                        val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                        var params = LinearLayout.LayoutParams(100,
+                                            100)
+                                        params.setMargins(0, 0, 0, 0)
+                                        val radioButton = RadioButton(context)
+                                        params.gravity = Gravity.CENTER
+                                        radioButton.buttonDrawable = null
+                                        radioButton.id = index
+                                        radioButton.setOnCheckedChangeListener { _, isChecked ->
+                                            if (isChecked) {
+                                                params.width += 50
+                                                params.height += 50
+                                                radioButton.layoutParams = params
+                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                                radioButton.background = layerDrawable
+                                                bindingImage.showImageView.setImageBitmap(imageBitmap)
+                                                bindingImage.executePendingBindings()
+                                            } else {
+                                                params.width -= 50
+                                                params.height -= 50
+                                                radioButton.layoutParams = params
+                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                                radioButton.background = layerDrawable
+                                            }
+                                        }
+                                        radioButton.layoutParams = params
+                                        radioButton.background = layerDrawable
+                                        radioButton.setOnClickListener {
+                                            bindingImage.showImageView.setImageBitmap(imageBitmap)
+                                            bindingImage.executePendingBindings()
+                                        }
+                                        radioGroup.addView(radioButton)
+                                        bindingImage.executePendingBindings()
+                                    }
+                                    bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
+                                        View.OnTouchListener {
+                                        override fun onSwipeRight(): Boolean {
+                                            if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
+                                                (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
+                                            } else
+                                                (radioGroup[0] as RadioButton).isChecked = true
+                                            return true
+                                        }
+
+                                        override fun onSwipeLeft(): Boolean {
+                                            if (radioGroup.checkedRadioButtonId > 0)
+                                                (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
+                                            else
+                                                (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
+                                            return true
+                                        }
+                                    })
+                                    radioGroup.gravity = Gravity.CENTER
+                                    (radioGroup.getChildAt(0) as RadioButton).isChecked = true
+
+                                    bindingImage.footLinearLayout.addView(radioGroup)
+                                    bindingImage.executePendingBindings()
+                                    dialog.setContentView(bindingImage.root)
+                                    showDialog(activity!!, dialog)
+                                    dialog.setOnDismissListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+                                    dialog.setOnCancelListener {
+                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                    }
+                                }
+                            }
+
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
@@ -360,6 +597,8 @@ class TransitionFragmentViewModel @Inject constructor(
                     binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
                         R.drawable.icon_list))
                     setAdapter(context,
+                        activity,
+                        activity.layoutInflater,
                         binding.transitionRecylerView,
                         transitionFragment.transitionGridAdapter,
                         getFilesFromPath(path, app.getFilterState()))
@@ -368,7 +607,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     app.setLayoutState(LayoutState.LIST_LAYOUT.value)
                     binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
                         R.drawable.icon_grid))
-                    setAdapter(context,
+                    setAdapter(context, activity!!, activity!!.layoutInflater,
                         binding.transitionRecylerView,
                         transitionFragment.transitionListAdapter,
                         getFilesFromPath(path, app.getFilterState()))
@@ -562,6 +801,17 @@ class TransitionFragmentViewModel @Inject constructor(
                 }
             })
         }
+    }
+
+    fun showDialog(activity: Activity, dialog: Dialog) {
+        activity.window.statusBarColor = ContextCompat.getColor(activity, R.color.black)
+        dialog.setOnKeyListener { _, keyCode, _ ->
+            if (keyCode == KeyEvent.KEYCODE_BACK) {
+                dialog.cancel()
+            }
+            return@setOnKeyListener false
+        }
+        dialog.show()
     }
 
     fun getItemsChangedStateMutableLiveData() = this.itemsChangedState

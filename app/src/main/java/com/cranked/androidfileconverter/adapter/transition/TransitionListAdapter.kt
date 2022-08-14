@@ -10,6 +10,8 @@ import com.cranked.androidfileconverter.databinding.RowTransitionListItemBinding
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 import com.cranked.androidfileconverter.utils.enums.FileType
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
+import java.io.File
 
 class TransitionListAdapter(private val transitionFragmentViewModel: TransitionFragmentViewModel) :
     BaseViewBindingRecyclerViewAdapter<TransitionModel, RowTransitionListItemBinding>(R.layout.row_transition_list_item) {
@@ -36,9 +38,8 @@ class TransitionListAdapter(private val transitionFragmentViewModel: TransitionF
                     .into(binding.transitionListImageView)
             }
             FileType.PDF.type -> {
-                Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf)
-                    .placeholder(R.drawable.custom_dialog).apply(RequestOptions().transform(RoundedCorners(10)))
-                    .into(binding.transitionListImageView)
+                binding.transitionListImageView.setImageBitmap(BitmapUtils.getImageOfPdf(binding.root.context, File(item.filePath), 0))
+
             }
             FileType.PNG.type, FileType.JPG.type -> {
                 Glide.with(binding.root.context).load(item.filePath).placeholder(R.drawable.custom_dialog)

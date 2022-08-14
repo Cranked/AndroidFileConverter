@@ -137,6 +137,7 @@ class HomeFragment @Inject constructor() :
                                     dialog.cancel()
                                 }
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
+
                                 val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.path), 0)
                                 bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(resources, showImageBitmap, 10f))
                                 val list = BitmapUtils.pdfToBitmap(binding.root.context, File(item.path))
@@ -145,7 +146,7 @@ class HomeFragment @Inject constructor() :
                                 radioGroup.clearCheck()
                                 list.forEachIndexed { index, imageBitmap ->
                                     val drawable =
-                                        BitmapUtils.getRoundedBitmap(resources, showImageBitmap, 10f).toDrawable(resources)
+                                        BitmapUtils.getRoundedBitmap(resources, imageBitmap, 10f).toDrawable(resources)
                                     val layerDrawable = LayerDrawable(arrayOf(drawable))
                                     var params = LinearLayout.LayoutParams(100,
                                         100)
@@ -172,7 +173,7 @@ class HomeFragment @Inject constructor() :
                                         }
                                     }
                                     radioButton.layoutParams = params
-                                    radioButton.background = layerDrawable
+                                    radioButton.background = drawable
                                     radioButton.setOnClickListener {
                                         bindingImage.showImageView.setImageBitmap(imageBitmap)
                                         bindingImage.executePendingBindings()
@@ -184,17 +185,17 @@ class HomeFragment @Inject constructor() :
                                     View.OnTouchListener {
                                     override fun onSwipeRight(): Boolean {
                                         if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
-                                            (radioGroup[radioGroup.checkedRadioButtonId+1] as RadioButton).isChecked=true
+                                            (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
                                         } else
-                                            (radioGroup[0] as RadioButton).isChecked=true
+                                            (radioGroup[0] as RadioButton).isChecked = true
                                         return true
                                     }
 
                                     override fun onSwipeLeft(): Boolean {
                                         if (radioGroup.checkedRadioButtonId > 0)
-                                            (radioGroup[radioGroup.checkedRadioButtonId-1] as RadioButton).isChecked=true
+                                            (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
                                         else
-                                            (radioGroup[radioGroup.childCount-1] as RadioButton).isChecked=true
+                                            (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
                                         return true
                                     }
                                 })
