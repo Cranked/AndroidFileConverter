@@ -1,28 +1,22 @@
 package com.cranked.androidfileconverter.ui.transition
 
-import android.content.Intent
-import android.net.Uri
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
-import androidx.core.content.FileProvider
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
-import com.cranked.androidfileconverter.BuildConfig
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.transition.TransitionGridAdapter
 import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
-import com.cranked.androidfileconverter.ui.main.MainViewModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
-import java.io.File
 import javax.inject.Inject
 
 class TransitionFragment @Inject constructor() :
@@ -31,19 +25,17 @@ class TransitionFragment @Inject constructor() :
     ) {
     private val TAG = TransitionFragment::class.toString()
     private val app by lazy {
-        activity!!.application as FileConvertApp
+        requireActivity().application as FileConvertApp
     }
     private val spinnerList by lazy {
         listOf(
-            context!!.getString(R.string.sorting_a_to_z),
-            context!!.getString(R.string.sorting_z_to_a),
-            context!!.getString(R.string.sorting_newest_items),
-            context!!.getString(R.string.sorting_oldest_items),
+            requireContext().getString(R.string.sorting_a_to_z),
+            requireContext().getString(R.string.sorting_z_to_a),
+            requireContext().getString(R.string.sorting_newest_items),
+            requireContext().getString(R.string.sorting_oldest_items),
         )
     }
 
-    @Inject
-    lateinit var mainViewModel: MainViewModel
     lateinit var transitionListAdapter: TransitionListAdapter
     lateinit var transitionGridAdapter: TransitionGridAdapter
 
@@ -141,18 +133,15 @@ class TransitionFragment @Inject constructor() :
                 LayoutState.LIST_LAYOUT.value -> {
                     binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context!!.getDrawable(
                         R.drawable.icon_grid))
-                    transitionListAdapter = viewModel.setAdapter(context!!,
-                        binding.transitionRecylerView,
-                        transitionListAdapter,
-                        list)
+                    transitionListAdapter =
+                        viewModel.setAdapter(context!!, activity!!, activity!!.layoutInflater, binding.transitionRecylerView,
+                            transitionListAdapter, list)
                 }
                 LayoutState.GRID_LAYOUT.value -> {
                     binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context!!.getDrawable(
                         R.drawable.icon_list))
-                    transitionGridAdapter = viewModel.setAdapter(context!!,
-                        binding.transitionRecylerView,
-                        transitionGridAdapter,
-                        list)
+                    transitionGridAdapter = viewModel.setAdapter(context!!, requireActivity(), requireActivity().layoutInflater,
+                        binding.transitionRecylerView, transitionGridAdapter, list)
                 }
             }
         } catch (e: Exception) {

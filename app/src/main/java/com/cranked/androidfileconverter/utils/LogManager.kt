@@ -6,4 +6,8 @@ object LogManager {
     fun log(tag: String, msg: String) {
         Log.e(tag, msg)
     }
+
+    fun log(tag: String, e: Exception) {
+        Log.e(tag, e.toString())
+    }
 }

@@ -21,7 +21,7 @@
     <string name="folder_name">Klasör Adı</string>
     <string name="folder">Klasör</string>
     <string name="cancel">İptal</string>
-    <string name="folderexit">Folder is Exist</string>
+    <string name="folderexit">Klasör mevcut</string>
 
 
     <!--    Search Strings-->
@@ -48,7 +48,7 @@
     <!--    SettingsFragment-->
     <string name="language">Dil</string>
     <string name="ask_before_using_mobiledata">Mobil veri kullanılmadan önce sor</string>
-    <string name="dark_mode">Dark mode</string>
+    <string name="dark_mode">Karanlık Mod</string>
 
     <!--    OptionsBottomDialogStrings-->
 
@@ -62,6 +62,18 @@
     <string name="copy">Kopyala</string>
     <string name="duplicate">İki Nüsha</string>
     <string name="go_to_folder">Klasöre Git</string>
+
+    <string-array name="options_menu_string_array">
+        <item>@string/tools</item>
+        <item>@string/share</item>
+        <item>@string/mark_as_favorite</item>
+        <item>@string/create_folder_with_selections</item>
+        <item>@string/rename</item>
+        <item>@string/delete</item>
+        <item>@string/move</item>
+        <item>@string/copy</item>
+        <item>@string/duplicate</item>
+    </string-array>
 
     <string-array name="favorites_optionsmenu_string_array">
         <item>@string/tools</item>

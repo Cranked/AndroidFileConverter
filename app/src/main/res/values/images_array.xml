@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <integer-array name="imagesArray">
-
         <item>@drawable/icon_tools</item>
         <item>@drawable/icon_share</item>
         <item>@drawable/icon_favorite</item>

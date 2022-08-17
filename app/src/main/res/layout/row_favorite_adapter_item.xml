@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:tools="http://schemas.android.com/tools"
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <data>
@@ -11,8 +12,8 @@
 
     <LinearLayout
         android:id="@+id/favoriteLinearLayout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="220dp"
         android:clickable="true"
         android:contextClickable="true"
         android:longClickable="true"
@@ -22,9 +23,7 @@
         <ImageView
             android:id="@+id/fav_image"
             android:layout_width="@dimen/favorite_item_width"
-            android:layout_height="@dimen/favorite_item_height"
-            android:backgroundTint="#BA1818"
-            app:srcCompat="@drawable/custom_radius_folder" />
+            android:layout_height="@dimen/favorite_item_height" />
 
         <TextView
             android:id="@+id/fav_item_name"
@@ -36,7 +35,7 @@
             android:maxWidth="200dp"
             android:maxLines="1"
             android:singleLine="true"
-            android:text="TextViewawdawdawdawdawdawdawd"
+            android:text="TextView"
             android:textSize="16sp"
             android:textStyle="bold" />
 
