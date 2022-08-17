@@ -199,7 +199,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     })
                                     radioGroup.gravity = Gravity.CENTER
                                     (radioGroup.getChildAt(0) as RadioButton).isChecked = true
-
                                     bindingImage.footLinearLayout.addView(radioGroup)
                                     bindingImage.executePendingBindings()
                                     dialog.setContentView(bindingImage.root)
@@ -443,7 +442,6 @@ class TransitionFragmentViewModel @Inject constructor(
                 DuplicateTask(this, transitionList, selectedRowList)
             )
             when (transitionList.size) {
-
                 0, 1 -> {
                     transitionList.forEach {
                         when (it.fileType) {
