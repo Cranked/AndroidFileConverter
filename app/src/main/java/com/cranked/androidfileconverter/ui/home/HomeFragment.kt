@@ -17,7 +17,7 @@ import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.adapter.FavoritesAdapter
+import com.cranked.androidfileconverter.adapter.favorites.FavoritesAdapter
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapter
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
@@ -29,6 +29,7 @@ import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
 import com.cranked.androidfileconverter.databinding.ShowImageLayoutBinding
+import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.OnSwipeTouchListener
 import com.cranked.androidfileconverter.utils.enums.FileType
@@ -103,6 +104,8 @@ class HomeFragment @Inject constructor() :
                     rowBinding: RowFavoriteAdapterItemBinding,
                 ) {
                     rowBinding.favoriteLinearLayout.setOnClickListener {
+                        val bindingImage =
+                            ShowImageLayoutBinding.inflate(layoutInflater)
                         when (item.fileType) {
                             FileType.FOLDER.type -> {
                                 viewModel.goToTransitionFragmentWithIntent(it, item.path)
@@ -131,8 +134,7 @@ class HomeFragment @Inject constructor() :
                             }
                             FileType.PDF.type -> {
                                 rowBinding.favImage.visibility = View.GONE
-                                val bindingImage =
-                                    ShowImageLayoutBinding.inflate(layoutInflater)
+
                                 bindingImage.backShowImageView.setOnClickListener {
                                     dialog.cancel()
                                 }
@@ -215,7 +217,11 @@ class HomeFragment @Inject constructor() :
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
+
                             }
+                        }
+                        bindingImage.optionsOfFileDetail.setOnClickListener {
+                            val list = arrayListOf<OptionsModel>()
                         }
                     }
                 }

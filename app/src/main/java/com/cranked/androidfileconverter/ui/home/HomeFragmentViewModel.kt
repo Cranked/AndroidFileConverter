@@ -92,16 +92,15 @@ class HomeFragmentViewModel @Inject constructor(
             }.toList()
             val taskList = arrayListOf(ToolsTask(),
                 ShareTask(context, this, arrayListOf(favoriteFile)),
-                GoToFolderTask(this, favoriteFile, view),
-                RemoveFavoriteTask(this, favoritesDao, favoriteFile))
+                GoToFolderTask( favoriteFile, view),
+                RemoveFavoriteTask( favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()
             when (favoriteFile.fileType) {
                 FileType.FOLDER.type -> {
                     taskTypeList.forEachIndexed { index, s ->
                         if (s.value == TaskType.REMOVEFAVORITETASK.value)
                             list += OptionsModel(drawableList.getDrawable(index)!!,
-                                stringList[index].toString(),
-                                taskList[index])
+                                stringList[index].toString(),taskList[index])
                     }
                 }
                 else -> {
@@ -121,7 +120,7 @@ class HomeFragmentViewModel @Inject constructor(
             optionsAdapter.setListener(object : BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
                 override fun onItemClick(item: OptionsModel, position: Int, rowBinding: RowOptionsItemBinding) {
                     rowBinding.root.setOnClickListener {
-                        item.task.doTask()
+                        item.task.doTask(this@HomeFragmentViewModel)
                         favoriteOptionsBottomDialog.dismiss()
                     }
                 }

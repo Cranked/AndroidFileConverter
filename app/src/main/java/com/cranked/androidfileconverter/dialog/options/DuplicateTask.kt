@@ -1,6 +1,7 @@
 package com.cranked.androidfileconverter.dialog.options
 
 import com.cranked.androidcorelibrary.utility.FileUtils
+import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 import com.cranked.androidfileconverter.utils.file.FileUtility
@@ -11,7 +12,7 @@ class DuplicateTask(
     private val transitionList: ArrayList<TransitionModel>,
     private val selectedRowList: ArrayList<TransitionModel>,
 ) : ITask() {
-    override fun doTask() {
+    override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
 
         transitionList.forEach { model ->
             if (File(model.filePath).isDirectory) {
@@ -30,7 +31,8 @@ class DuplicateTask(
         viewModel.sendLongListenerActivated(false)
     }
 
-
+    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
+    }
 
 
 }

@@ -1,19 +1,23 @@
 package com.cranked.androidfileconverter.dialog.options
 
+import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 
-class MarkFavoriteTask(private val viewModel: TransitionFragmentViewModel,private val transitionList:List<TransitionModel>) : ITask() {
-    override fun doTask() {
+class MarkFavoriteTask(private val transitionList: List<TransitionModel>) : ITask() {
+    lateinit var transitionFragmentViewModel: TransitionFragmentViewModel
+    lateinit var homeFragmentViewModel: HomeFragmentViewModel
+
+    override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
         when (transitionList.size) {
             1 -> {
-                val model = transitionList.get(0)
+                val model = transitionList[0]
                 if (model.isFavorite) {
-                    viewModel.removeFavorite(model.filePath,
+                    transitionFragmentViewModel.removeFavorite(model.filePath,
                         model.fileName,
                         model.fileType)
                 } else {
-                    viewModel.markFavorite(model.filePath,
+                    transitionFragmentViewModel.markFavorite(model.filePath,
                         model.fileExtension,
                         model.fileName,
                         model.fileType)
@@ -21,6 +25,9 @@ class MarkFavoriteTask(private val viewModel: TransitionFragmentViewModel,privat
             }
         }
 
+    }
+
+    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
     }
 
 }

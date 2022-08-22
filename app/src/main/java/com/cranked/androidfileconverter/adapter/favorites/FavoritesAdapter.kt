@@ -1,4 +1,4 @@
-package com.cranked.androidfileconverter.adapter
+package com.cranked.androidfileconverter.adapter.favorites
 
 import android.view.View
 import androidx.annotation.LayoutRes
