@@ -4,18 +4,18 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.TypedArray
 import android.net.Uri
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.View
-import android.view.WindowManager
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
-import com.cranked.androidcorelibrary.dialog.BaseDialog
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.BuildConfig
@@ -92,15 +92,15 @@ class HomeFragmentViewModel @Inject constructor(
             }.toList()
             val taskList = arrayListOf(ToolsTask(),
                 ShareTask(context, this, arrayListOf(favoriteFile)),
-                GoToFolderTask( favoriteFile, view),
-                RemoveFavoriteTask( favoritesDao, favoriteFile))
+                GoToFolderTask(favoriteFile, view),
+                RemoveFavoriteTask(favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()
             when (favoriteFile.fileType) {
                 FileType.FOLDER.type -> {
                     taskTypeList.forEachIndexed { index, s ->
                         if (s.value == TaskType.REMOVEFAVORITETASK.value)
                             list += OptionsModel(drawableList.getDrawable(index)!!,
-                                stringList[index].toString(),taskList[index])
+                                stringList[index].toString(), taskList[index])
                     }
                 }
                 else -> {
@@ -122,6 +122,63 @@ class HomeFragmentViewModel @Inject constructor(
                     rowBinding.root.setOnClickListener {
                         item.task.doTask(this@HomeFragmentViewModel)
                         favoriteOptionsBottomDialog.dismiss()
+                    }
+                }
+            })
+            favoriteOptionsBottomDialog = FavoriteOptionsBottomDialog(optionsAdapter)
+            favoriteOptionsBottomDialog.show(supportFragmentManager, "FavoriteOptionsBottomDialog")
+        } catch (e: Exception) {
+            LogManager.log(TAG, e.toString())
+        }
+    }
+
+    fun showFavoritesBottomDialog(
+        supportFragmentManager: FragmentManager,
+        fragment: Fragment,
+        dialog: Dialog,
+        favoriteFile: FavoriteFile,
+        stringList: List<String>,
+        drawableList: TypedArray,
+        taskTypeList: List<TaskType>,
+    ) {
+        try {
+            val list = arrayListOf<OptionsModel>()
+            val taskList = arrayListOf(ToolsTask(),
+                ShareTask(context, this, arrayListOf(favoriteFile)),
+                GoToFolderTask(favoriteFile, fragment.view!!, dialog),
+                RemoveFavoriteTask(favoritesDao, favoriteFile))
+            val optionsAdapter = OptionsAdapter()
+            when (favoriteFile.fileType) {
+                FileType.PNG.type, FileType.JPG.type -> {
+                    taskTypeList.forEachIndexed { index, s ->
+                        if (s.value == TaskType.SHARETASK.value ||
+                            s.value == TaskType.REMOVEFAVORITETASK.value ||
+                            s.value == TaskType.GOTOFOLDER.value
+                        )
+                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                stringList[index],
+                                taskList[index])
+                    }
+                }
+                FileType.PDF.type -> {
+                    taskTypeList.forEachIndexed { index, s ->
+                        if (s.value == TaskType.TOOLSTASK.value ||
+                            s.value == TaskType.SHARETASK.value ||
+                            s.value == TaskType.REMOVEFAVORITETASK.value ||
+                            s.value == TaskType.GOTOFOLDER.value
+                        )
+                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                stringList[index],
+                                taskList[index])
+                    }
+                }
+            }
+            optionsAdapter.setItems(list)
+            optionsAdapter.setListener(object : BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
+                override fun onItemClick(item: OptionsModel, position: Int, rowBinding: RowOptionsItemBinding) {
+                    rowBinding.root.setOnClickListener {
+                        favoriteOptionsBottomDialog.dismiss()
+                        item.task.doTask(this@HomeFragmentViewModel)
                     }
                 }
             })

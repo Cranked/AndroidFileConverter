@@ -17,8 +17,8 @@ import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.adapter.favorites.FavoritesAdapter
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
+import com.cranked.androidfileconverter.adapter.favorites.FavoritesAdapter
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapter
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
@@ -29,10 +29,10 @@ import com.cranked.androidfileconverter.databinding.FragmentHomeBinding
 import com.cranked.androidfileconverter.databinding.RowFavoriteAdapterItemBinding
 import com.cranked.androidfileconverter.databinding.RowRecentfileItemBinding
 import com.cranked.androidfileconverter.databinding.ShowImageLayoutBinding
-import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.OnSwipeTouchListener
 import com.cranked.androidfileconverter.utils.enums.FileType
+import com.cranked.androidfileconverter.utils.enums.TaskType
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
@@ -60,7 +60,7 @@ class HomeFragment @Inject constructor() :
     }
     var favoritesAdapter: FavoritesAdapter = FavoritesAdapter(R.layout.row_favorite_adapter_item)
     var recentFileAdapter = RecentFileAdapter()
-    lateinit var dialog: Dialog
+    var dialog: Dialog? = null
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -114,19 +114,19 @@ class HomeFragment @Inject constructor() :
                                 val view = layoutInflater.inflate(R.layout.show_image_layout, null)
                                 view.findViewById<ImageView>(R.id.backShowImageView)
                                     .setOnClickListener {
-                                        dialog.dismiss()
+                                        dialog!!.dismiss()
                                     }
                                 val bitmap = BitmapFactory.decodeFile(item.path)
                                 val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                 imageView.setImageBitmap(bitmap)
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
-                                dialog.setContentView(view)
-                                viewModel.showDialog(activity!!, dialog)
-                                dialog.setOnCancelListener {
+                                dialog!!.setContentView(view)
+                                viewModel.showDialog(activity!!, dialog!!)
+                                dialog!!.setOnCancelListener {
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
-                                dialog.setOnDismissListener {
+                                dialog!!.setOnDismissListener {
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
@@ -136,7 +136,7 @@ class HomeFragment @Inject constructor() :
                                 rowBinding.favImage.visibility = View.GONE
 
                                 bindingImage.backShowImageView.setOnClickListener {
-                                    dialog.cancel()
+                                    dialog!!.cancel()
                                 }
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
 
@@ -206,22 +206,34 @@ class HomeFragment @Inject constructor() :
 
                                 bindingImage.footLinearLayout.addView(radioGroup)
                                 bindingImage.executePendingBindings()
-                                dialog.setContentView(bindingImage.root)
-                                viewModel.showDialog(activity!!, dialog)
-                                dialog.setOnDismissListener {
+                                dialog!!.setContentView(bindingImage.root)
+                                viewModel.showDialog(activity!!, dialog!!)
+                                dialog!!.setOnDismissListener {
                                     rowBinding.favImage.visibility = View.VISIBLE
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
-                                dialog.setOnCancelListener {
+                                dialog!!.setOnCancelListener {
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
-
                             }
                         }
                         bindingImage.optionsOfFileDetail.setOnClickListener {
-                            val list = arrayListOf<OptionsModel>()
+                            val stringList =
+                                activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toList()
+                            val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                            val taskTypeList = TaskType.values().filter {
+                                it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                        it.value == TaskType.REMOVEFAVORITETASK.value || it.value == TaskType.GOTOFOLDER.value
+                            }.toList()
+                            viewModel.showFavoritesBottomDialog(activity!!.supportFragmentManager,
+                                this@HomeFragment,
+                                dialog!!,
+                                item,
+                                stringList,
+                                drawableList,
+                                taskTypeList)
                         }
                     }
                 }

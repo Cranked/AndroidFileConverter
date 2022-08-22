@@ -5,9 +5,6 @@ import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewMode
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
 
 class MarkFavoriteTask(private val transitionList: List<TransitionModel>) : ITask() {
-    lateinit var transitionFragmentViewModel: TransitionFragmentViewModel
-    lateinit var homeFragmentViewModel: HomeFragmentViewModel
-
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
         when (transitionList.size) {
             1 -> {
@@ -24,10 +21,10 @@ class MarkFavoriteTask(private val transitionList: List<TransitionModel>) : ITas
                 }
             }
         }
-
     }
 
     override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
+
     }
 
 }
