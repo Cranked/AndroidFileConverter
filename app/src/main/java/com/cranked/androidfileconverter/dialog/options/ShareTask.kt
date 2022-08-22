@@ -33,7 +33,7 @@ class ShareTask(
         this.selectedRowList = selectedRowList
     }
 
-    override fun doTask() {
+    override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
         if (this.transitionFragmentViewModel != null) {
             this.transitionFragmentViewModel!!.shareItemsList(context, transitionList)
             selectedRowList.clear()
@@ -41,6 +41,10 @@ class ShareTask(
         if (this.homeFragmentViewModel != null) {
             this.homeFragmentViewModel!!.shareItemsList(context, favoriteList)
         }
+    }
+
+    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
+        homeFragmentViewModel.shareItemsList(context, favoriteList)
     }
 
 

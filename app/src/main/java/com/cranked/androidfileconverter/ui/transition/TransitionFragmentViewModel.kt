@@ -100,10 +100,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     sendIntentToTransitionFragmentWithIntent(it,
                                         item.filePath)
                                 }
-                                FileType.FOLDER.type -> {
-                                    sendIntentToTransitionFragmentWithIntent(it,
-                                        item.filePath)
-                                }
                                 FileType.PNG.type, FileType.JPG.type -> {
                                     val view = layoutInflater.inflate(R.layout.show_image_layout, null)
                                     view.findViewById<ImageView>(R.id.backShowImageView)
@@ -124,7 +120,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                         activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                     }
-
                                 }
                                 FileType.PDF.type -> {
                                     val bindingImage =
@@ -386,7 +381,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     }
                                 }
                             }
-
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
@@ -433,12 +427,12 @@ class TransitionFragmentViewModel @Inject constructor(
             val taskList = arrayListOf(
                 ToolsTask(),
                 ShareTask(context, this, transitionList, selectedRowList),
-                MarkFavoriteTask(this, transitionList),
-                CreateFolderWithSelectionTask(this, supportFragmentManager, transitionList, folderPath.value!!, favoritesDao),
-                RenameTask(this, supportFragmentManager, transitionList, favoritesDao),
-                DeleteTask(this, supportFragmentManager, transitionList),
-                MoveTask(context, this, optionsBottomDialog, transitionList),
-                CopyTask(context, this, optionsBottomDialog, transitionList),
+                MarkFavoriteTask( transitionList),
+                CreateFolderWithSelectionTask( supportFragmentManager, transitionList, folderPath.value!!, favoritesDao),
+                RenameTask(supportFragmentManager, transitionList, favoritesDao),
+                DeleteTask( supportFragmentManager, transitionList),
+                MoveTask(context,  optionsBottomDialog, transitionList),
+                CopyTask(context,  optionsBottomDialog, transitionList),
                 DuplicateTask(this, transitionList, selectedRowList)
             )
             when (transitionList.size) {
@@ -451,11 +445,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                         if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
                                             list += OptionsModel(drawableList.getDrawable(index)!!,
                                                 context.getString(R.string.remove_favorite),
-                                                taskList.get(index))
+                                                taskList[index])
                                         } else {
                                             list += OptionsModel(drawableList.getDrawable(index)!!,
-                                                stringList.get(index).toString(),
-                                                taskList.get(index))
+                                                stringList[index].toString(),
+                                                taskList[index])
                                         }
                                     }
                                 }
@@ -465,11 +459,11 @@ class TransitionFragmentViewModel @Inject constructor(
                                     if (it.isFavorite && s.value == TaskType.MARKFAVORITETASK.value) {
                                         list += OptionsModel(drawableList.getDrawable(index)!!,
                                             context.getString(R.string.remove_favorite),
-                                            taskList.get(index))
+                                            taskList[index])
                                     } else {
                                         list += OptionsModel(drawableList.getDrawable(index)!!,
                                             stringList.get(index).toString(),
-                                            taskList.get(index))
+                                            taskList[index])
                                     }
                                 }
                             }
@@ -483,15 +477,15 @@ class TransitionFragmentViewModel @Inject constructor(
                                 s.value != TaskType.RENAMETASK.value && s.value != TaskType.MARKFAVORITETASK.value
                             )
                                 list += OptionsModel(drawableList.getDrawable(index)!!,
-                                    stringList.get(index).toString(),
-                                    taskList.get(index))
+                                    stringList[index].toString(),
+                                    taskList[index])
                         }
                     } else {
                         taskTypeList.forEachIndexed { index, s ->
                             if (s.value != TaskType.RENAMETASK.value && s.value != TaskType.MARKFAVORITETASK.value)
                                 list += OptionsModel(drawableList.getDrawable(index)!!,
-                                    stringList.get(index).toString(),
-                                    taskList.get(index))
+                                    stringList[index].toString(),
+                                    taskList[index])
                         }
                     }
                 }
@@ -504,7 +498,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding: RowOptionsItemBinding,
                 ) {
                     rowBinding.optionsBottomLinearLayout.setOnClickListener {
-                        item.task.doTask()
+                        item.task.doTask(this@TransitionFragmentViewModel)
                         optionsBottomDialog.dismiss()
                         sendItemsChangedSate(true)
                         sendLongListenerActivated(false)

@@ -1,10 +1,10 @@
 package com.cranked.androidfileconverter.adapter
 
 import android.content.Context
-import androidx.core.view.postDelayed
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
+import com.cranked.androidfileconverter.adapter.favorites.FavoritesAdapter
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import javax.inject.Inject
 
