@@ -5,7 +5,6 @@ import android.graphics.BitmapFactory
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.*
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.RadioButton
 import android.widget.RadioGroup
@@ -103,6 +102,8 @@ class HomeFragment @Inject constructor() :
                     position: Int,
                     rowBinding: RowFavoriteAdapterItemBinding,
                 ) {
+
+
                     rowBinding.favoriteLinearLayout.setOnClickListener {
                         val bindingImage =
                             ShowImageLayoutBinding.inflate(layoutInflater)
@@ -111,16 +112,11 @@ class HomeFragment @Inject constructor() :
                                 viewModel.goToTransitionFragmentWithIntent(it, item.path)
                             }
                             FileType.PNG.type, FileType.JPG.type -> {
-                                val view = layoutInflater.inflate(R.layout.show_image_layout, null)
-                                view.findViewById<ImageView>(R.id.backShowImageView)
-                                    .setOnClickListener {
-                                        dialog!!.dismiss()
-                                    }
+                                bindingImage.backShowImageView.setOnClickListener { dialog!!.dismiss() }
                                 val bitmap = BitmapFactory.decodeFile(item.path)
-                                val imageView = view.findViewById<ImageView>(R.id.showImageView)
-                                imageView.setImageBitmap(bitmap)
+                                bindingImage.showImageView.setImageBitmap(bitmap)
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
-                                dialog!!.setContentView(view)
+                                dialog!!.setContentView(bindingImage.root)
                                 viewModel.showDialog(activity!!, dialog!!)
                                 dialog!!.setOnCancelListener {
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
@@ -130,7 +126,7 @@ class HomeFragment @Inject constructor() :
                                     activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
-
+                                bindingImage.executePendingBindings()
                             }
                             FileType.PDF.type -> {
                                 rowBinding.favImage.visibility = View.GONE
@@ -236,6 +232,7 @@ class HomeFragment @Inject constructor() :
                                 taskTypeList)
                         }
                     }
+
                 }
             })
             favoritesAdapter.setLongClickListener(object :
