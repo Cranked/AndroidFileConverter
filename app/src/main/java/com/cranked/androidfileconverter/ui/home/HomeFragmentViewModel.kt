@@ -177,8 +177,8 @@ class HomeFragmentViewModel @Inject constructor(
             optionsAdapter.setListener(object : BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
                 override fun onItemClick(item: OptionsModel, position: Int, rowBinding: RowOptionsItemBinding) {
                     rowBinding.root.setOnClickListener {
-                        favoriteOptionsBottomDialog.dismiss()
                         item.task.doTask(this@HomeFragmentViewModel)
+                        favoriteOptionsBottomDialog.dismiss()
                     }
                 }
             })
