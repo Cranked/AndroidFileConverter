@@ -59,6 +59,7 @@ class TransitionFragment @Inject constructor() :
             override fun handleOnBackPressed() {
                 viewModel.backStack(binding.transitionToolbarMenu.backImageView)
                 viewModel.sendLongListenerActivated(false)
+                viewModel.sendItemsChangedSate(true)
                 viewModel.getSelectedRowList().clear()
                 setLayoutSate(app.getLayoutState(),
                     viewModel.getFilesFromPath(path, app.getFilterState()))

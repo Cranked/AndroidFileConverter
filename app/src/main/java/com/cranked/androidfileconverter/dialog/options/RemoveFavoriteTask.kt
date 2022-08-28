@@ -7,6 +7,8 @@ import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewMode
 
 class RemoveFavoriteTask(private val favoritesDao: FavoritesDao, private val favoriteFile: FavoriteFile) : ITask() {
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
+        favoritesDao.delete(favoriteFile)
+        transitionFragmentViewModel.getItemsChangedStateMutableLiveData().postValue(true)
     }
 
     override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {

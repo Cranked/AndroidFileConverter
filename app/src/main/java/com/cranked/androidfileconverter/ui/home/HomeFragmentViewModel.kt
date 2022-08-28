@@ -91,7 +91,7 @@ class HomeFragmentViewModel @Inject constructor(
                         it.value == TaskType.REMOVEFAVORITETASK.value || it.value == TaskType.GOTOFOLDER.value
             }.toList()
             val taskList = arrayListOf(ToolsTask(),
-                ShareTask(context, this, arrayListOf(favoriteFile)),
+                ShareTask(context,  arrayListOf(favoriteFile)),
                 GoToFolderTask(favoriteFile, view),
                 RemoveFavoriteTask(favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()
@@ -144,7 +144,7 @@ class HomeFragmentViewModel @Inject constructor(
         try {
             val list = arrayListOf<OptionsModel>()
             val taskList = arrayListOf(ToolsTask(),
-                ShareTask(context, this, arrayListOf(favoriteFile)),
+                ShareTask(context,  arrayListOf(favoriteFile)),
                 GoToFolderTask(favoriteFile, fragment.view!!, dialog),
                 RemoveFavoriteTask(favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()

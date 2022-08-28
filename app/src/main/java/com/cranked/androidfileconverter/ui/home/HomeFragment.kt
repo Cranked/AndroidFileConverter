@@ -217,12 +217,17 @@ class HomeFragment @Inject constructor() :
                         }
                         bindingImage.optionsOfFileDetail.setOnClickListener {
                             val stringList =
-                                activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toList()
+                                activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
                             val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
                             val taskTypeList = TaskType.values().filter {
                                 it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                                         it.value == TaskType.REMOVEFAVORITETASK.value || it.value == TaskType.GOTOFOLDER.value
                             }.toList()
+                            if (favoritesDao.getFavorite(item.path, item.fileName, item.fileType) != null) {
+                                stringList.add(activity!!.resources.getString(R.string.remove_favorite))
+                            } else {
+                                stringList.add(activity!!.resources.getString(R.string.mark_as_favorite))
+                            }
                             viewModel.showFavoritesBottomDialog(activity!!.supportFragmentManager,
                                 this@HomeFragment,
                                 dialog!!,
@@ -232,7 +237,6 @@ class HomeFragment @Inject constructor() :
                                 taskTypeList)
                         }
                     }
-
                 }
             })
             favoritesAdapter.setLongClickListener(object :

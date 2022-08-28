@@ -6,6 +6,7 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.res.TypedArray
 import android.graphics.BitmapFactory
 import android.graphics.drawable.LayerDrawable
 import android.net.Uri
@@ -38,6 +39,7 @@ import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.databinding.*
 import com.cranked.androidfileconverter.dialog.DeleteDialog
 import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDialog
+import com.cranked.androidfileconverter.dialog.favorite.FavoriteOptionsBottomDialog
 import com.cranked.androidfileconverter.dialog.options.*
 import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.utils.*
@@ -67,6 +69,8 @@ class TransitionFragmentViewModel @Inject constructor(
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     lateinit var dialog: Dialog
+    private lateinit var favoriteOptionsBottomDialog: FavoriteOptionsBottomDialog
+
     fun setAdapter(
         context: Context,
         activity: FragmentActivity,
@@ -95,6 +99,8 @@ class TransitionFragmentViewModel @Inject constructor(
                     }
                     rowBinding.transitionLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
+                            val bindingImage =
+                                ShowImageLayoutBinding.inflate(layoutInflater)
                             when (item.fileType) {
                                 FileType.FOLDER.type -> {
                                     sendIntentToTransitionFragmentWithIntent(it,
@@ -122,8 +128,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     }
                                 }
                                 FileType.PDF.type -> {
-                                    val bindingImage =
-                                        ShowImageLayoutBinding.inflate(layoutInflater)
                                     bindingImage.backShowImageView.setOnClickListener {
                                         dialog.cancel()
                                     }
@@ -208,7 +212,29 @@ class TransitionFragmentViewModel @Inject constructor(
                                     }
                                 }
                             }
-
+                            bindingImage.optionsOfFileDetail.setOnClickListener {
+                                var stringList =
+                                    activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                var taskTypeList = TaskType.values().filter {
+                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                            it.value == TaskType.GOTOFOLDER.value
+                                }.toMutableList()
+                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                } else {
+                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                }
+                                showFavoritesBottomDialog(activity!!.supportFragmentManager,
+                                    rowBinding.root,
+                                    dialog!!,
+                                    item,
+                                    stringList,
+                                    drawableList,
+                                    taskTypeList)
+                            }
                         } else {
                             if (!selectedRowList.contains(item)) {
                                 selectedRowList.add(item)
@@ -236,6 +262,73 @@ class TransitionFragmentViewModel @Inject constructor(
             setHasFixedSize(true)
         }
         return transitionListAdapter
+    }
+
+    fun showFavoritesBottomDialog(
+        supportFragmentManager: FragmentManager,
+        view: View,
+        dialog: Dialog,
+        transitionModel: TransitionModel,
+        stringList: List<String>,
+        drawableList: TypedArray,
+        taskTypeList: List<TaskType>,
+    ) {
+        try {
+            val list = arrayListOf<OptionsModel>()
+            val taskList = arrayListOf(ToolsTask(),
+                ShareTask(context, arrayListOf(transitionModel), arrayListOf()),
+                GoToFolderTask(transitionModel, view, dialog))
+            val favoriteFile = transitionModel.toFavoriteModel()
+            if (favoritesDao.getFavorite(favoriteFile.path, favoriteFile.fileName, favoriteFile.fileType) != null) {
+                taskList.add(RemoveFavoriteTask(favoritesDao,
+                    favoritesDao.getFavorite(favoriteFile.path,
+                        favoriteFile.fileName,
+                        favoriteFile.fileType)))
+            } else {
+                taskList.add(MarkFavoriteTask(arrayListOf(transitionModel)))
+            }
+            val optionsAdapter = OptionsAdapter()
+            when (transitionModel.fileType) {
+                FileType.PNG.type, FileType.JPG.type -> {
+                    taskTypeList.forEachIndexed { index, s ->
+                        if (s.value == TaskType.SHARETASK.value ||
+                            s.value == TaskType.REMOVEFAVORITETASK.value ||
+                            s.value == TaskType.MARKFAVORITETASK.value ||
+                            s.value == TaskType.GOTOFOLDER.value
+                        )
+                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                stringList[index],
+                                taskList[index])
+                    }
+                }
+                FileType.PDF.type -> {
+                    taskTypeList.forEachIndexed { index, s ->
+                        if (s.value == TaskType.TOOLSTASK.value ||
+                            s.value == TaskType.SHARETASK.value ||
+                            s.value == TaskType.REMOVEFAVORITETASK.value ||
+                            s.value == TaskType.MARKFAVORITETASK.value ||
+                            s.value == TaskType.GOTOFOLDER.value
+                        )
+                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                                stringList[index],
+                                taskList[index])
+                    }
+                }
+            }
+            optionsAdapter.setItems(list)
+            optionsAdapter.setListener(object : BaseViewBindingRecyclerViewAdapter.ClickListener<OptionsModel, RowOptionsItemBinding> {
+                override fun onItemClick(item: OptionsModel, position: Int, rowBinding: RowOptionsItemBinding) {
+                    rowBinding.root.setOnClickListener {
+                        item.task.doTask(this@TransitionFragmentViewModel)
+                        favoriteOptionsBottomDialog.dismiss()
+                    }
+                }
+            })
+            favoriteOptionsBottomDialog = FavoriteOptionsBottomDialog(optionsAdapter)
+            favoriteOptionsBottomDialog.show(supportFragmentManager, "FavoriteOptionsBottomDialog")
+        } catch (e: Exception) {
+            LogManager.log(TAG, e.toString())
+        }
     }
 
     fun setAdapter(
@@ -266,6 +359,8 @@ class TransitionFragmentViewModel @Inject constructor(
                     }
                     rowBinding.transitionGridLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
+                            val bindingImage =
+                                ShowImageLayoutBinding.inflate(layoutInflater)
                             when (item.fileType) {
                                 FileType.FOLDER.type -> {
                                     sendIntentToTransitionFragmentWithIntent(it,
@@ -294,8 +389,6 @@ class TransitionFragmentViewModel @Inject constructor(
 
                                 }
                                 FileType.PDF.type -> {
-                                    val bindingImage =
-                                        ShowImageLayoutBinding.inflate(layoutInflater)
                                     bindingImage.backShowImageView.setOnClickListener {
                                         dialog.cancel()
                                     }
@@ -380,6 +473,29 @@ class TransitionFragmentViewModel @Inject constructor(
                                         activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                     }
                                 }
+                            }
+                            bindingImage.optionsOfFileDetail.setOnClickListener {
+                                var stringList =
+                                    activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                val taskTypeList = TaskType.values().filter {
+                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                            it.value == TaskType.GOTOFOLDER.value
+                                }.toMutableList()
+                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                    stringList.add(activity!!.resources.getString(R.string.remove_favorite))
+                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                } else {
+                                    stringList.add(activity!!.resources.getString(R.string.mark_as_favorite))
+                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                }
+                                showFavoritesBottomDialog(activity!!.supportFragmentManager,
+                                    rowBinding.root,
+                                    dialog!!,
+                                    item,
+                                    stringList,
+                                    drawableList,
+                                    taskTypeList)
                             }
                         } else {
                             if (!selectedRowList.contains(item)) {
@@ -426,13 +542,13 @@ class TransitionFragmentViewModel @Inject constructor(
             val taskTypeList = TaskType.values().copyOfRange(0, stringList.size).toList()
             val taskList = arrayListOf(
                 ToolsTask(),
-                ShareTask(context, this, transitionList, selectedRowList),
-                MarkFavoriteTask( transitionList),
-                CreateFolderWithSelectionTask( supportFragmentManager, transitionList, folderPath.value!!, favoritesDao),
+                ShareTask(context, transitionList, selectedRowList),
+                MarkFavoriteTask(transitionList),
+                CreateFolderWithSelectionTask(supportFragmentManager, transitionList, folderPath.value!!, favoritesDao),
                 RenameTask(supportFragmentManager, transitionList, favoritesDao),
-                DeleteTask( supportFragmentManager, transitionList),
-                MoveTask(context,  optionsBottomDialog, transitionList),
-                CopyTask(context,  optionsBottomDialog, transitionList),
+                DeleteTask(supportFragmentManager, transitionList),
+                MoveTask(context, optionsBottomDialog, transitionList),
+                CopyTask(context, optionsBottomDialog, transitionList),
                 DuplicateTask(this, transitionList, selectedRowList)
             )
             when (transitionList.size) {
