@@ -1,7 +1,9 @@
 package com.cranked.androidfileconverter.ui.transition
 
+import android.os.Build
 import android.os.Parcelable
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
+import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
@@ -31,6 +33,10 @@ fun File.toTransitionModel(file: File, favoritesDao: FavoritesDao): TransitionMo
     )
 }
 
+fun TransitionModel.toFavoriteModel(): FavoriteFile {
+    return FavoriteFile(this.fileName, this.fileExtension, this.fileType, this.filePath)
+}
+
 fun File.toTransitionModel(file: File): TransitionModel {
     val fileType = FileUtility.getType(file)
     return TransitionModel(file.name,
@@ -43,13 +49,25 @@ fun File.toTransitionModel(file: File): TransitionModel {
 }
 
 fun List<File>.toTransitionList(favoritesDao: FavoritesDao): List<TransitionModel> {
-    return this.parallelStream().map { transition ->
-        transition.toTransitionModel(transition, favoritesDao)
-    }.toList()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        this.parallelStream().map { transition ->
+            transition.toTransitionModel(transition, favoritesDao)
+        }.toList()
+    } else {
+        this.map { transition ->
+            transition.toTransitionModel(transition, favoritesDao)
+        }.toList()
+    }
 }
 
 fun List<File>.toTransitionList(): List<TransitionModel> {
-    return this.parallelStream().map { transition ->
-        transition.toTransitionModel(transition)
-    }.toList()
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        this.parallelStream().map { transition ->
+            transition.toTransitionModel(transition)
+        }.toList()
+    } else {
+        this.map { transition ->
+            transition.toTransitionModel(transition)
+        }.toList()
+    }
 }

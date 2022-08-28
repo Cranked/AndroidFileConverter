@@ -79,7 +79,6 @@
         <item>@string/tools</item>
         <item>@string/share</item>
         <item>@string/go_to_folder</item>
-        <item>@string/remove_favorite</item>
     </string-array>
 
     <!--    Dialog warning strings-->

@@ -9,38 +9,28 @@ import com.cranked.androidfileconverter.ui.transition.TransitionModel
 class ShareTask(
 ) : ITask() {
     lateinit var context: Context
-    var transitionFragmentViewModel: TransitionFragmentViewModel? = null
-    var homeFragmentViewModel: HomeFragmentViewModel? = null
     lateinit var transitionList: ArrayList<TransitionModel>
     lateinit var selectedRowList: ArrayList<TransitionModel>
     lateinit var favoriteList: ArrayList<FavoriteFile>
 
-    constructor(context: Context, viewModel: HomeFragmentViewModel, favoriteList: ArrayList<FavoriteFile>) : this() {
-        this.homeFragmentViewModel = viewModel
+    constructor(context: Context, favoriteList: ArrayList<FavoriteFile>) : this() {
         this.context = context
         this.favoriteList = favoriteList
     }
 
     constructor(
         context: Context,
-        viewModel: TransitionFragmentViewModel,
         transitionList: ArrayList<TransitionModel>,
         selectedRowList: ArrayList<TransitionModel>,
     ) : this() {
         this.context = context
-        this.transitionFragmentViewModel = viewModel
         this.transitionList = transitionList
         this.selectedRowList = selectedRowList
     }
 
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
-        if (this.transitionFragmentViewModel != null) {
-            this.transitionFragmentViewModel!!.shareItemsList(context, transitionList)
-            selectedRowList.clear()
-        }
-        if (this.homeFragmentViewModel != null) {
-            this.homeFragmentViewModel!!.shareItemsList(context, favoriteList)
-        }
+        transitionFragmentViewModel.shareItemsList(context, transitionList)
+        selectedRowList.clear()
     }
 
     override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
