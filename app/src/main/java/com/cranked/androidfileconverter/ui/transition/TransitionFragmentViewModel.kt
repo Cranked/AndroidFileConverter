@@ -99,8 +99,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     }
                     rowBinding.transitionLinearLayout.setOnClickListener {
                         if (!longListenerActivated.value!!) {
-                            val bindingImage =
-                                ShowImageLayoutBinding.inflate(layoutInflater)
+
                             when (item.fileType) {
                                 FileType.FOLDER.type -> {
                                     sendIntentToTransitionFragmentWithIntent(it,
@@ -112,6 +111,30 @@ class TransitionFragmentViewModel @Inject constructor(
                                         .setOnClickListener {
                                             dialog.dismiss()
                                         }
+                                    view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
+
+                                        var stringList =
+                                            activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                        val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                        var taskTypeList = TaskType.values().filter {
+                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                    it.value == TaskType.GOTOFOLDER.value
+                                        }.toMutableList()
+                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                        } else {
+                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                        }
+                                        showFavoritesBottomDialog(activity!!.supportFragmentManager,
+                                            rowBinding.root,
+                                            dialog!!,
+                                            item,
+                                            stringList,
+                                            drawableList,
+                                            taskTypeList)
+                                    }
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                     imageView.setImageBitmap(bitmap)
@@ -128,8 +151,14 @@ class TransitionFragmentViewModel @Inject constructor(
                                     }
                                 }
                                 FileType.PDF.type -> {
+                                    val bindingImage =
+                                        ShowImageLayoutBinding.inflate(layoutInflater)
                                     bindingImage.backShowImageView.setOnClickListener {
                                         dialog.cancel()
+                                    }
+                                    bindingImage.toolsOfFileDetail.setImageDrawable(context.getDrawable(R.drawable.icon_printer_white))
+                                    bindingImage.toolsOfFileDetail.setOnClickListener {
+                                    // Yazdırma ekranı gösterilecek
                                     }
                                     dialog = Dialog(activity!!, R.style.fullscreenalert)
                                     val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.filePath), 0)
@@ -210,30 +239,30 @@ class TransitionFragmentViewModel @Inject constructor(
                                         activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                         activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                     }
+                                    bindingImage.optionsOfFileDetail.setOnClickListener {
+                                        var stringList =
+                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                        val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                        var taskTypeList = TaskType.values().filter {
+                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                    it.value == TaskType.GOTOFOLDER.value
+                                        }.toMutableList()
+                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                        } else {
+                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                        }
+                                        showFavoritesBottomDialog(activity.supportFragmentManager,
+                                            rowBinding.root,
+                                            dialog,
+                                            item,
+                                            stringList,
+                                            drawableList,
+                                            taskTypeList)
+                                    }
                                 }
-                            }
-                            bindingImage.optionsOfFileDetail.setOnClickListener {
-                                var stringList =
-                                    activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
-                                var taskTypeList = TaskType.values().filter {
-                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
-                                            it.value == TaskType.GOTOFOLDER.value
-                                }.toMutableList()
-                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
-                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
-                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
-                                } else {
-                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
-                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
-                                }
-                                showFavoritesBottomDialog(activity!!.supportFragmentManager,
-                                    rowBinding.root,
-                                    dialog!!,
-                                    item,
-                                    stringList,
-                                    drawableList,
-                                    taskTypeList)
                             }
                         } else {
                             if (!selectedRowList.contains(item)) {
@@ -372,6 +401,9 @@ class TransitionFragmentViewModel @Inject constructor(
                                         .setOnClickListener {
                                             dialog.dismiss()
                                         }
+                                    view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
+
+                                    }
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                     imageView.setImageBitmap(bitmap)
