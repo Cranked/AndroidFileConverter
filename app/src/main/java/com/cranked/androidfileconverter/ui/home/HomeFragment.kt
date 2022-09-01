@@ -145,7 +145,6 @@ class HomeFragment @Inject constructor() :
                                 list.forEachIndexed { index, imageBitmap ->
                                     val drawable =
                                         BitmapUtils.getRoundedBitmap(resources, imageBitmap, 10f).toDrawable(resources)
-                                    val layerDrawable = LayerDrawable(arrayOf(drawable))
                                     var params = LinearLayout.LayoutParams(100,
                                         100)
                                     params.setMargins(0, 0, 0, 0)
@@ -153,21 +152,19 @@ class HomeFragment @Inject constructor() :
                                     params.gravity = Gravity.CENTER
                                     radioButton.buttonDrawable = null
                                     radioButton.id = index
+                                    val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                    radioButton.background = layerDrawable
                                     radioButton.setOnCheckedChangeListener { _, isChecked ->
                                         if (isChecked) {
                                             params.width += 50
                                             params.height += 50
                                             radioButton.layoutParams = params
-                                            val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                            radioButton.background = layerDrawable
                                             bindingImage.showImageView.setImageBitmap(imageBitmap)
                                             bindingImage.executePendingBindings()
                                         } else {
                                             params.width -= 50
                                             params.height -= 50
                                             radioButton.layoutParams = params
-                                            val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                            radioButton.background = layerDrawable
                                         }
                                     }
                                     radioButton.layoutParams = params

@@ -44,7 +44,6 @@ object BitmapUtils {
         try {
             val renderer = PdfRenderer(ParcelFileDescriptor.open(file, ParcelFileDescriptor.MODE_READ_ONLY))
             var bitmap: Bitmap
-            val pageCount = renderer.pageCount
             for (i in 0..index) {
                 val page = renderer.openPage(i)
                 val width: Int = context.resources.displayMetrics.densityDpi / 72 * page.width

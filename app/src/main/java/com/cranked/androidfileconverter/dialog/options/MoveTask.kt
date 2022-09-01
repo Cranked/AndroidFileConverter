@@ -16,7 +16,7 @@ class MoveTask(
 ) : ITask() {
 
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
-        optionsBottomDialog!!.dismiss()
+        optionsBottomDialog.dismiss()
         transitionFragmentViewModel.sendLongListenerActivated(false)
         val intent = Intent(context, TaskActivity::class.java)
         intent.putExtra(Constants.FILE_TASK_TYPE, TaskType.MOVETASK.value)

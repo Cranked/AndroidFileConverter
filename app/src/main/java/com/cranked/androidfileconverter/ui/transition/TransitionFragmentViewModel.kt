@@ -114,8 +114,8 @@ class TransitionFragmentViewModel @Inject constructor(
                                     view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
 
                                         var stringList =
-                                            activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                        val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
                                         var taskTypeList = TaskType.values().filter {
                                             it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                                                     it.value == TaskType.GOTOFOLDER.value
@@ -127,9 +127,9 @@ class TransitionFragmentViewModel @Inject constructor(
                                             stringList.add(activity.resources.getString(R.string.mark_as_favorite))
                                             taskTypeList.add(TaskType.MARKFAVORITETASK)
                                         }
-                                        showFavoritesBottomDialog(activity!!.supportFragmentManager,
+                                        showFavoritesBottomDialog(activity.supportFragmentManager,
                                             rowBinding.root,
-                                            dialog!!,
+                                            dialog,
                                             item,
                                             stringList,
                                             drawableList,
@@ -138,16 +138,16 @@ class TransitionFragmentViewModel @Inject constructor(
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                     imageView.setImageBitmap(bitmap)
-                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                    dialog = Dialog(activity, R.style.fullscreenalert)
                                     dialog.setContentView(view)
-                                    showDialog(activity!!, dialog)
+                                    showDialog(activity, dialog)
                                     dialog.setOnCancelListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                     dialog.setOnDismissListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                 }
                                 FileType.PDF.type -> {
@@ -160,8 +160,8 @@ class TransitionFragmentViewModel @Inject constructor(
                                     bindingImage.toolsOfFileDetail.setOnClickListener {
                                     // Yazdırma ekranı gösterilecek
                                     }
-                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
-                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.filePath), 0)
+                                    dialog = Dialog(activity, R.style.fullscreenalert)
+                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
                                     bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
                                         showImageBitmap,
                                         10f))
@@ -186,16 +186,12 @@ class TransitionFragmentViewModel @Inject constructor(
                                                 params.width += 50
                                                 params.height += 50
                                                 radioButton.layoutParams = params
-                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                                radioButton.background = layerDrawable
                                                 bindingImage.showImageView.setImageBitmap(imageBitmap)
                                                 bindingImage.executePendingBindings()
                                             } else {
                                                 params.width -= 50
                                                 params.height -= 50
                                                 radioButton.layoutParams = params
-                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                                radioButton.background = layerDrawable
                                             }
                                         }
                                         radioButton.layoutParams = params
@@ -230,19 +226,19 @@ class TransitionFragmentViewModel @Inject constructor(
                                     bindingImage.footLinearLayout.addView(radioGroup)
                                     bindingImage.executePendingBindings()
                                     dialog.setContentView(bindingImage.root)
-                                    showDialog(activity!!, dialog)
+                                    showDialog(activity, dialog)
                                     dialog.setOnDismissListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                     dialog.setOnCancelListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                     bindingImage.optionsOfFileDetail.setOnClickListener {
                                         var stringList =
                                             activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                        val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
                                         var taskTypeList = TaskType.values().filter {
                                             it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                                                     it.value == TaskType.GOTOFOLDER.value
@@ -407,16 +403,16 @@ class TransitionFragmentViewModel @Inject constructor(
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                     imageView.setImageBitmap(bitmap)
-                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                    dialog = Dialog(activity, R.style.fullscreenalert)
                                     dialog.setContentView(view)
-                                    showDialog(activity!!, dialog)
+                                    showDialog(activity, dialog)
                                     dialog.setOnCancelListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                     dialog.setOnDismissListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
 
                                 }
@@ -424,8 +420,8 @@ class TransitionFragmentViewModel @Inject constructor(
                                     bindingImage.backShowImageView.setOnClickListener {
                                         dialog.cancel()
                                     }
-                                    dialog = Dialog(activity!!, R.style.fullscreenalert)
-                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.filePath), 0)
+                                    dialog = Dialog(activity, R.style.fullscreenalert)
+                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
                                     bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
                                         showImageBitmap,
                                         10f))
@@ -450,16 +446,12 @@ class TransitionFragmentViewModel @Inject constructor(
                                                 params.width += 50
                                                 params.height += 50
                                                 radioButton.layoutParams = params
-                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                                radioButton.background = layerDrawable
                                                 bindingImage.showImageView.setImageBitmap(imageBitmap)
                                                 bindingImage.executePendingBindings()
                                             } else {
                                                 params.width -= 50
                                                 params.height -= 50
                                                 radioButton.layoutParams = params
-                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                                radioButton.background = layerDrawable
                                             }
                                         }
                                         radioButton.layoutParams = params
@@ -495,35 +487,35 @@ class TransitionFragmentViewModel @Inject constructor(
                                     bindingImage.footLinearLayout.addView(radioGroup)
                                     bindingImage.executePendingBindings()
                                     dialog.setContentView(bindingImage.root)
-                                    showDialog(activity!!, dialog)
+                                    showDialog(activity, dialog)
                                     dialog.setOnDismissListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                     dialog.setOnCancelListener {
-                                        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
+                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
                                 }
                             }
                             bindingImage.optionsOfFileDetail.setOnClickListener {
                                 var stringList =
-                                    activity!!.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                val drawableList = activity!!.resources.obtainTypedArray(R.array.favorites_images_array)
+                                    activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
                                 val taskTypeList = TaskType.values().filter {
                                     it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                                             it.value == TaskType.GOTOFOLDER.value
                                 }.toMutableList()
                                 if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
-                                    stringList.add(activity!!.resources.getString(R.string.remove_favorite))
+                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
                                     taskTypeList.add(TaskType.REMOVEFAVORITETASK)
                                 } else {
-                                    stringList.add(activity!!.resources.getString(R.string.mark_as_favorite))
+                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
                                     taskTypeList.add(TaskType.MARKFAVORITETASK)
                                 }
-                                showFavoritesBottomDialog(activity!!.supportFragmentManager,
+                                showFavoritesBottomDialog(activity.supportFragmentManager,
                                     rowBinding.root,
-                                    dialog!!,
+                                    dialog,
                                     item,
                                     stringList,
                                     drawableList,
@@ -566,7 +558,7 @@ class TransitionFragmentViewModel @Inject constructor(
             val list = arrayListOf<OptionsModel>()
             val adapter = OptionsAdapter()
             val title =
-                if (transitionList.size > 1) transitionList.size.toString() + "  " + context!!.getString(R.string.item) else transitionList.get(
+                if (transitionList.size > 1) transitionList.size.toString() + "  " + context.getString(R.string.item) else transitionList.get(
                     0).fileName
             optionsBottomDialog = OptionsBottomDialog(adapter, title, transitionList)
             val stringList = context.resources.getStringArray(R.array.options_menu_string_array).toList()
@@ -747,7 +739,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     app.setLayoutState(LayoutState.LIST_LAYOUT.value)
                     binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
                         R.drawable.icon_grid))
-                    setAdapter(context, activity!!, activity!!.layoutInflater,
+                    setAdapter(context, activity, activity.layoutInflater,
                         binding.transitionRecylerView,
                         transitionFragment.transitionListAdapter,
                         getFilesFromPath(path, app.getFilterState()))
@@ -821,7 +813,7 @@ class TransitionFragmentViewModel @Inject constructor(
     fun shareItemsList(context: Context, transitionList: ArrayList<TransitionModel>) {
         val uriArrayList = arrayListOf<Uri>()
         transitionList.forEach {
-            uriArrayList += FileProvider.getUriForFile(context!!,
+            uriArrayList += FileProvider.getUriForFile(context,
                 BuildConfig.APPLICATION_ID + ".provider",
                 File(it.filePath))
         }

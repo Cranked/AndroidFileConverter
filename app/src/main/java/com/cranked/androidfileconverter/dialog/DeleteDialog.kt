@@ -21,7 +21,7 @@ class DeleteDialog(
     override fun onBindingCreate(binding: DialogDeleteFilesBinding) {
         try {
             getDialog()!!.window!!.setLayout(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-            binding.deleteContentDescription.text = context!!.getString(R.string.wantToDeleteFile)
+            binding.deleteContentDescription.text = requireContext().getString(R.string.wantToDeleteFile)
             binding.deleteDialogLayout.cancelButton.setOnClickListener {
                 dismiss()
                 viewModel.getSelectedRowList().clear()

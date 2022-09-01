@@ -31,7 +31,7 @@ class CreateFolderWithSelectionDialog(
             }
             binding.createFolderCancelOkLayout.okButton.setOnClickListener {
                 if (binding.folderNameEditText.text!!.isEmpty()) {
-                    viewModel.showToast(context!!.getString(R.string.folder_name_required))
+                    viewModel.showToast(requireContext().getString(R.string.folder_name_required))
                     return@setOnClickListener
                 }
                 val folderName =
