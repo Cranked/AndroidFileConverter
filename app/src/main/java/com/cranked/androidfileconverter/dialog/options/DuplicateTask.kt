@@ -21,7 +21,6 @@ class DuplicateTask(
                         model.fileName)
                 FileUtility.duplicate(model.filePath + File.separator, targetFolderName)
             } else {
-                val targetFolderName =
                     FileUtils.createFileAndFolder(model.filePath.substring(0, model.filePath.lastIndexOf("/")),
                         model.fileName)
 

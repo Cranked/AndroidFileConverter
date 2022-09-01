@@ -2,12 +2,10 @@ package com.cranked.androidfileconverter.di.component
 
 import android.app.Application
 import com.cranked.androidfileconverter.di.module.*
+import com.cranked.androidfileconverter.ui.camera.CameraFragment
 import com.cranked.androidfileconverter.ui.home.HomeFragment
 import com.cranked.androidfileconverter.ui.languages.LanguagesActivity
 import com.cranked.androidfileconverter.ui.main.MainActivity
-import com.cranked.androidfileconverter.ui.task.TaskActivity
-import com.cranked.androidfileconverter.ui.task.TaskFragment
-import com.cranked.androidfileconverter.ui.task.TaskTransitionFragment
 import dagger.BindsInstance
 import dagger.Component
 import dagger.android.AndroidInjectionModule
@@ -28,6 +26,7 @@ interface AppComponent : AndroidInjector<DaggerApplication> {
 
     override fun inject(application: DaggerApplication?)
     fun bindHomeFragment(fragment: HomeFragment)
+    fun bindCameraFragment(fragment: CameraFragment)
     fun bindMainActivity(activity: MainActivity)
     fun bindLanguagesActivity(activity: LanguagesActivity)
 }

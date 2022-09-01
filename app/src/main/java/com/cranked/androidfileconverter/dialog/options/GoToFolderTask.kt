@@ -12,7 +12,7 @@ import java.io.File
 class GoToFolderTask : ITask {
     lateinit var favoriteFile: FavoriteFile
     lateinit var transitionModel: TransitionModel
-    lateinit var view: View
+    var view: View
     var dialog: Dialog? = null
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
         if (this.dialog != null && this.dialog!!.isShowing) this.dialog!!.dismiss()

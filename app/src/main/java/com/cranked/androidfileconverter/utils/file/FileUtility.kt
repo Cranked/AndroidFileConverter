@@ -53,7 +53,7 @@ object FileUtility {
         getInternalStoragePath() + Environment.DIRECTORY_DOWNLOADS + File.separator
 
     fun getProcessedPath() = getFileTransformerPath() + Constants.processedFolderName + File.separator
-
+    fun getPhotosPath() = getFileTransformerPath() + Constants.photos + File.separator
     fun getType(file: File): Int {
         if (file.isDirectory)
             return FileType.FOLDER.type

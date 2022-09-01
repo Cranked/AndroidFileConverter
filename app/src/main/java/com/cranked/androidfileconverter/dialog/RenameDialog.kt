@@ -53,7 +53,7 @@ class RenameDialog(
                             println("hebele")
                         }
                     }
-                    val finalFileName = FileUtility.renameFile(transitionModel.filePath,
+                    FileUtility.renameFile(transitionModel.filePath,
                         newPath)
                     dismiss()
                     viewModel.sendItemsChangedSate(true)

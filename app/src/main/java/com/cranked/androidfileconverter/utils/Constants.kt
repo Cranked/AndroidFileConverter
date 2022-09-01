@@ -8,7 +8,9 @@ object Constants {
 
     const val folderName = "FileTransformer"
     const val processedFolderName = "processed"
+    const val photos = "photos"
     const val PERMISSION_REQUEST_CODE = 4545
+    const val RESULT_ADD_PHOTO = 4141
     const val DESTINATION_PATH_ACTION = "DestinationPath"
     const val FILE_TASK_TYPE = "FileTaskType"
     const val SELECTED_LIST = "SelectedList"
