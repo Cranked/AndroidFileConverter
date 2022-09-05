@@ -93,5 +93,6 @@
     <string name="files_moved">%1$d dosya taşındı</string>
     <string name="files_copied">%1$d dosya kopyalandı</string>
     <string name="something_went_wrong">Bir hata oluştu</string>
+    <string name="item_counts">%1$d öğe</string>
 
 </resources>

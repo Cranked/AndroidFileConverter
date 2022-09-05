@@ -9,7 +9,9 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" />
-    <uses-permission android:name="android.permission.QUERY_ALL_PACKAGES" tools:ignore="QueryAllPackagesPermission" />
+    <uses-permission
+        android:name="android.permission.QUERY_ALL_PACKAGES"
+        tools:ignore="QueryAllPackagesPermission" />
 
     <application
         android:name=".FileConvertApp"
@@ -36,15 +38,14 @@
             android:theme="@style/mainStyle" />
         <activity
             android:name=".ui.search.SearchActivity"
-            android:theme="@style/mainStyle"
             android:configChanges="orientation|keyboard|screenSize"
-            android:exported="false" />
+            android:exported="false"
+            android:theme="@style/mainStyle" />
         <activity
             android:name=".ui.main.MainActivity"
             android:configChanges="orientation|keyboard|screenSize"
             android:exported="false"
-            android:theme="@style/mainStyle"
-            />
+            android:theme="@style/mainStyle" />
         <activity
             android:name=".ui.splash.SplashActivity"
             android:configChanges="orientation|keyboard|screenSize"

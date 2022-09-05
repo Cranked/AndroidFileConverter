@@ -9,11 +9,15 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
+import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
+import com.cranked.androidfileconverter.adapter.photo.PhotoFile
 import com.cranked.androidfileconverter.databinding.FragmentCameraBinding
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import java.io.File
 import java.text.SimpleDateFormat
@@ -26,6 +30,8 @@ class CameraFragment @Inject constructor() :
     val app by lazy {
         requireActivity().application as FileConvertApp
     }
+    lateinit var adapter: PhotoAdapter
+    lateinit var path: String
     val TAG = this::class.java.toString().substringAfterLast(".")
 
 
@@ -36,6 +42,7 @@ class CameraFragment @Inject constructor() :
         binding = getViewDataBinding(inflater, container)
         initViewModel(viewModel)
         app.appComponent.bindCameraFragment(this)
+        path = FileUtility.getPhotosPath()
         return binding.root
     }
 
@@ -49,7 +56,13 @@ class CameraFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
+            PhotoFile(it.path,
+                it.name,
+                FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
+                DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
+        }.sortedByDescending { it.date }.toMutableList()
+        adapter = viewModel.setAdapter(requireActivity().baseContext, requireActivity(), binding.recyclerView, PhotoAdapter(), photoList)
         binding.takePhotoButton.setOnClickListener {
             try {
                 if (!File(FileUtility.getPhotosPath()).exists()) {
@@ -59,7 +72,7 @@ class CameraFragment @Inject constructor() :
                         return@setOnClickListener
                     }
                 }
-                viewModel.takePhoto(requireActivity(), FileUtility.getPhotosPath() + SimpleDateFormat("yyyyMMdd_HHmmss").format(
+                viewModel.takePhoto(this, path + SimpleDateFormat("yyyyMMdd_HHmmss").format(
                     Date()))
             } catch (e: Exception) {
                 LogManager.log(TAG, e)
@@ -73,10 +86,24 @@ class CameraFragment @Inject constructor() :
             Activity.RESULT_OK -> {
                 when (requestCode) {
                     Constants.RESULT_ADD_PHOTO -> {
-
+                        var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
+                            PhotoFile(it.path,
+                                it.name,
+                                FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
+                                DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
+                        }.sortedByDescending { it.date }.toMutableList()
+                        adapter.setItems(photoList)
+                        adapter.notifyDataSetChanged()
                     }
+                }
+            }
+            Activity.RESULT_CANCELED -> {
+                when (requestCode) {
+                    Constants.RESULT_ADD_PHOTO ->
+                        FileUtility.deleteFile(viewModel.getFolderPath())
                 }
             }
         }
     }
+
 }
