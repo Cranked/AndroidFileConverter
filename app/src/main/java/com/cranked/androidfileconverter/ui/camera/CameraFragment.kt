@@ -19,6 +19,7 @@ import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
+import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -42,6 +43,8 @@ class CameraFragment @Inject constructor() :
         binding = getViewDataBinding(inflater, container)
         initViewModel(viewModel)
         app.appComponent.bindCameraFragment(this)
+        app.rxBus.send(ToolbarState(true))
+
         path = FileUtility.getPhotosPath()
         return binding.root
     }
