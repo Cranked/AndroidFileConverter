@@ -13,6 +13,7 @@ object Constants {
     const val RESULT_ADD_PHOTO = 4141
     const val DESTINATION_PATH_ACTION = "DestinationPath"
     const val FILE_TASK_TYPE = "FileTaskType"
+    const val IMAGE_CONTENT="imageContent"
     const val SELECTED_LIST = "SelectedList"
     val VALID_TYPES = arrayListOf("pdf", "xlsx", "docx", "png", "jpg")
     var PERMISSIONS = arrayOf(

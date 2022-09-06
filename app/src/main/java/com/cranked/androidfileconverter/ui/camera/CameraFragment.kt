@@ -30,9 +30,9 @@ class CameraFragment @Inject constructor() :
     val app by lazy {
         requireActivity().application as FileConvertApp
     }
-    lateinit var adapter: PhotoAdapter
-    lateinit var path: String
-    val TAG = this::class.java.toString().substringAfterLast(".")
+    private lateinit var adapter: PhotoAdapter
+    private lateinit var path: String
+    private val TAG = this::class.java.toString().substringAfterLast(".")
 
 
     override fun onCreateView(
