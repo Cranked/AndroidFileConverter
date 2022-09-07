@@ -5,7 +5,7 @@ import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewMode
 
 
 abstract class ITask {
-    abstract fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel)
-    abstract fun doTask(homeFragmentViewModel: HomeFragmentViewModel)
+    open fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {}
+    open fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {}
 
 }

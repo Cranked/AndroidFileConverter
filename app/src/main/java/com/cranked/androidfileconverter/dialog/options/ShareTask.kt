@@ -36,6 +36,4 @@ class ShareTask(
     override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
         homeFragmentViewModel.shareItemsList(context, favoriteList)
     }
-
-
 }

@@ -10,8 +10,4 @@ class DeleteTask(private val supportFragmentManager: FragmentManager,private val
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
         transitionFragmentViewModel.showDeleteFialog(supportFragmentManager, transitionList)
     }
-
-    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
-
-    }
 }

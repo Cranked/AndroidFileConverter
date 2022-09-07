@@ -17,7 +17,4 @@ class RenameTask(private val supportFragmentManager: FragmentManager,private val
             }
         }
     }
-
-    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
-    }
 }
