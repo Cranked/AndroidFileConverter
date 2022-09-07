@@ -1,5 +1,6 @@
 package com.cranked.androidfileconverter.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
@@ -140,6 +141,7 @@ class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, Act
                 builder.show()
             }
     }
+
     override fun onDestroy() {
         super.onDestroy()
         onBindingClear(binding)

@@ -89,6 +89,6 @@
     <string name="files_moved">%1$d files moved.</string>
     <string name="files_copied">%1$d files copied.</string>
     <string name="something_went_wrong">Something went wrong</string>
-
+    <string name="item_counts">%1$d elements</string>
 
 </resources>

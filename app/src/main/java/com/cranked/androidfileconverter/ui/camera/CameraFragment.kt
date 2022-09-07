@@ -9,24 +9,31 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
+import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
+import com.cranked.androidfileconverter.adapter.photo.PhotoFile
 import com.cranked.androidfileconverter.databinding.FragmentCameraBinding
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
+import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 
 class CameraFragment @Inject constructor() :
     BaseDaggerFragment<CameraFragmentViewModel, FragmentCameraBinding>(CameraFragmentViewModel::class.java) {
-    val app by lazy {
+    private val app by lazy {
         requireActivity().application as FileConvertApp
     }
-    val TAG = this::class.java.toString().substringAfterLast(".")
+    private lateinit var folderPath: String
+    private lateinit var adapter: PhotoAdapter
+    private lateinit var path: String
+    private val TAG = this::class.java.toString().substringAfterLast(".")
 
 
     override fun onCreateView(
@@ -36,6 +43,9 @@ class CameraFragment @Inject constructor() :
         binding = getViewDataBinding(inflater, container)
         initViewModel(viewModel)
         app.appComponent.bindCameraFragment(this)
+        app.rxBus.send(ToolbarState(true))
+
+        path = FileUtility.getPhotosPath()
         return binding.root
     }
 
@@ -49,7 +59,13 @@ class CameraFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
+            PhotoFile(it.path,
+                it.name,
+                FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
+                DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
+        }.sortedByDescending { it.date }.toMutableList()
+        adapter = viewModel.setAdapter(requireActivity().baseContext, binding.recyclerView, PhotoAdapter(), photoList)
         binding.takePhotoButton.setOnClickListener {
             try {
                 if (!File(FileUtility.getPhotosPath()).exists()) {
@@ -59,8 +75,8 @@ class CameraFragment @Inject constructor() :
                         return@setOnClickListener
                     }
                 }
-                viewModel.takePhoto(requireActivity(), FileUtility.getPhotosPath() + SimpleDateFormat("yyyyMMdd_HHmmss").format(
-                    Date()))
+                folderPath = viewModel.getImagePath(path)
+                BitmapUtils.takePhoto(this, folderPath)
             } catch (e: Exception) {
                 LogManager.log(TAG, e)
             }
@@ -73,10 +89,24 @@ class CameraFragment @Inject constructor() :
             Activity.RESULT_OK -> {
                 when (requestCode) {
                     Constants.RESULT_ADD_PHOTO -> {
-
+                        var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
+                            PhotoFile(it.path,
+                                it.name,
+                                FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
+                                DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
+                        }.sortedByDescending { it.date }.toMutableList()
+                        adapter.setItems(photoList)
+                        adapter.notifyDataSetChanged()
                     }
+                }
+            }
+            Activity.RESULT_CANCELED -> {
+                when (requestCode) {
+                    Constants.RESULT_ADD_PHOTO ->
+                        FileUtility.deleteFile(folderPath)
                 }
             }
         }
     }
+
 }

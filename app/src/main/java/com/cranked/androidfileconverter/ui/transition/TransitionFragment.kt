@@ -39,7 +39,7 @@ class TransitionFragment @Inject constructor() :
     lateinit var transitionListAdapter: TransitionListAdapter
     lateinit var transitionGridAdapter: TransitionGridAdapter
 
-    lateinit var path: String
+    private lateinit var path: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,

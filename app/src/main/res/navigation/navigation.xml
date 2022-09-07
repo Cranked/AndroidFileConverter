@@ -23,7 +23,11 @@
         android:id="@+id/camera_dest"
         android:name="com.cranked.androidfileconverter.ui.camera.CameraFragment"
         android:label="@string/camera"
-        tools:layout="@layout/fragment_camera" />
+        tools:layout="@layout/fragment_camera" >
+        <action
+            android:id="@+id/action_camera_dest_to_cameraImageFragment"
+            app:destination="@id/cameraImageFragment" />
+    </fragment>
     <fragment
         android:id="@+id/settings_dest"
         android:name="com.cranked.androidfileconverter.ui.settings.SettingsFragment"
@@ -37,6 +41,14 @@
         <action
             android:id="@+id/action_transition_fragment_self"
             app:destination="@id/transition_fragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/cameraImageFragment"
+        android:name="com.cranked.androidfileconverter.ui.camera.CameraImageFragment"
+        android:label="CameraImageFragment" >
+        <action
+            android:id="@+id/action_cameraImageFragment_to_camera_dest"
+            app:destination="@id/camera_dest" />
     </fragment>
 
 </navigation>

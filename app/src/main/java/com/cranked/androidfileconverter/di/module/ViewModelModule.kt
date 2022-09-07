@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.cranked.androidfileconverter.adapter.FavoritesAdapterViewModel
 import com.cranked.androidfileconverter.adapter.recentfile.RecentFileAdapterViewModel
 import com.cranked.androidfileconverter.ui.camera.CameraFragmentViewModel
+import com.cranked.androidfileconverter.ui.camera.CameraImageFragmentViewModel
 import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
 import com.cranked.androidfileconverter.ui.languages.LanguageActivityViewModel
 import com.cranked.androidfileconverter.ui.main.MainViewModel
@@ -89,4 +90,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CameraFragmentViewModel::class)
     abstract fun cameraFragmentViewModel(viewModel: CameraFragmentViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(CameraImageFragmentViewModel::class)
+    abstract fun cameraImageFragmentViewModel(viewModel: CameraImageFragmentViewModel): ViewModel
 }

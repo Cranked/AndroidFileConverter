@@ -4,21 +4,30 @@
     <data>
         <variable
             name="viewModel"
-            type="com.cranked.androidfileconverter.ui.camera.CameraFragmentViewModel" />
+            type="com.cranked.androidfileconverter.ui.camera.CameraImageFragmentViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/recyclerView"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
+        <include
+            android:id="@+id/camera_toolbar_menu"
+            layout="@layout/camera_toolbar_menu"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/cameraImageRecyclerView"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_margin="@dimen/icon_margin_8dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/camera_toolbar_menu" />
+        <!-- TODO: Update blank fragment layout -->
         <ImageButton
             android:id="@+id/takePhotoButton"
             android:layout_width="80dp"
@@ -29,6 +38,5 @@
             android:src="@drawable/custom_radius_camera"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent" />
-
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

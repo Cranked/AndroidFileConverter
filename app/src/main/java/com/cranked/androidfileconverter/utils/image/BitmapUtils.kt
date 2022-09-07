@@ -2,15 +2,24 @@ package com.cranked.androidfileconverter.utils.image
 
 import android.annotation.SuppressLint
 import android.content.Context
+import android.content.Intent
 import android.content.res.Resources
 import android.graphics.*
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
+import android.provider.MediaStore
 import androidx.annotation.NonNull
+import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.Fragment
+import com.cranked.androidfileconverter.BuildConfig
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.utils.Constants
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.collections.ArrayList
 
 
 object BitmapUtils {
@@ -68,6 +77,30 @@ object BitmapUtils {
         roundedBitmap.cornerRadius = cornerRadius
         return roundedBitmap.toBitmap()
     }
+    fun takePhoto(fragment: Fragment, path: String) {
+        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+        var file: File? = null
 
+        if (intent.resolveActivity(fragment.requireActivity().packageManager) != null) {
+            try {
+                file = createImageFile(path)
+            } catch (e: Exception) {
+            }
+            val uri = FileProvider.getUriForFile(fragment.requireActivity(), BuildConfig.APPLICATION_ID + ".provider", file!!)
+            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
+            fragment.startActivityForResult(intent, Constants.RESULT_ADD_PHOTO)
+        }
+    }
 
+    private fun createImageFile(filePath: String): File {
+        val imageFileName = "JPEG_"
+        val file = File(filePath)
+        file.mkdirs()
+
+        return File.createTempFile(
+            imageFileName,  /* prefix */
+            ".jpg",  /* suffix */
+            file /* directory */
+        )
+    }
 }
