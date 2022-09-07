@@ -93,8 +93,7 @@ object BitmapUtils {
     }
 
     private fun createImageFile(filePath: String): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
+        val imageFileName = "JPEG_"
         val file = File(filePath)
         file.mkdirs()
 
