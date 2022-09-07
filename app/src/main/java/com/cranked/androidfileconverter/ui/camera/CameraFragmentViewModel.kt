@@ -7,6 +7,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.view.View
 import androidx.core.content.FileProvider
+import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -24,42 +25,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class CameraFragmentViewModel @Inject constructor(private val mContext: Context) : BaseViewModel() {
-    private lateinit var folderPath: String
+class CameraFragmentViewModel @Inject constructor() : BaseViewModel() {
     private val TAG = this::class.java.toString().substringAfterLast(".")
-
-    fun takePhoto(fragment: CameraFragment, path: String) {
-        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-        var file: File? = null
-
-        if (intent.resolveActivity(fragment.requireActivity().packageManager) != null) {
-            try {
-                file = createImageFile(path)
-                folderPath = path
-            } catch (e: Exception) {
-            }
-            val uri = FileProvider.getUriForFile(fragment.requireActivity(), BuildConfig.APPLICATION_ID + ".provider", file!!)
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri)
-            fragment.startActivityForResult(intent, Constants.RESULT_ADD_PHOTO)
-        }
-    }
-
-    private fun createImageFile(filePath: String): File {
-        val timeStamp: String = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
-        val imageFileName = "JPEG_" + timeStamp + "_"
-        val file = File(filePath)
-        file.mkdirs()
-
-        return File.createTempFile(
-            imageFileName,  /* prefix */
-            ".jpg",  /* suffix */
-            file /* directory */
-        )
-    }
 
     fun setAdapter(
         context: Context,
-        activity: Activity,
         recylerView: RecyclerView,
         photoAdapter: PhotoAdapter,
         list: MutableList<PhotoFile>,
@@ -91,6 +61,6 @@ class CameraFragmentViewModel @Inject constructor(private val mContext: Context)
             LogManager.log(TAG,e)
         }
     }
-
-    fun getFolderPath() = this.folderPath
+    fun getImagePath(path:String)=path + SimpleDateFormat("yyyyMMdd_HHmmss").format(
+        Date())
 }

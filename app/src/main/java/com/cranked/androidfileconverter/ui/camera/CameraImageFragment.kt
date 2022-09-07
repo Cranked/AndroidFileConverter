@@ -1,5 +1,7 @@
 package com.cranked.androidfileconverter.ui.camera
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
@@ -10,9 +12,14 @@ import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.adapter.photo.ImagePreview
 import com.cranked.androidfileconverter.adapter.photo.PhotoFile
+import com.cranked.androidfileconverter.adapter.photo.PhotoStaggeredAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraImageBinding
 import com.cranked.androidfileconverter.utils.Constants
+import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.file.FileUtility
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 
 class CameraImageFragment :
@@ -21,6 +28,9 @@ class CameraImageFragment :
     private val app by lazy {
         requireActivity().application as FileConvertApp
     }
+    private lateinit var folderPath: String
+    private lateinit var adapter: PhotoStaggeredAdapter
+    private lateinit var path: String
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,14 +59,50 @@ class CameraImageFragment :
     }
 
     override fun createListeners() {
-        viewModel.getImagePathMutableLiveData().observe(viewLifecycleOwner) {
-            val imageList =
-                FileUtils.getFolderFiles(it.path, 100000, 1).filter { it.isFile and Constants.VALID_TYPES.contains(it.extension) }
-            binding.cameraToolbarMenu.camImgFileName.text = it.fileName
-            println(imageList.toString())
+        try {
+            viewModel.getImagePathMutableLiveData().observe(viewLifecycleOwner) {
+                path = it.path
+                val imageList =
+                    FileUtils.getFolderFiles(it.path, 100000, 1).filter { it.isFile and Constants.VALID_TYPES.contains(it.extension) }
+                        .map { ImagePreview(it.path, it.name) }.toMutableList()
+                binding.cameraToolbarMenu.camImgFileName.text = it.fileName
+                adapter =
+                    viewModel.setAdapter(requireActivity().baseContext, binding.cameraImageRecyclerView, PhotoStaggeredAdapter(), imageList)
+                println(imageList.toString())
+            }
+            binding.cameraToolbarMenu.camImgBackButton.setOnClickListener {
+                it.findNavController().navigate(R.id.action_cameraImageFragment_to_camera_dest)
+            }
+            binding.takePhotoButton.setOnClickListener {
+                BitmapUtils.takePhoto(this, viewModel.getImagePathMutableLiveData().value!!.path)
+            }
+        } catch (e: Exception) {
+            LogManager.log(TAG, e)
         }
-        binding.cameraToolbarMenu.camImgBackButton.setOnClickListener {
-            it.findNavController().navigate(R.id.action_cameraImageFragment_to_camera_dest)
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (resultCode) {
+            Activity.RESULT_OK -> {
+                when (requestCode) {
+                    Constants.RESULT_ADD_PHOTO -> {
+                        var photoList =
+                            FileUtils.getFolderFiles(path, 100000, 1).filter { it.isFile or Constants.VALID_TYPES.contains(it.extension) }
+                                .map {
+                                    ImagePreview(it.path, it.name)
+                                }.sortedByDescending { it.fileName }.toMutableList()
+                        adapter.setItems(photoList)
+                        adapter.notifyDataSetChanged()
+                    }
+                }
+            }
+            Activity.RESULT_CANCELED -> {
+                when (requestCode) {
+                    Constants.RESULT_ADD_PHOTO ->
+                        FileUtility.deleteFile(folderPath)
+                }
+            }
         }
     }
 }

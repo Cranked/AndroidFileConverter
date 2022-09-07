@@ -19,18 +19,18 @@ import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import java.io.File
-import java.text.SimpleDateFormat
-import java.util.*
 import javax.inject.Inject
 
 
 class CameraFragment @Inject constructor() :
     BaseDaggerFragment<CameraFragmentViewModel, FragmentCameraBinding>(CameraFragmentViewModel::class.java) {
-    val app by lazy {
+    private val app by lazy {
         requireActivity().application as FileConvertApp
     }
+    private lateinit var folderPath: String
     private lateinit var adapter: PhotoAdapter
     private lateinit var path: String
     private val TAG = this::class.java.toString().substringAfterLast(".")
@@ -65,7 +65,7 @@ class CameraFragment @Inject constructor() :
                 FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
                 DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
         }.sortedByDescending { it.date }.toMutableList()
-        adapter = viewModel.setAdapter(requireActivity().baseContext, requireActivity(), binding.recyclerView, PhotoAdapter(), photoList)
+        adapter = viewModel.setAdapter(requireActivity().baseContext, binding.recyclerView, PhotoAdapter(), photoList)
         binding.takePhotoButton.setOnClickListener {
             try {
                 if (!File(FileUtility.getPhotosPath()).exists()) {
@@ -75,8 +75,8 @@ class CameraFragment @Inject constructor() :
                         return@setOnClickListener
                     }
                 }
-                viewModel.takePhoto(this, path + SimpleDateFormat("yyyyMMdd_HHmmss").format(
-                    Date()))
+                folderPath = viewModel.getImagePath(path)
+                BitmapUtils.takePhoto(this, folderPath)
             } catch (e: Exception) {
                 LogManager.log(TAG, e)
             }
@@ -103,7 +103,7 @@ class CameraFragment @Inject constructor() :
             Activity.RESULT_CANCELED -> {
                 when (requestCode) {
                     Constants.RESULT_ADD_PHOTO ->
-                        FileUtility.deleteFile(viewModel.getFolderPath())
+                        FileUtility.deleteFile(folderPath)
                 }
             }
         }
