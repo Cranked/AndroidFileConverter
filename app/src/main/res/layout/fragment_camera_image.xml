@@ -32,7 +32,7 @@
             android:id="@+id/takePhotoButton"
             android:layout_width="80dp"
             android:layout_height="80dp"
-            android:layout_marginEnd="32dp"
+            android:layout_marginEnd="@dimen/camera_margin"
             android:layout_marginBottom="@dimen/side_margin"
             android:background="#00FFFFFF"
             android:src="@drawable/custom_radius_camera"

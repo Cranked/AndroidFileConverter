@@ -45,7 +45,7 @@ class CameraImageFragmentViewModel @Inject constructor() : BaseViewModel() {
         recylerView.apply {
             adapter = photoStaggeredAdapter
             layoutManager =
-                StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL)
         }
         return photoStaggeredAdapter
     }

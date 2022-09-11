@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
@@ -99,6 +100,8 @@ object BitmapUtils {
             file /* directory */
         )
     }
+
+    fun getBitmapFromPath(path: String) = BitmapFactory.decodeFile(path)
 
     fun setViewVisibility(view: View, isVisible: Boolean) {
         view.visibility = if (isVisible) View.VISIBLE else View.GONE
