@@ -1,6 +1,7 @@
 package com.cranked.androidfileconverter.ui.camera
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -13,8 +14,8 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
-import com.cranked.androidfileconverter.adapter.photo.PhotoFile
 import com.cranked.androidfileconverter.databinding.FragmentCameraBinding
+import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.date.DateUtils
@@ -34,6 +35,7 @@ class CameraFragment @Inject constructor() :
     private lateinit var adapter: PhotoAdapter
     private lateinit var path: String
     private val TAG = this::class.java.toString().substringAfterLast(".")
+    private val dialog by lazy { Dialog(requireActivity(), R.style.fullscreenalert) }
 
 
     override fun onCreateView(
@@ -65,7 +67,8 @@ class CameraFragment @Inject constructor() :
                 FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
                 DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
         }.sortedByDescending { it.date }.toMutableList()
-        adapter = viewModel.setAdapter(requireActivity().baseContext, binding.recyclerView, PhotoAdapter(), photoList)
+        adapter =
+            viewModel.setAdapter(requireActivity().baseContext, requireActivity(), binding.recyclerView, PhotoAdapter(), photoList, dialog)
         binding.takePhotoButton.setOnClickListener {
             try {
                 if (!File(FileUtility.getPhotosPath()).exists()) {
@@ -109,4 +112,16 @@ class CameraFragment @Inject constructor() :
         }
     }
 
+    override fun createListeners() {
+        viewModel.getItemsChangedStateMutableLiveData().observe(viewLifecycleOwner){
+            var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
+                PhotoFile(it.path,
+                    it.name,
+                    FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
+                    DateUtils.getDatefromTime(it.lastModified(), Constants.dateFormat))
+            }.sortedByDescending { it.date }.toMutableList()
+            adapter.setItems(photoList)
+        }
+
+    }
 }

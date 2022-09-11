@@ -12,10 +12,11 @@ import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.adapter.photo.ImagePreview
-import com.cranked.androidfileconverter.adapter.photo.PhotoFile
+
 import com.cranked.androidfileconverter.adapter.photo.PhotoStaggeredAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraImageBinding
+import com.cranked.androidfileconverter.ui.model.ImagePreview
+import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.file.FileUtility

@@ -76,6 +76,13 @@
         <item>@string/share</item>
         <item>@string/go_to_folder</item>
     </string-array>
+    <string-array name="taken_photo_menu_array">
+        <item>@string/tools</item>
+        <item>@string/rename</item>
+        <item>@string/delete</item>
+        <item>@string/go_to_folder</item>
+    </string-array>
+
     <!--    Dialog warning strings-->
 
     <string name="wantToDeleteFile">Do you really want to delete</string>

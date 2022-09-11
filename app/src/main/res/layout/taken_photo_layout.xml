@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_margin="@dimen/icon_margin_8dp"
+        android:background="@drawable/bottom_sheet_dialog"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/detailFileName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/side_margin"
+            android:gravity="left"
+            android:text="FileName"
+            android:textColor="@color/black"
+            android:textSize="@dimen/text_size"
+            android:textStyle="bold" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/gray"></LinearLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/takenPhotoRecyclerView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_margin="@dimen/side_margin"
+            android:background="@color/white"
+            android:scrollbars="vertical" />
+    </LinearLayout>
+</layout>

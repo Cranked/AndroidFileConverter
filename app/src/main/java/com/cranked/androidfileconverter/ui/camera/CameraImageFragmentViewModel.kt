@@ -8,10 +8,10 @@ import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.StaggeredGridLayoutManager
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
-import com.cranked.androidfileconverter.adapter.photo.ImagePreview
-import com.cranked.androidfileconverter.adapter.photo.PhotoFile
 import com.cranked.androidfileconverter.adapter.photo.PhotoStaggeredAdapter
 import com.cranked.androidfileconverter.databinding.RowImageStaggeredItemBinding
+import com.cranked.androidfileconverter.ui.model.ImagePreview
+import com.cranked.androidfileconverter.ui.model.PhotoFile
 import javax.inject.Inject
 
 class CameraImageFragmentViewModel @Inject constructor(private val mContext: Context) : BaseViewModel() {
