@@ -46,8 +46,8 @@ class CameraFragment @Inject constructor() :
         initViewModel(viewModel)
         app.appComponent.bindCameraFragment(this)
         app.rxBus.send(ToolbarState(true))
-
         path = FileUtility.getPhotosPath()
+        viewModel.setTakePhotoAnimationsWithRecyclerView(binding.takePhotoButton, binding.recyclerView)
         return binding.root
     }
 
@@ -113,7 +113,7 @@ class CameraFragment @Inject constructor() :
     }
 
     override fun createListeners() {
-        viewModel.getItemsChangedStateMutableLiveData().observe(viewLifecycleOwner){
+        viewModel.getItemsChangedStateMutableLiveData().observe(viewLifecycleOwner) {
             var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
                 PhotoFile(it.path,
                     it.name,

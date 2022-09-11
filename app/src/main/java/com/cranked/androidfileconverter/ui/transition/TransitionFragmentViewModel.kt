@@ -158,7 +158,7 @@ class TransitionFragmentViewModel @Inject constructor(
                                     }
                                     bindingImage.toolsOfFileDetail.setImageDrawable(context.getDrawable(R.drawable.icon_printer_white))
                                     bindingImage.toolsOfFileDetail.setOnClickListener {
-                                    // Yazdırma ekranı gösterilecek
+                                        // Yazdırma ekranı gösterilecek
                                     }
                                     dialog = Dialog(activity, R.style.fullscreenalert)
                                     val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
@@ -708,9 +708,9 @@ class TransitionFragmentViewModel @Inject constructor(
             showOptionsBottomDialog(supportFragmentManager, selectedRowList)
         }
 
-        setViewVisibility(binding.transitionToolbarMenu.root,
+        BitmapUtils.setViewVisibility(binding.transitionToolbarMenu.root,
             !longListenerActivated.value!!)
-        setViewVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
+        BitmapUtils.setViewVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
 
         val title = path.split("/").last { it.isNotEmpty() }
         binding.transitionToolbarMenu.titleToolBar.text = title
@@ -784,7 +784,6 @@ class TransitionFragmentViewModel @Inject constructor(
 
                 override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             }
-        setCreatefolderAnimations(binding)
     }
 
     fun backStack(view: View) {
@@ -888,17 +887,13 @@ class TransitionFragmentViewModel @Inject constructor(
         deleteDialogFragment.show(supportFragmentManager, "DeleteDialogFragment")
     }
 
-    fun setViewVisibility(view: View, visible: Boolean) {
-        view.visibility = if (visible) View.VISIBLE else View.GONE
-    }
-
-    fun setCreatefolderAnimations(binding: FragmentTransitionBinding) {
+    fun setCreatefolderAnimationsWithRecyclerView(view: View, recylerView: RecyclerView) {
         val slideOutUp: AnimatorSet = AnimationX().getNewAnimatorSet()
         val slideInDown: AnimatorSet = AnimationX().getNewAnimatorSet()
         val slideOutUpAnimator = object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) = Unit
             override fun onAnimationEnd(animation: Animator?) {
-                setViewVisibility(binding.createFolderButton, false)
+                BitmapUtils.setViewVisibility(view, false)
             }
 
             override fun onAnimationCancel(animation: Animator?) = Unit
@@ -907,26 +902,26 @@ class TransitionFragmentViewModel @Inject constructor(
         val slideInDownAnimator = object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) = Unit
             override fun onAnimationEnd(animation: Animator?) {
-                setViewVisibility(binding.createFolderButton, true)
+                BitmapUtils.setViewVisibility(view, true)
             }
 
             override fun onAnimationCancel(animation: Animator?) = Unit
             override fun onAnimationRepeat(animation: Animator?) = Unit
         }
-        val animatorSetSlideInDown = AnimationXUtils.slideInDown(binding.createFolderButton, slideInDown)
-        val animatorSetSlideOutUp = AnimationXUtils.slideOutUp(binding.createFolderButton, slideOutUp)
-        binding.transitionRecylerView.apply {
+        val animatorSetSlideInDown = AnimationXUtils.slideInDown(view, slideInDown)
+        val animatorSetSlideOutUp = AnimationXUtils.slideOutUp(view, slideOutUp)
+        recylerView.apply {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (recyclerView.canScrollVertically(1) && dy > 0) {
-                        if (binding.createFolderButton.isVisible) {
-                            binding.createFolderButton.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
+                        if (view.isVisible) {
+                            view.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
                         }
                         //scrolled to BOTTOM
                     } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
                         if (!getLongListenerActivatedMutableLiveData().value!!)
-                            if (!binding.createFolderButton.isVisible) {
-                                binding.createFolderButton.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
+                            if (!view.isVisible) {
+                                view.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
                             }
                         //scrolled to TOP
                     }

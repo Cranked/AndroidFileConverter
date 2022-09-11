@@ -1,5 +1,7 @@
 package com.cranked.androidfileconverter.ui.camera
 
+import android.animation.Animator
+import android.animation.AnimatorSet
 import android.app.Dialog
 import android.content.Context
 import android.content.res.TypedArray
@@ -7,6 +9,7 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.annotation.IdRes
+import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
@@ -31,9 +34,13 @@ import com.cranked.androidfileconverter.ui.model.OptionsModel
 import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.ui.model.toTransitionModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
+import com.cranked.androidfileconverter.utils.AnimationX
+import com.cranked.androidfileconverter.utils.AnimationXUtils
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
+import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.TaskType
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
@@ -67,7 +74,7 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
                         val drawableList = activity.resources.obtainTypedArray(R.array.taken_photo_images_array)
                         var taskTypeList = TaskType.values().filter {
                             it.value == TaskType.TOOLSTASK.value || it.value == TaskType.RENAMETASK.value ||
-                                    it.value == TaskType.DELETETASK.value ||it.value == TaskType.GOTOFOLDER.value
+                                    it.value == TaskType.DELETETASK.value || it.value == TaskType.GOTOFOLDER.value
                         }.toList()
 
                         showTakenPhotoOptionsBottomDialog(activity.supportFragmentManager,
@@ -157,6 +164,48 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
 
     fun sendItemsChangedSate(value: Boolean) {
         itemsChangedState.postValue(value)
+    }
+
+    fun setTakePhotoAnimationsWithRecyclerView(view: View, recylerView: RecyclerView) {
+        val slideOutUp: AnimatorSet = AnimationX().getNewAnimatorSet()
+        val slideInDown: AnimatorSet = AnimationX().getNewAnimatorSet()
+        val slideOutUpAnimator = object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) = Unit
+            override fun onAnimationEnd(animation: Animator?) {
+                BitmapUtils.setViewVisibility(view, false)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) = Unit
+            override fun onAnimationRepeat(animation: Animator?) = Unit
+        }
+        val slideInDownAnimator = object : Animator.AnimatorListener {
+            override fun onAnimationStart(animation: Animator?) = Unit
+            override fun onAnimationEnd(animation: Animator?) {
+                BitmapUtils.setViewVisibility(view, true)
+            }
+
+            override fun onAnimationCancel(animation: Animator?) = Unit
+            override fun onAnimationRepeat(animation: Animator?) = Unit
+        }
+        val animatorSetSlideInDown = AnimationXUtils.slideInDown(view, slideInDown)
+        val animatorSetSlideOutUp = AnimationXUtils.slideOutUp(view, slideOutUp)
+        recylerView.apply {
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    if (recyclerView.canScrollVertically(1) && dy > 0) {
+                        if (view.isVisible) {
+                            view.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
+                        }
+                        //scrolled to BOTTOM
+                    } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
+                            if (!view.isVisible) {
+                                view.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
+                            }
+                        //scrolled to TOP
+                    }
+                }
+            })
+        }
     }
 
     fun showDeleteFialog(

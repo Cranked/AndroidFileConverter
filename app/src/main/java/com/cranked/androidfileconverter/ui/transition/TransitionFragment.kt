@@ -16,6 +16,7 @@ import com.cranked.androidfileconverter.adapter.transition.TransitionListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentTransitionBinding
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
 import javax.inject.Inject
 
@@ -54,7 +55,7 @@ class TransitionFragment @Inject constructor() :
         }
         app.rxBus.send(ToolbarState(false))
         viewModel.init(binding, this, activity!!, app, path, spinnerList)
-
+        viewModel.setCreatefolderAnimationsWithRecyclerView(binding.createFolderButton, binding.transitionRecylerView)
         activity!!.onBackPressedDispatcher.addCallback(viewLifecycleOwner, object : OnBackPressedCallback(true) {
             override fun handleOnBackPressed() {
                 viewModel.backStack(binding.transitionToolbarMenu.backImageView)
@@ -111,8 +112,8 @@ class TransitionFragment @Inject constructor() :
             transitionListAdapter.setItems(list)
         }
         viewModel.getLongListenerActivatedMutableLiveData().observe(viewLifecycleOwner) {
-            viewModel.setViewVisibility(binding.multipleSelectionMenu.root, it)
-            viewModel.setViewVisibility(binding.transitionToolbarMenu.root, !it)
+            BitmapUtils.setViewVisibility(binding.multipleSelectionMenu.root, it)
+            BitmapUtils.setViewVisibility(binding.transitionToolbarMenu.root, !it)
             val list = viewModel.getFilesFromPath(path, app.getFilterState())
             transitionGridAdapter.setItems(list)
             transitionListAdapter.setItems(list)

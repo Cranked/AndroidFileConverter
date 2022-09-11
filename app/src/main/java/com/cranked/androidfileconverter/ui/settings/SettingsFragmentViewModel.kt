@@ -3,7 +3,6 @@ package com.cranked.androidfileconverter.ui.settings
 import android.app.Activity
 import android.content.Context
 import android.content.Intent
-import com.cranked.androidcorelibrary.ui.raw.RawActivity
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.ui.languages.LanguagesActivity

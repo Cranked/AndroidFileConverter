@@ -43,6 +43,7 @@ class CameraImageFragment :
             onBundle(it)
         }
         app.rxBus.send(ToolbarState(false))
+        viewModel.setTakePhotoAnimationsWithRecyclerView(binding.takePhotoButton, binding.cameraImageRecyclerView)
         return binding.root
     }
 
