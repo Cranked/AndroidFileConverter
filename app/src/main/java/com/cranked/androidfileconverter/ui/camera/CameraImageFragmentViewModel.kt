@@ -38,14 +38,14 @@ class CameraImageFragmentViewModel @Inject constructor() : BaseViewModel() {
             setItems(list)
             setListener(object : BaseViewBindingRecyclerViewAdapter.ClickListener<ImagePreview, RowImageStaggeredItemBinding> {
                 override fun onItemClick(item: ImagePreview, position: Int, rowBinding: RowImageStaggeredItemBinding) {
-                    println("hebele")
+
                 }
             })
         }
         recylerView.apply {
             adapter = photoStaggeredAdapter
             layoutManager =
-                StaggeredGridLayoutManager(3, LinearLayoutManager.VERTICAL)
+                StaggeredGridLayoutManager(2, LinearLayoutManager.VERTICAL)
         }
         return photoStaggeredAdapter
     }

@@ -399,6 +399,28 @@ class TransitionFragmentViewModel @Inject constructor(
                                         }
                                     view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
 
+
+                                        var stringList =
+                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
+                                        var taskTypeList = TaskType.values().filter {
+                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                    it.value == TaskType.GOTOFOLDER.value
+                                        }.toMutableList()
+                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                        } else {
+                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                        }
+                                        showFavoritesBottomDialog(activity.supportFragmentManager,
+                                            rowBinding.root,
+                                            dialog,
+                                            item,
+                                            stringList,
+                                            drawableList,
+                                            taskTypeList)
                                     }
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
