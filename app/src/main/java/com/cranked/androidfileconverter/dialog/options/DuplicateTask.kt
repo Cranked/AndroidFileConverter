@@ -29,9 +29,4 @@ class DuplicateTask(
         selectedRowList.clear()
         viewModel.sendLongListenerActivated(false)
     }
-
-    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
-    }
-
-
 }

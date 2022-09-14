@@ -20,8 +20,4 @@ class CreateFolderWithSelectionTask(
             favoritesDao)
         dialog.show(supportFragmentManager, "CreateFolderWithSelection")
     }
-
-    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
-
-    }
 }

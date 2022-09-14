@@ -22,9 +22,4 @@ class MarkFavoriteTask(private val transitionList: List<TransitionModel>) : ITas
             }
         }
     }
-
-    override fun doTask(homeFragmentViewModel: HomeFragmentViewModel) {
-
-    }
-
 }

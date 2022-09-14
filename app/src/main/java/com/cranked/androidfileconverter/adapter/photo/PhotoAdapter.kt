@@ -7,6 +7,7 @@ import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.RowTakenPhotoBinding
+import com.cranked.androidfileconverter.ui.model.PhotoFile
 
 class PhotoAdapter : BaseViewBindingRecyclerViewAdapter<PhotoFile, RowTakenPhotoBinding>(R.layout.row_taken_photo) {
     override fun setBindingModel(item: PhotoFile, binding: RowTakenPhotoBinding, position: Int) {

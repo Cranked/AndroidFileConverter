@@ -189,9 +189,9 @@ class HomeFragmentViewModel @Inject constructor(
         }
     }
 
-    fun shareItemsList(context: Context, transitionList: ArrayList<FavoriteFile>) {
+    fun shareItemsList(context: Context, favoriteList: ArrayList<FavoriteFile>) {
         val uriArrayList = arrayListOf<Uri>()
-        transitionList.forEach {
+        favoriteList.forEach {
             uriArrayList += FileProvider.getUriForFile(context,
                 BuildConfig.APPLICATION_ID + ".provider",
                 File(it.path))

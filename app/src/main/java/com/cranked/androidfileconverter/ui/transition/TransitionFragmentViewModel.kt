@@ -76,6 +76,7 @@ class TransitionFragmentViewModel @Inject constructor(
         activity: FragmentActivity,
         layoutInflater: LayoutInflater,
         recylerView: RecyclerView,
+        dialog: Dialog,
         transitionListAdapter: TransitionListAdapter,
         list: MutableList<TransitionModel>,
     ): TransitionListAdapter {
@@ -138,7 +139,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                     imageView.setImageBitmap(bitmap)
-                                    dialog = Dialog(activity, R.style.fullscreenalert)
                                     dialog.setContentView(view)
                                     showDialog(activity, dialog)
                                     dialog.setOnCancelListener {
@@ -158,9 +158,8 @@ class TransitionFragmentViewModel @Inject constructor(
                                     }
                                     bindingImage.toolsOfFileDetail.setImageDrawable(context.getDrawable(R.drawable.icon_printer_white))
                                     bindingImage.toolsOfFileDetail.setOnClickListener {
-                                    // Yazdırma ekranı gösterilecek
+                                        // Yazdırma ekranı gösterilecek
                                     }
-                                    dialog = Dialog(activity, R.style.fullscreenalert)
                                     val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
                                     bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
                                         showImageBitmap,
@@ -399,6 +398,28 @@ class TransitionFragmentViewModel @Inject constructor(
                                         }
                                     view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
 
+
+                                        var stringList =
+                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
+                                        var taskTypeList = TaskType.values().filter {
+                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                    it.value == TaskType.GOTOFOLDER.value
+                                        }.toMutableList()
+                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                        } else {
+                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                        }
+                                        showFavoritesBottomDialog(activity.supportFragmentManager,
+                                            rowBinding.root,
+                                            dialog,
+                                            item,
+                                            stringList,
+                                            drawableList,
+                                            taskTypeList)
                                     }
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
@@ -414,7 +435,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                         activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                         activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
-
                                 }
                                 FileType.PDF.type -> {
                                     bindingImage.backShowImageView.setOnClickListener {
@@ -708,9 +728,9 @@ class TransitionFragmentViewModel @Inject constructor(
             showOptionsBottomDialog(supportFragmentManager, selectedRowList)
         }
 
-        setViewVisibility(binding.transitionToolbarMenu.root,
+        BitmapUtils.setViewVisibility(binding.transitionToolbarMenu.root,
             !longListenerActivated.value!!)
-        setViewVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
+        BitmapUtils.setViewVisibility(binding.multipleSelectionMenu.root, longListenerActivated.value!!)
 
         val title = path.split("/").last { it.isNotEmpty() }
         binding.transitionToolbarMenu.titleToolBar.text = title
@@ -722,30 +742,7 @@ class TransitionFragmentViewModel @Inject constructor(
                 context.getDrawable(
                     R.drawable.icon_list))
         }
-        binding.transitionToolbarMenu.layoutImageView.setOnClickListener {
-            when (app.getLayoutState()) {
-                LayoutState.LIST_LAYOUT.value -> {
-                    app.setLayoutState(LayoutState.GRID_LAYOUT.value)
-                    binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
-                        R.drawable.icon_list))
-                    setAdapter(context,
-                        activity,
-                        activity.layoutInflater,
-                        binding.transitionRecylerView,
-                        transitionFragment.transitionGridAdapter,
-                        getFilesFromPath(path, app.getFilterState()))
-                }
-                LayoutState.GRID_LAYOUT.value -> {
-                    app.setLayoutState(LayoutState.LIST_LAYOUT.value)
-                    binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
-                        R.drawable.icon_grid))
-                    setAdapter(context, activity, activity.layoutInflater,
-                        binding.transitionRecylerView,
-                        transitionFragment.transitionListAdapter,
-                        getFilesFromPath(path, app.getFilterState()))
-                }
-            }
-        }
+
         val arrayAdapter =
             ArrayAdapter(this.context,
                 R.layout.row_spinner_item_child,
@@ -784,7 +781,6 @@ class TransitionFragmentViewModel @Inject constructor(
 
                 override fun onNothingSelected(parent: AdapterView<*>?) = Unit
             }
-        setCreatefolderAnimations(binding)
     }
 
     fun backStack(view: View) {
@@ -888,17 +884,13 @@ class TransitionFragmentViewModel @Inject constructor(
         deleteDialogFragment.show(supportFragmentManager, "DeleteDialogFragment")
     }
 
-    fun setViewVisibility(view: View, visible: Boolean) {
-        view.visibility = if (visible) View.VISIBLE else View.GONE
-    }
-
-    fun setCreatefolderAnimations(binding: FragmentTransitionBinding) {
+    fun setCreatefolderAnimationsWithRecyclerView(view: View, recylerView: RecyclerView) {
         val slideOutUp: AnimatorSet = AnimationX().getNewAnimatorSet()
         val slideInDown: AnimatorSet = AnimationX().getNewAnimatorSet()
         val slideOutUpAnimator = object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) = Unit
             override fun onAnimationEnd(animation: Animator?) {
-                setViewVisibility(binding.createFolderButton, false)
+                BitmapUtils.setViewVisibility(view, false)
             }
 
             override fun onAnimationCancel(animation: Animator?) = Unit
@@ -907,26 +899,26 @@ class TransitionFragmentViewModel @Inject constructor(
         val slideInDownAnimator = object : Animator.AnimatorListener {
             override fun onAnimationStart(animation: Animator?) = Unit
             override fun onAnimationEnd(animation: Animator?) {
-                setViewVisibility(binding.createFolderButton, true)
+                BitmapUtils.setViewVisibility(view, true)
             }
 
             override fun onAnimationCancel(animation: Animator?) = Unit
             override fun onAnimationRepeat(animation: Animator?) = Unit
         }
-        val animatorSetSlideInDown = AnimationXUtils.slideInDown(binding.createFolderButton, slideInDown)
-        val animatorSetSlideOutUp = AnimationXUtils.slideOutUp(binding.createFolderButton, slideOutUp)
-        binding.transitionRecylerView.apply {
+        val animatorSetSlideInDown = AnimationXUtils.slideInDown(view, slideInDown)
+        val animatorSetSlideOutUp = AnimationXUtils.slideOutUp(view, slideOutUp)
+        recylerView.apply {
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
                 override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
                     if (recyclerView.canScrollVertically(1) && dy > 0) {
-                        if (binding.createFolderButton.isVisible) {
-                            binding.createFolderButton.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
+                        if (view.isVisible) {
+                            view.animationStart(300, animatorSetSlideOutUp, slideOutUpAnimator)
                         }
                         //scrolled to BOTTOM
                     } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
                         if (!getLongListenerActivatedMutableLiveData().value!!)
-                            if (!binding.createFolderButton.isVisible) {
-                                binding.createFolderButton.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
+                            if (!view.isVisible) {
+                                view.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
                             }
                         //scrolled to TOP
                     }

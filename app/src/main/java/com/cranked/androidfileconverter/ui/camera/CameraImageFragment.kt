@@ -1,6 +1,7 @@
 package com.cranked.androidfileconverter.ui.camera
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -12,10 +13,11 @@ import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.adapter.photo.ImagePreview
-import com.cranked.androidfileconverter.adapter.photo.PhotoFile
+
 import com.cranked.androidfileconverter.adapter.photo.PhotoStaggeredAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraImageBinding
+import com.cranked.androidfileconverter.ui.model.ImagePreview
+import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.file.FileUtility
@@ -27,6 +29,9 @@ class CameraImageFragment :
     private val TAG = this::class.java.toString().substringAfterLast(".")
     private val app by lazy {
         requireActivity().application as FileConvertApp
+    }
+    private val dialog by lazy {
+        Dialog(requireContext(), R.style.fullscreenalert)
     }
     private lateinit var folderPath: String
     private lateinit var adapter: PhotoStaggeredAdapter
@@ -42,6 +47,7 @@ class CameraImageFragment :
             onBundle(it)
         }
         app.rxBus.send(ToolbarState(false))
+        viewModel.setTakePhotoAnimationsWithRecyclerView(binding.takePhotoButton, binding.cameraImageRecyclerView)
         return binding.root
     }
 
@@ -67,7 +73,12 @@ class CameraImageFragment :
                         .map { ImagePreview(it.path, it.name) }.toMutableList()
                 binding.cameraToolbarMenu.camImgFileName.text = it.fileName
                 adapter =
-                    viewModel.setAdapter(requireActivity().baseContext, binding.cameraImageRecyclerView, PhotoStaggeredAdapter(), imageList)
+                    viewModel.setAdapter(this.activity!!,
+                        requireActivity().layoutInflater,
+                        binding.cameraImageRecyclerView,
+                        dialog,
+                        PhotoStaggeredAdapter(),
+                        imageList)
                 println(imageList.toString())
             }
             binding.cameraToolbarMenu.camImgBackButton.setOnClickListener {

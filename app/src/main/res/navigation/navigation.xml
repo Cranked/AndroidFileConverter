@@ -27,6 +27,9 @@
         <action
             android:id="@+id/action_camera_dest_to_cameraImageFragment"
             app:destination="@id/cameraImageFragment" />
+        <action
+            android:id="@+id/action_camera_dest_to_transition_fragment"
+            app:destination="@id/transition_fragment" />
     </fragment>
     <fragment
         android:id="@+id/settings_dest"
@@ -49,6 +52,9 @@
         <action
             android:id="@+id/action_cameraImageFragment_to_camera_dest"
             app:destination="@id/camera_dest" />
+        <action
+            android:id="@+id/action_cameraImageFragment_to_transition_fragment"
+            app:destination="@id/transition_fragment" />
     </fragment>
 
 </navigation>

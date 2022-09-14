@@ -14,6 +14,9 @@
     <dimen name="fav_icon_size">30dp</dimen>
     <dimen name="margin_2dp">2dp</dimen>
     <dimen name="folder_size">80dp</dimen>
+    <dimen name="border_stroke_8dp">8dp</dimen>
     <dimen name="camera_margin">32dp</dimen>
+    <dimen name="margin_5dp">5dp</dimen>
+
     <dimen name="take_photo_image_size">100dp</dimen>
 </resources>

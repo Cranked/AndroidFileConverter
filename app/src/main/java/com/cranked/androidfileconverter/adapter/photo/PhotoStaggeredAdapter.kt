@@ -4,6 +4,7 @@ import com.bumptech.glide.Glide
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.databinding.RowImageStaggeredItemBinding
+import com.cranked.androidfileconverter.ui.model.ImagePreview
 
 class PhotoStaggeredAdapter :
     BaseViewBindingRecyclerViewAdapter<ImagePreview, RowImageStaggeredItemBinding>(R.layout.row_image_staggered_item) {
