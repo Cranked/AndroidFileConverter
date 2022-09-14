@@ -76,6 +76,7 @@ class TransitionFragmentViewModel @Inject constructor(
         activity: FragmentActivity,
         layoutInflater: LayoutInflater,
         recylerView: RecyclerView,
+        dialog: Dialog,
         transitionListAdapter: TransitionListAdapter,
         list: MutableList<TransitionModel>,
     ): TransitionListAdapter {
@@ -138,7 +139,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     val bitmap = BitmapFactory.decodeFile(item.filePath)
                                     val imageView = view.findViewById<ImageView>(R.id.showImageView)
                                     imageView.setImageBitmap(bitmap)
-                                    dialog = Dialog(activity, R.style.fullscreenalert)
                                     dialog.setContentView(view)
                                     showDialog(activity, dialog)
                                     dialog.setOnCancelListener {
@@ -160,7 +160,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                     bindingImage.toolsOfFileDetail.setOnClickListener {
                                         // Yazdırma ekranı gösterilecek
                                     }
-                                    dialog = Dialog(activity, R.style.fullscreenalert)
                                     val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
                                     bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
                                         showImageBitmap,
@@ -436,7 +435,6 @@ class TransitionFragmentViewModel @Inject constructor(
                                         activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
                                         activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
-
                                 }
                                 FileType.PDF.type -> {
                                     bindingImage.backShowImageView.setOnClickListener {
@@ -744,30 +742,7 @@ class TransitionFragmentViewModel @Inject constructor(
                 context.getDrawable(
                     R.drawable.icon_list))
         }
-        binding.transitionToolbarMenu.layoutImageView.setOnClickListener {
-            when (app.getLayoutState()) {
-                LayoutState.LIST_LAYOUT.value -> {
-                    app.setLayoutState(LayoutState.GRID_LAYOUT.value)
-                    binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
-                        R.drawable.icon_list))
-                    setAdapter(context,
-                        activity,
-                        activity.layoutInflater,
-                        binding.transitionRecylerView,
-                        transitionFragment.transitionGridAdapter,
-                        getFilesFromPath(path, app.getFilterState()))
-                }
-                LayoutState.GRID_LAYOUT.value -> {
-                    app.setLayoutState(LayoutState.LIST_LAYOUT.value)
-                    binding.transitionToolbarMenu.layoutImageView.setImageDrawable(context.getDrawable(
-                        R.drawable.icon_grid))
-                    setAdapter(context, activity, activity.layoutInflater,
-                        binding.transitionRecylerView,
-                        transitionFragment.transitionListAdapter,
-                        getFilesFromPath(path, app.getFilterState()))
-                }
-            }
-        }
+
         val arrayAdapter =
             ArrayAdapter(this.context,
                 R.layout.row_spinner_item_child,

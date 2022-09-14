@@ -5,7 +5,9 @@ import android.view.View
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.data.database.entity.FavoriteFile
 import com.cranked.androidfileconverter.ui.camera.CameraFragmentViewModel
+import com.cranked.androidfileconverter.ui.camera.CameraImageFragmentViewModel
 import com.cranked.androidfileconverter.ui.home.HomeFragmentViewModel
+import com.cranked.androidfileconverter.ui.model.ImagePreview
 import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
@@ -16,6 +18,7 @@ class GoToFolderTask : ITask {
     lateinit var favoriteFile: FavoriteFile
     lateinit var transitionModel: TransitionModel
     lateinit var photoFile: PhotoFile
+    lateinit var imagePreview: ImagePreview
     var view: View
     var dialog: Dialog? = null
     override fun doTask(transitionFragmentViewModel: TransitionFragmentViewModel) {
@@ -34,6 +37,12 @@ class GoToFolderTask : ITask {
     constructor(favoriteFile: FavoriteFile, view: View) {
         this.favoriteFile = favoriteFile
         this.view = view
+    }
+
+    constructor(imagePreview: ImagePreview, view: View, dialog: Dialog) {
+        this.imagePreview = imagePreview
+        this.view = view
+        this.dialog = dialog
     }
 
     constructor(transitionModel: TransitionModel, view: View, dialog: Dialog) {
@@ -58,5 +67,10 @@ class GoToFolderTask : ITask {
         if (this.dialog != null && this.dialog!!.isShowing) this.dialog!!.dismiss()
         val path = photoFile.path.substringBeforeLast("/")
         cameraFragmentViewModel.goToTransitionFragmentWithIntent(R.id.action_camera_dest_to_transition_fragment, view, path)
+    }
+    override fun doTask(cameraImageFragmentViewModel: CameraImageFragmentViewModel) {
+        if (this.dialog != null && this.dialog!!.isShowing) this.dialog!!.dismiss()
+        val path = imagePreview.path.substringBeforeLast("/")
+        cameraImageFragmentViewModel.goToTransitionFragmentWithIntent(R.id.action_cameraImageFragment_to_transition_fragment, view, path)
     }
 }

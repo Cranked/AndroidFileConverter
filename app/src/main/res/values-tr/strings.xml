@@ -87,6 +87,10 @@
         <item>@string/delete</item>
         <item>@string/go_to_folder</item>
     </string-array>
+    <string-array name="taken_photo_preview_array_string">
+        <item>@string/share</item>
+        <item>@string/go_to_folder</item>
+    </string-array>
 
     <!--    Dialog warning strings-->
     <string name="wantToDeleteFile">Gerçekten silmek istiyormusunuz</string>

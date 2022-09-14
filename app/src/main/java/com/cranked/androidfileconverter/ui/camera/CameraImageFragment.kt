@@ -1,6 +1,7 @@
 package com.cranked.androidfileconverter.ui.camera
 
 import android.app.Activity
+import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -28,6 +29,9 @@ class CameraImageFragment :
     private val TAG = this::class.java.toString().substringAfterLast(".")
     private val app by lazy {
         requireActivity().application as FileConvertApp
+    }
+    private val dialog by lazy {
+        Dialog(requireContext(), R.style.fullscreenalert)
     }
     private lateinit var folderPath: String
     private lateinit var adapter: PhotoStaggeredAdapter
@@ -69,7 +73,12 @@ class CameraImageFragment :
                         .map { ImagePreview(it.path, it.name) }.toMutableList()
                 binding.cameraToolbarMenu.camImgFileName.text = it.fileName
                 adapter =
-                    viewModel.setAdapter(requireActivity().baseContext, binding.cameraImageRecyclerView, PhotoStaggeredAdapter(), imageList)
+                    viewModel.setAdapter(this.activity!!,
+                        requireActivity().layoutInflater,
+                        binding.cameraImageRecyclerView,
+                        dialog,
+                        PhotoStaggeredAdapter(),
+                        imageList)
                 println(imageList.toString())
             }
             binding.cameraToolbarMenu.camImgBackButton.setOnClickListener {

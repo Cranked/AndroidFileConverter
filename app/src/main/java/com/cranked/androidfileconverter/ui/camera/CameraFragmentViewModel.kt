@@ -52,7 +52,6 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
     private val itemsChangedState = MutableLiveData<Boolean>()
 
 
-    lateinit var takenPhotoOptionsDialog: TakenPhotoOptionsDialog
     fun setAdapter(
         context: Context,
         activity: FragmentActivity,
@@ -69,6 +68,7 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
                         goWithIntentToCameraImageFragment(R.id.action_camera_dest_to_cameraImageFragment, it, item)
                     }
                     rowBinding.takenPhotoOptions.setOnClickListener {
+
                         var stringList =
                             activity.resources.getStringArray(R.array.taken_photo_menu_array).toList()
                         val drawableList = activity.resources.obtainTypedArray(R.array.taken_photo_images_array)
@@ -76,10 +76,11 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
                             it.value == TaskType.TOOLSTASK.value || it.value == TaskType.RENAMETASK.value ||
                                     it.value == TaskType.DELETETASK.value || it.value == TaskType.GOTOFOLDER.value
                         }.toList()
-
                         showTakenPhotoOptionsBottomDialog(activity.supportFragmentManager,
+                            activity,
                             rowBinding.root,
                             dialog,
+                            OptionsAdapter(),
                             item,
                             stringList,
                             drawableList,
@@ -125,21 +126,23 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
 
     fun showTakenPhotoOptionsBottomDialog(
         supportFragmentManager: FragmentManager,
+        activity: FragmentActivity,
         view: View,
         dialog: Dialog,
+        optionsAdapter: OptionsAdapter,
         photoFile: PhotoFile,
         stringList: List<String>,
         drawableList: TypedArray,
         taskTypeList: List<TaskType>,
     ) {
         try {
+            var takenPhotoOptionsDialog: TakenPhotoOptionsDialog? = null
             val list = arrayListOf<OptionsModel>()
             val taskList = arrayListOf(ToolsTask(),
                 RenameTask(supportFragmentManager, arrayListOf(photoFile.toTransitionModel()), favoritesDao),
                 DeleteTask(supportFragmentManager, arrayListOf(photoFile.toTransitionModel())),
                 GoToFolderTask(photoFile, view, dialog))
 
-            val optionsAdapter = OptionsAdapter()
             taskTypeList.forEachIndexed { index, s ->
                 list += OptionsModel(drawableList.getDrawable(index)!!,
                     stringList[index],
@@ -151,7 +154,7 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
                 override fun onItemClick(item: OptionsModel, position: Int, rowBinding: RowOptionsItemBinding) {
                     rowBinding.root.setOnClickListener {
                         item.task.doTask(this@CameraFragmentViewModel)
-                        takenPhotoOptionsDialog.dismiss()
+                        takenPhotoOptionsDialog!!.dismiss()
                     }
                 }
             })
@@ -198,9 +201,9 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
                         }
                         //scrolled to BOTTOM
                     } else if (recyclerView.canScrollVertically(-1) && dy < 0) {
-                            if (!view.isVisible) {
-                                view.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
-                            }
+                        if (!view.isVisible) {
+                            view.animationStart(300, animatorSetSlideInDown, slideInDownAnimator)
+                        }
                         //scrolled to TOP
                     }
                 }

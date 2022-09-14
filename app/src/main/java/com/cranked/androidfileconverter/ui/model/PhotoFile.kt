@@ -13,3 +13,7 @@ data class ImagePreview(val path: String, val fileName: String)
 fun PhotoFile.toTransitionModel(): TransitionModel {
     return TransitionModel(this.fileName, "", FileType.JPG.type, this.path, "", false)
 }
+
+fun ImagePreview.toTransitionModel(): TransitionModel {
+    return TransitionModel(this.fileName, "", FileType.JPG.type, this.path, "", false)
+}

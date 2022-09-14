@@ -24,4 +24,8 @@
         <item>@drawable/icon_delete</item>
         <item>@drawable/icon_go</item>
     </integer-array>
+    <integer-array name="taken_photo_preview_array">
+        <item>@drawable/icon_share</item>
+        <item>@drawable/icon_go</item>
+    </integer-array>
 </resources>

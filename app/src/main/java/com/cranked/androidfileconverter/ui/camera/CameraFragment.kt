@@ -13,8 +13,10 @@ import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.adapter.options.OptionsAdapter
 import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraBinding
+import com.cranked.androidfileconverter.dialog.takenphoto.TakenPhotoOptionsDialog
 import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
@@ -36,7 +38,6 @@ class CameraFragment @Inject constructor() :
     private lateinit var path: String
     private val TAG = this::class.java.toString().substringAfterLast(".")
     private val dialog by lazy { Dialog(requireActivity(), R.style.fullscreenalert) }
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
