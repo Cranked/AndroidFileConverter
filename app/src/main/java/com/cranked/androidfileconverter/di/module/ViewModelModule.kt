@@ -12,6 +12,7 @@ import com.cranked.androidfileconverter.ui.settings.SettingsFragmentViewModel
 import com.cranked.androidfileconverter.ui.task.TaskActivityViewModel
 import com.cranked.androidfileconverter.ui.task.TaskFragmentViewModel
 import com.cranked.androidfileconverter.ui.task.TaskTransitionFragmentViewModel
+import com.cranked.androidfileconverter.ui.tools.ToolsFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import dagger.Binds
 import dagger.MapKey
@@ -95,4 +96,9 @@ abstract class ViewModelModule {
     @IntoMap
     @ViewModelKey(CameraImageFragmentViewModel::class)
     abstract fun cameraImageFragmentViewModel(viewModel: CameraImageFragmentViewModel): ViewModel
+
+    @Binds
+    @IntoMap
+    @ViewModelKey(ToolsFragmentViewModel::class)
+    abstract fun toolsFragmentViewModel(viewModel: ToolsFragmentViewModel): ViewModel
 }
