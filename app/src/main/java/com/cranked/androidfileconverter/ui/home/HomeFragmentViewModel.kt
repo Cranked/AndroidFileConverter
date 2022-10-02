@@ -12,6 +12,7 @@ import android.view.View
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
 import androidx.navigation.findNavController
@@ -19,6 +20,7 @@ import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
 import com.cranked.androidfileconverter.BuildConfig
+import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.options.OptionsAdapter
 import com.cranked.androidfileconverter.data.database.dao.FavoritesDao
@@ -81,17 +83,18 @@ class HomeFragmentViewModel @Inject constructor(
         favoritesState = value
     }
 
-    fun showFavoritesBottomDialog(supportFragmentManager: FragmentManager, view: View, favoriteFile: FavoriteFile) {
+    fun showFavoritesBottomDialog(activity: FragmentActivity, view: View, favoriteFile: FavoriteFile) {
         try {
             val list = arrayListOf<OptionsModel>()
+            val pageModel = Constants.pageSizes[(activity.application as FileConvertApp).getPageDefaultSize()]
             val stringList = context.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toList()
             val drawableList = context.resources.obtainTypedArray(R.array.favorites_images_array)
             val taskTypeList = TaskType.values().filter {
                 it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                         it.value == TaskType.REMOVEFAVORITETASK.value || it.value == TaskType.GOTOFOLDER.value
             }.toList()
-            val taskList = arrayListOf(ToolsTask(),
-                ShareTask(context,  arrayListOf(favoriteFile)),
+            val taskList = arrayListOf(ToolsTask(view.context, arrayListOf(favoriteFile.path), pageModel!!),
+                ShareTask(context, arrayListOf(favoriteFile)),
                 GoToFolderTask(favoriteFile, view),
                 RemoveFavoriteTask(favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()
@@ -126,7 +129,7 @@ class HomeFragmentViewModel @Inject constructor(
                 }
             })
             favoriteOptionsBottomDialog = FavoriteOptionsBottomDialog(optionsAdapter)
-            favoriteOptionsBottomDialog.show(supportFragmentManager, "FavoriteOptionsBottomDialog")
+            favoriteOptionsBottomDialog.show(activity.supportFragmentManager, "FavoriteOptionsBottomDialog")
         } catch (e: Exception) {
             LogManager.log(TAG, e.toString())
         }
@@ -143,8 +146,9 @@ class HomeFragmentViewModel @Inject constructor(
     ) {
         try {
             val list = arrayListOf<OptionsModel>()
-            val taskList = arrayListOf(ToolsTask(),
-                ShareTask(context,  arrayListOf(favoriteFile)),
+            val pageModel = Constants.pageSizes[(fragment.requireActivity().application as FileConvertApp).getPageDefaultSize()]
+            val taskList = arrayListOf(ToolsTask(fragment.requireActivity(), arrayListOf(favoriteFile.path), pageModel!!),
+                ShareTask(context, arrayListOf(favoriteFile)),
                 GoToFolderTask(favoriteFile, fragment.view!!, dialog),
                 RemoveFavoriteTask(favoritesDao, favoriteFile))
             val optionsAdapter = OptionsAdapter()

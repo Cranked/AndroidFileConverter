@@ -12,6 +12,7 @@ import com.cranked.androidfileconverter.ui.settings.SettingsFragmentViewModel
 import com.cranked.androidfileconverter.ui.task.TaskActivityViewModel
 import com.cranked.androidfileconverter.ui.task.TaskFragmentViewModel
 import com.cranked.androidfileconverter.ui.task.TaskTransitionFragmentViewModel
+import com.cranked.androidfileconverter.ui.tools.ToolsFragmentViewModel
 import com.cranked.androidfileconverter.ui.transition.TransitionFragmentViewModel
 import dagger.Binds
 import dagger.MapKey
@@ -32,38 +33,43 @@ internal annotation class ViewModelKey(val value: KClass<out ViewModel>)
 
 @Module
 abstract class ViewModelModule {
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(HomeFragmentViewModel::class)
     abstract fun homefragmentListViewModel(viewModel: HomeFragmentViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(MainViewModel::class)
     abstract fun mainViewModel(viewModel: MainViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(FavoritesAdapterViewModel::class)
     abstract fun favoriteAdapterViewModel(viewModel: FavoritesAdapterViewModel): ViewModel
 
-
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(RecentFileAdapterViewModel::class)
     abstract fun recentFileAdapterViewModel(viewModel: RecentFileAdapterViewModel): ViewModel
 
-
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(TransitionFragmentViewModel::class)
     abstract fun transitionFragmentViewModel(viewModel: TransitionFragmentViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(SettingsFragmentViewModel::class)
     abstract fun settingsFragmentViewModel(viewModel: SettingsFragmentViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(LanguageActivityViewModel::class)
@@ -75,6 +81,7 @@ abstract class ViewModelModule {
     @ViewModelKey(TaskActivityViewModel::class)
     abstract fun taskActivityViewModel(viewModel: TaskActivityViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(TaskFragmentViewModel::class)
@@ -86,13 +93,21 @@ abstract class ViewModelModule {
     @ViewModelKey(TaskTransitionFragmentViewModel::class)
     abstract fun taskTransitionFragmentViewModel(viewModel: TaskTransitionFragmentViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(CameraFragmentViewModel::class)
     abstract fun cameraFragmentViewModel(viewModel: CameraFragmentViewModel): ViewModel
 
+    @Singleton
     @Binds
     @IntoMap
     @ViewModelKey(CameraImageFragmentViewModel::class)
     abstract fun cameraImageFragmentViewModel(viewModel: CameraImageFragmentViewModel): ViewModel
+
+    @Singleton
+    @Binds
+    @IntoMap
+    @ViewModelKey(ToolsFragmentViewModel::class)
+    abstract fun toolsFragmentViewModel(viewModel: ToolsFragmentViewModel): ViewModel
 }

@@ -31,29 +31,27 @@ class FileConvertApp : DaggerApplication() {
         this.appComponent.inject(this)
     }
 
-    fun getLanguage(): String {
-        return prefManager.get(Constants.LANGUAGE, Constants.DEFAULT_LANGUAGE).toString()
-    }
-
+    fun getLanguage() = prefManager.get(Constants.LANGUAGE, Constants.DEFAULT_LANGUAGE).toString()
     fun setLanguage(language: String) {
         prefManager.addValueCommit(Constants.LANGUAGE, language)
     }
 
+    fun getPageDefaultSize() = prefManager.get(Constants.DEFAULT_PAGE_SIZE, Constants.DEFAULT_PAGE_SIZE_VALUE)
+    fun setPageDefaultSize(pageType: String) {
+        prefManager.addValueCommit(Constants.DEFAULT_PAGE_SIZE, pageType)
+    }
+
+    fun getLayoutState() = prefManager.getSharedPreferences().getInt(Constants.LAYOUT_STATE, LayoutState.LIST_LAYOUT.value)
     fun setLayoutState(value: Int) {
         prefManager.addValueCommit(Constants.LAYOUT_STATE, value)
     }
 
-    fun getLayoutState(): Int {
-        return prefManager.getSharedPreferences()
-            .getInt(Constants.LAYOUT_STATE, LayoutState.LIST_LAYOUT.value)
-    }
 
     fun setFilterState(value: Int) {
         prefManager.addValueCommit(Constants.FILTER_STATE, value)
     }
 
-    fun getFilterState(): Int {
-        return prefManager.getSharedPreferences()
-            .getInt(Constants.FILTER_STATE, FilterState.ORDERBYNAME_A_TO_Z.value)
-    }
+    fun getFilterState() = prefManager.getSharedPreferences()
+        .getInt(Constants.FILTER_STATE, FilterState.ORDERBYNAME_A_TO_Z.value)
+
 }

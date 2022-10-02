@@ -9,6 +9,8 @@ import android.view.ViewGroup
 import androidx.activity.OnBackPressedCallback
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.cranked.androidcorelibrary.extension.showToast
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
@@ -19,6 +21,7 @@ import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class TransitionFragment @Inject constructor() :
@@ -131,6 +134,9 @@ class TransitionFragment @Inject constructor() :
                 binding.createFolderButton.visibility = View.INVISIBLE
             binding.multipleSelectionMenu.selectedItemsMultiple.text = it.toString()
         }
+        viewModel.getErrorMessageMutableLiveData().observe(viewLifecycleOwner) {
+            showToast(it)
+        }
     }
 
     fun setLayoutSate(state: Int, list: MutableList<TransitionModel>) {
@@ -179,7 +185,7 @@ class TransitionFragment @Inject constructor() :
                         R.drawable.icon_grid))
                     viewModel.setAdapter(requireContext(), requireActivity(), requireActivity().layoutInflater,
                         binding.transitionRecylerView,
-                         dialog,transitionListAdapter,
+                        dialog, transitionListAdapter,
                         viewModel.getFilesFromPath(path, app.getFilterState()))
                 }
             }

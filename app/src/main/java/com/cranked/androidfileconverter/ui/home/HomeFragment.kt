@@ -1,7 +1,7 @@
 package com.cranked.androidfileconverter.ui.home
 
 import android.app.Dialog
-import android.graphics.BitmapFactory
+import android.graphics.Bitmap
 import android.graphics.drawable.LayerDrawable
 import android.os.Bundle
 import android.view.*
@@ -12,6 +12,12 @@ import androidx.core.graphics.drawable.toDrawable
 import androidx.core.view.get
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.lifecycle.lifecycleScope
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.engine.DiskCacheStrategy
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
@@ -35,6 +41,7 @@ import com.cranked.androidfileconverter.utils.enums.TaskType
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import kotlinx.coroutines.launch
 import java.io.File
 import javax.inject.Inject
 
@@ -57,6 +64,7 @@ class HomeFragment @Inject constructor() :
     val app by lazy {
         activity!!.application as FileConvertApp
     }
+    lateinit var list: List<Bitmap>
     var favoritesAdapter: FavoritesAdapter = FavoritesAdapter(R.layout.row_favorite_adapter_item)
     var recentFileAdapter = RecentFileAdapter()
     var dialog: Dialog? = null
@@ -68,7 +76,7 @@ class HomeFragment @Inject constructor() :
         initViewModel(viewModel)
         app.rxBus.send(ToolbarState(true))
         app.appComponent.bindHomeFragment(this)
-        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+        activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
         activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
         return binding.root
     }
@@ -102,43 +110,41 @@ class HomeFragment @Inject constructor() :
                     position: Int,
                     rowBinding: RowFavoriteAdapterItemBinding,
                 ) {
-
-
                     rowBinding.favoriteLinearLayout.setOnClickListener {
                         val bindingImage =
                             ShowImageLayoutBinding.inflate(layoutInflater)
+                        bindingImage.backShowImageView.setOnClickListener { dialog!!.dismiss() }
                         when (item.fileType) {
                             FileType.FOLDER.type -> {
                                 viewModel.goToTransitionFragmentWithIntent(it, item.path)
                             }
                             FileType.PNG.type, FileType.JPG.type -> {
-                                bindingImage.backShowImageView.setOnClickListener { dialog!!.dismiss() }
-                                val bitmap = BitmapFactory.decodeFile(item.path)
-                                bindingImage.showImageView.setImageBitmap(bitmap)
+                                Glide.with(bindingImage.root.context).load(item.path).apply(RequestOptions().transform(RoundedCorners(10)))
+                                    .into(bindingImage.showImageView)
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
                                 dialog!!.setContentView(bindingImage.root)
                                 viewModel.showDialog(activity!!, dialog!!)
                                 dialog!!.setOnCancelListener {
-                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
                                 dialog!!.setOnDismissListener {
-                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
                                 bindingImage.executePendingBindings()
                             }
                             FileType.PDF.type -> {
                                 rowBinding.favImage.visibility = View.GONE
-
-                                bindingImage.backShowImageView.setOnClickListener {
-                                    dialog!!.cancel()
-                                }
                                 dialog = Dialog(activity!!, R.style.fullscreenalert)
+                                viewLifecycleOwner.lifecycleScope.launch {
+                                    val showImageBitmap = BitmapUtils.getImagePdf(File(item.path))
+                                    Glide.with(bindingImage.root.context).load(showImageBitmap).diskCacheStrategy(DiskCacheStrategy.ALL)
+                                        .priority(Priority.IMMEDIATE)
+                                        .apply(RequestOptions().transform(RoundedCorners(10))).into(bindingImage.showImageView)
+                                }
 
-                                val showImageBitmap = BitmapUtils.getImageOfPdf(activity!!, File(item.path), 0)
-                                bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(resources, showImageBitmap, 10f))
-                                val list = BitmapUtils.pdfToBitmap(binding.root.context, File(item.path))
+
                                 val radioGroup = RadioGroup(bindingImage.root.context)
                                 radioGroup.orientation = RadioGroup.HORIZONTAL
                                 radioGroup.clearCheck()
@@ -196,18 +202,17 @@ class HomeFragment @Inject constructor() :
                                 })
                                 radioGroup.gravity = Gravity.CENTER
                                 (radioGroup.getChildAt(0) as RadioButton).isChecked = true
-
                                 bindingImage.footLinearLayout.addView(radioGroup)
                                 bindingImage.executePendingBindings()
                                 dialog!!.setContentView(bindingImage.root)
                                 viewModel.showDialog(activity!!, dialog!!)
                                 dialog!!.setOnDismissListener {
                                     rowBinding.favImage.visibility = View.VISIBLE
-                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
                                 dialog!!.setOnCancelListener {
-                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                                    activity!!.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                                     activity!!.window.statusBarColor = activity!!.getColor(R.color.primary_color)
                                 }
                             }
@@ -240,7 +245,7 @@ class HomeFragment @Inject constructor() :
                 BaseViewBindingRecyclerViewAdapter.LongClickListener<FavoriteFile, RowFavoriteAdapterItemBinding> {
                 override fun onItemLongClick(item: FavoriteFile, position: Int, rowBinding: RowFavoriteAdapterItemBinding) {
                     rowBinding.favoriteLinearLayout.setOnLongClickListener {
-                        viewModel.showFavoritesBottomDialog(activity!!.supportFragmentManager, it, item)
+                        viewModel.showFavoritesBottomDialog(requireActivity(), it, item)
                         return@setOnLongClickListener true
                     }
                 }
@@ -272,5 +277,13 @@ class HomeFragment @Inject constructor() :
             val list = favoritesDao.getAll()
             favoritesAdapter.setItems(list)
         }
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        hideKeyboard()
+        onBindingClear(binding)
+        recentFileAdapter.clearItems()
+        favoritesAdapter.clearItems()
     }
 }

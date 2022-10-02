@@ -40,7 +40,7 @@ fun TransitionModel.toFavoriteModel(): FavoriteFile {
 fun File.toTransitionModel(file: File): TransitionModel {
     val fileType = FileUtility.getType(file)
     return TransitionModel(file.name,
-        file.extension,
+        if (!file.isDirectory) file.extension else "",
         fileType,
         file.absolutePath,
         DateUtils.getDatefromTime(file.lastModified(), Constants.dateFormat),

@@ -17,7 +17,7 @@ class SettingsFragmentViewModel @Inject constructor(
 
     fun goToLanguagesActivity(activity: Activity) {
         val intent = Intent(mContext, LanguagesActivity::class.java)
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP)
+        intent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
         activity.startActivity(intent)
         activity.finish()
     }

@@ -7,6 +7,7 @@ import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.content.res.TypedArray
+import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.drawable.LayerDrawable
 import android.net.Uri
@@ -21,10 +22,15 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.FragmentActivity
 import androidx.fragment.app.FragmentManager
 import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.Priority
+import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.bumptech.glide.request.RequestOptions
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
@@ -42,6 +48,7 @@ import com.cranked.androidfileconverter.dialog.createfolder.CreateFolderBottomDi
 import com.cranked.androidfileconverter.dialog.favorite.FavoriteOptionsBottomDialog
 import com.cranked.androidfileconverter.dialog.options.*
 import com.cranked.androidfileconverter.ui.model.OptionsModel
+import com.cranked.androidfileconverter.ui.model.PageModel
 import com.cranked.androidfileconverter.utils.*
 import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.FileType
@@ -49,19 +56,21 @@ import com.cranked.androidfileconverter.utils.enums.FilterState
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.TaskType
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
+import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
 import javax.inject.Inject
 
 class TransitionFragmentViewModel @Inject constructor(
-    private val favoritesDao: FavoritesDao,
-    private val context: Context,
-) :
+    private val context: Context, private val favoritesDao: FavoritesDao, private val pageModel: PageModel,
+
+    ) :
     BaseViewModel() {
     val TAG = TransitionFragmentViewModel::class.java.name
     private val folderPath = MutableLiveData<String>()
     private val noDataState = MutableLiveData<Boolean>()
     private val filterState = MutableLiveData<Int>()
+    private val errorMessage = MutableLiveData<String>()
     private val itemsChangedState = MutableLiveData<Boolean>()
     private var selectedRowList = arrayListOf<TransitionModel>()
     private val longListenerActivated = MutableLiveData(false)
@@ -69,6 +78,7 @@ class TransitionFragmentViewModel @Inject constructor(
     lateinit var supportFragmentManager: FragmentManager
     lateinit var optionsBottomDialog: OptionsBottomDialog
     lateinit var dialog: Dialog
+    lateinit var bitmapList: List<Bitmap>
     private lateinit var favoriteOptionsBottomDialog: FavoriteOptionsBottomDialog
 
     fun setAdapter(
@@ -89,191 +99,211 @@ class TransitionFragmentViewModel @Inject constructor(
                     position: Int,
                     rowBinding: RowTransitionListItemBinding,
                 ) {
-                    rowBinding.transitionLinearLayout.setOnLongClickListener {
-                        if (!longListenerActivated.value!!) {
-                            selectedRowList.clear()
-                            selectedRowList.add(item)
-                            sendSelectedRowSize(selectedRowList.size)
-                            sendLongListenerActivated(true)
+                    try {
+                        val bindingImage =
+                            ShowImageLayoutBinding.inflate(layoutInflater)
+
+                        rowBinding.transitionLinearLayout.setOnLongClickListener {
+                            if (!longListenerActivated.value!!) {
+                                selectedRowList.clear()
+                                selectedRowList.add(item)
+                                sendSelectedRowSize(selectedRowList.size)
+                                sendLongListenerActivated(true)
+                            }
+                            return@setOnLongClickListener true
                         }
-                        return@setOnLongClickListener true
-                    }
-                    rowBinding.transitionLinearLayout.setOnClickListener {
-                        if (!longListenerActivated.value!!) {
-
-                            when (item.fileType) {
-                                FileType.FOLDER.type -> {
-                                    sendIntentToTransitionFragmentWithIntent(it,
-                                        item.filePath)
-                                }
-                                FileType.PNG.type, FileType.JPG.type -> {
-                                    val view = layoutInflater.inflate(R.layout.show_image_layout, null)
-                                    view.findViewById<ImageView>(R.id.backShowImageView)
-                                        .setOnClickListener {
-                                            dialog.dismiss()
-                                        }
-                                    view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
-
-                                        var stringList =
-                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
-                                        var taskTypeList = TaskType.values().filter {
-                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
-                                                    it.value == TaskType.GOTOFOLDER.value
-                                        }.toMutableList()
-                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
-                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
-                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
-                                        } else {
-                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
-                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
-                                        }
-                                        showFavoritesBottomDialog(activity.supportFragmentManager,
-                                            rowBinding.root,
-                                            dialog,
-                                            item,
-                                            stringList,
-                                            drawableList,
-                                            taskTypeList)
-                                    }
-                                    val bitmap = BitmapFactory.decodeFile(item.filePath)
-                                    val imageView = view.findViewById<ImageView>(R.id.showImageView)
-                                    imageView.setImageBitmap(bitmap)
-                                    dialog.setContentView(view)
-                                    showDialog(activity, dialog)
-                                    dialog.setOnCancelListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
-                                    }
-                                    dialog.setOnDismissListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
-                                    }
-                                }
-                                FileType.PDF.type -> {
+                        rowBinding.transitionLinearLayout.setOnClickListener {
+                            try {
+                                if (!longListenerActivated.value!!) {
                                     val bindingImage =
                                         ShowImageLayoutBinding.inflate(layoutInflater)
                                     bindingImage.backShowImageView.setOnClickListener {
-                                        dialog.cancel()
+                                        dialog.dismiss()
                                     }
-                                    bindingImage.toolsOfFileDetail.setImageDrawable(context.getDrawable(R.drawable.icon_printer_white))
-                                    bindingImage.toolsOfFileDetail.setOnClickListener {
-                                        // Yazdırma ekranı gösterilecek
-                                    }
-                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
-                                    bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
-                                        showImageBitmap,
-                                        10f))
-                                    val list = BitmapUtils.pdfToBitmap(context, File(item.filePath))
-                                    val radioGroup = RadioGroup(bindingImage.root.context)
-                                    radioGroup.orientation = RadioGroup.HORIZONTAL
-                                    radioGroup.clearCheck()
-                                    list.forEachIndexed { index, imageBitmap ->
-                                        val drawable =
-                                            BitmapUtils.getRoundedBitmap(activity.resources, imageBitmap, 10f)
-                                                .toDrawable(activity.resources)
-                                        val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                        var params = LinearLayout.LayoutParams(100,
-                                            100)
-                                        params.setMargins(0, 0, 0, 0)
-                                        val radioButton = RadioButton(context)
-                                        params.gravity = Gravity.CENTER
-                                        radioButton.buttonDrawable = null
-                                        radioButton.id = index
-                                        radioButton.setOnCheckedChangeListener { _, isChecked ->
-                                            if (isChecked) {
-                                                params.width += 50
-                                                params.height += 50
-                                                radioButton.layoutParams = params
-                                                bindingImage.showImageView.setImageBitmap(imageBitmap)
-                                                bindingImage.executePendingBindings()
-                                            } else {
-                                                params.width -= 50
-                                                params.height -= 50
-                                                radioButton.layoutParams = params
+                                    when (item.fileType) {
+                                        FileType.FOLDER.type -> {
+                                            sendIntentToTransitionFragmentWithIntent(it,
+                                                item.filePath)
+                                        }
+                                        FileType.PNG.type, FileType.JPG.type -> {
+                                            bindingImage.optionsOfFileDetail.setOnClickListener {
+                                                var stringList =
+                                                    activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array)
+                                                        .toMutableList()
+                                                val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
+                                                var taskTypeList = TaskType.values().filter {
+                                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                            it.value == TaskType.GOTOFOLDER.value
+                                                }.toMutableList()
+                                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                                } else {
+                                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                                }
+                                                showFavoritesBottomDialog(activity,
+                                                    rowBinding.root,
+                                                    dialog,
+                                                    item,
+                                                    stringList,
+                                                    drawableList,
+                                                    taskTypeList)
+                                            }
+                                            Glide.with(context).load(item.filePath)
+                                                .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                    bindingImage.showImageView.height))
+                                                .priority(Priority.IMMEDIATE)
+                                                .transform(RoundedCorners(10)).into(bindingImage.showImageView)
+                                            dialog.setContentView(bindingImage.root)
+                                            showDialog(activity, dialog)
+                                            dialog.setOnCancelListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                            dialog.setOnDismissListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                             }
                                         }
-                                        radioButton.layoutParams = params
-                                        radioButton.background = layerDrawable
-                                        radioButton.setOnClickListener {
-                                            bindingImage.showImageView.setImageBitmap(imageBitmap)
-                                            bindingImage.executePendingBindings()
-                                        }
-                                        radioGroup.addView(radioButton)
-                                        bindingImage.executePendingBindings()
-                                    }
-                                    bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
-                                        View.OnTouchListener {
-                                        override fun onSwipeRight(): Boolean {
-                                            if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
-                                                (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
-                                            } else
-                                                (radioGroup[0] as RadioButton).isChecked = true
-                                            return true
-                                        }
+                                        FileType.PDF.type -> {
 
-                                        override fun onSwipeLeft(): Boolean {
-                                            if (radioGroup.checkedRadioButtonId > 0)
-                                                (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
-                                            else
-                                                (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
-                                            return true
+                                            bindingImage.toolsOfFileDetail.setImageDrawable(context.getDrawable(R.drawable.icon_printer_white))
+                                            bindingImage.toolsOfFileDetail.setOnClickListener {
+                                                // Yazdırma ekranı gösterilecek
+                                            }
+                                            viewModelScope.launch {
+                                                bitmapList = BitmapUtils.pdfToBitmap(File(item.filePath))
+                                            }
+
+                                            Glide.with(context).load(bitmapList[0])
+                                                .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                    bindingImage.showImageView.height).priority(Priority.IMMEDIATE)
+                                                    .transform(RoundedCorners(10)))
+                                                .into(bindingImage.showImageView)
+
+
+                                            val radioGroup = RadioGroup(bindingImage.root.context)
+                                            radioGroup.orientation = RadioGroup.HORIZONTAL
+                                            bitmapList.forEachIndexed { index, imageBitmap ->
+                                                val drawable =
+                                                    BitmapUtils.getRoundedBitmap(activity.resources, imageBitmap, 10f)
+                                                        .toDrawable(activity.resources)
+                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                                var params = LinearLayout.LayoutParams(100,
+                                                    100)
+                                                params.setMargins(0, 0, 0, 0)
+                                                val radioButton = RadioButton(context)
+                                                params.gravity = Gravity.CENTER
+                                                radioButton.buttonDrawable = null
+                                                radioButton.id = index
+                                                radioButton.setOnCheckedChangeListener { _, isChecked ->
+                                                    if (isChecked) {
+                                                        params.width += 50
+                                                        params.height += 50
+                                                        radioButton.layoutParams = params
+                                                        Glide.with(bindingImage.root.context).load(imageBitmap)
+                                                            .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                                bindingImage.showImageView.height))
+                                                            .transform(RoundedCorners(10)).into(bindingImage.showImageView)
+                                                        bindingImage.executePendingBindings()
+                                                    } else {
+                                                        params.width -= 50
+                                                        params.height -= 50
+                                                        radioButton.layoutParams = params
+                                                    }
+                                                }
+                                                radioButton.layoutParams = params
+                                                radioButton.background = layerDrawable
+                                                radioButton.setOnClickListener {
+                                                    Glide.with(bindingImage.root.context).load(imageBitmap)
+                                                        .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                            bindingImage.showImageView.height))
+                                                        .transform(RoundedCorners(10))
+                                                    bindingImage.executePendingBindings()
+                                                }
+                                                radioGroup.addView(radioButton)
+                                                bindingImage.executePendingBindings()
+                                            }
+                                            bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
+                                                View.OnTouchListener {
+                                                override fun onSwipeRight(): Boolean {
+                                                    if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
+                                                        (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
+                                                    } else
+                                                        (radioGroup[0] as RadioButton).isChecked = true
+                                                    return true
+                                                }
+
+                                                override fun onSwipeLeft(): Boolean {
+                                                    if (radioGroup.checkedRadioButtonId > 0)
+                                                        (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
+                                                    else
+                                                        (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
+                                                    return true
+                                                }
+                                            })
+                                            radioGroup.gravity = Gravity.CENTER
+                                            (radioGroup.getChildAt(0) as RadioButton).isChecked = true
+                                            bindingImage.footLinearLayout.addView(radioGroup)
+                                            bindingImage.executePendingBindings()
+                                            dialog.setContentView(bindingImage.root)
+                                            showDialog(activity, dialog)
+                                            dialog.setOnDismissListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                            dialog.setOnCancelListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                            bindingImage.optionsOfFileDetail.setOnClickListener {
+                                                var stringList =
+                                                    activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array)
+                                                        .toMutableList()
+                                                val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
+                                                var taskTypeList = TaskType.values().filter {
+                                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                            it.value == TaskType.GOTOFOLDER.value
+                                                }.toMutableList()
+                                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                                } else {
+                                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                                }
+                                                showFavoritesBottomDialog(activity,
+                                                    rowBinding.root,
+                                                    dialog,
+                                                    item,
+                                                    stringList,
+                                                    drawableList,
+                                                    taskTypeList)
+                                            }
                                         }
-                                    })
-                                    radioGroup.gravity = Gravity.CENTER
-                                    (radioGroup.getChildAt(0) as RadioButton).isChecked = true
-                                    bindingImage.footLinearLayout.addView(radioGroup)
-                                    bindingImage.executePendingBindings()
-                                    dialog.setContentView(bindingImage.root)
-                                    showDialog(activity, dialog)
-                                    dialog.setOnDismissListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                                     }
-                                    dialog.setOnCancelListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                } else {
+                                    if (!selectedRowList.contains(item)) {
+                                        selectedRowList.add(item)
+                                        rowBinding.transitionLinearLayout.background =
+                                            context.getDrawable(R.drawable.custom_adapter_selected_background)
+                                    } else {
+                                        selectedRowList.remove(item)
+                                        rowBinding.transitionLinearLayout.background =
+                                            context.getDrawable(R.drawable.custom_adapter_unselected_background)
                                     }
-                                    bindingImage.optionsOfFileDetail.setOnClickListener {
-                                        var stringList =
-                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
-                                        var taskTypeList = TaskType.values().filter {
-                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
-                                                    it.value == TaskType.GOTOFOLDER.value
-                                        }.toMutableList()
-                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
-                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
-                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
-                                        } else {
-                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
-                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
-                                        }
-                                        showFavoritesBottomDialog(activity.supportFragmentManager,
-                                            rowBinding.root,
-                                            dialog,
-                                            item,
-                                            stringList,
-                                            drawableList,
-                                            taskTypeList)
-                                    }
+                                    sendSelectedRowSize(selectedRowList.size)
                                 }
+                            } catch (e: Exception) {
+                                sendErrorMessage(context.getString(R.string.something_went_wrong))
                             }
-                        } else {
-                            if (!selectedRowList.contains(item)) {
-                                selectedRowList.add(item)
-                                rowBinding.transitionLinearLayout.background =
-                                    context.getDrawable(R.drawable.custom_adapter_selected_background)
-                            } else {
-                                selectedRowList.remove(item)
-                                rowBinding.transitionLinearLayout.background =
-                                    context.getDrawable(R.drawable.custom_adapter_unselected_background)
-                            }
-                            sendSelectedRowSize(selectedRowList.size)
                         }
-                    }
-                    rowBinding.optionsImageView.setOnClickListener {
-                        showOptionsBottomDialog(supportFragmentManager, arrayListOf(item))
+                        rowBinding.optionsImageView.setOnClickListener {
+                            showOptionsBottomDialog(supportFragmentManager, arrayListOf(item))
+                        }
+                    } catch (e: Exception) {
+                        sendErrorMessage(context.getString(R.string.something_went_wrong))
                     }
                 }
             })
@@ -284,12 +314,244 @@ class TransitionFragmentViewModel @Inject constructor(
             layoutManager =
                 LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             setHasFixedSize(true)
+            setItemViewCacheSize(10)
+            drawingCacheQuality = View.DRAWING_CACHE_QUALITY_LOW
         }
         return transitionListAdapter
     }
 
+
+    fun setAdapter(
+        context: Context,
+        activity: FragmentActivity,
+        layoutInflater: LayoutInflater,
+        recylerView: RecyclerView,
+        transitionGridAdapter: TransitionGridAdapter,
+        list: MutableList<TransitionModel>,
+    ): TransitionGridAdapter {
+        transitionGridAdapter.apply {
+            setHasStableIds(true)
+            setItems(list)
+            setListener(object :
+                BaseViewBindingRecyclerViewAdapter.ClickListener<TransitionModel, RowTransitionGridItemBinding> {
+                override fun onItemClick(
+                    item: TransitionModel,
+                    position: Int,
+                    rowBinding: RowTransitionGridItemBinding,
+                ) {
+                    try {
+                        rowBinding.transitionGridLinearLayout.setOnLongClickListener {
+                            if (!longListenerActivated.value!!) {
+                                sendLongListenerActivated(true)
+                                selectedRowList.clear()
+                                selectedRowList.add(item)
+                                sendSelectedRowSize(selectedRowList.size)
+                            }
+                            return@setOnLongClickListener true
+                        }
+                        rowBinding.transitionGridLinearLayout.setOnClickListener {
+                            try {
+                                if (!longListenerActivated.value!!) {
+                                    val bindingImage =
+                                        ShowImageLayoutBinding.inflate(layoutInflater)
+                                    bindingImage.backShowImageView.setOnClickListener { dialog.dismiss() }
+                                    when (item.fileType) {
+                                        FileType.FOLDER.type -> {
+                                            sendIntentToTransitionFragmentWithIntent(it,
+                                                item.filePath)
+                                        }
+                                        FileType.PNG.type, FileType.JPG.type -> {
+                                            bindingImage.optionsOfFileDetail.setOnClickListener {
+                                                var stringList =
+                                                    activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array)
+                                                        .toMutableList()
+                                                val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
+                                                var taskTypeList = TaskType.values().filter {
+                                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                            it.value == TaskType.GOTOFOLDER.value
+                                                }.toMutableList()
+                                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                                } else {
+                                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                                }
+                                                showFavoritesBottomDialog(activity,
+                                                    rowBinding.root,
+                                                    dialog,
+                                                    item,
+                                                    stringList,
+                                                    drawableList,
+                                                    taskTypeList)
+                                            }
+                                            val bitmap = BitmapFactory.decodeFile(item.filePath)
+                                            Glide.with(bindingImage.showImageView.context).load(bitmap)
+                                                .override(bindingImage.showImageView.width, bindingImage.showImageView.height)
+                                                .apply(RequestOptions().transform(RoundedCorners(10))).into(bindingImage.showImageView)
+                                            dialog = Dialog(activity, R.style.fullscreenalert)
+                                            dialog.setContentView(bindingImage.root)
+                                            showDialog(activity, dialog)
+                                            dialog.setOnCancelListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                            dialog.setOnDismissListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                        }
+                                        FileType.PDF.type -> {
+                                            dialog = Dialog(activity, R.style.fullscreenalert)
+                                            val showImageBitmap = BitmapUtils.getImagePdf(File(item.filePath))
+                                            Glide.with(bindingImage.root.context).load(showImageBitmap)
+                                                .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                    bindingImage.showImageView.height))
+                                                .transform(RoundedCorners(10)).into(bindingImage.showImageView)
+                                            viewModelScope.launch {
+                                                bitmapList = BitmapUtils.pdfToBitmap(File(item.filePath))
+
+                                            }
+                                            val radioGroup = RadioGroup(bindingImage.root.context)
+                                            radioGroup.orientation = RadioGroup.HORIZONTAL
+                                            bitmapList.forEachIndexed { index, imageBitmap ->
+                                                val drawable =
+                                                    BitmapUtils.getRoundedBitmap(activity.resources, imageBitmap, 10f)
+                                                        .toDrawable(activity.resources)
+                                                val layerDrawable = LayerDrawable(arrayOf(drawable))
+                                                var params = LinearLayout.LayoutParams(100,
+                                                    100)
+                                                params.setMargins(0, 0, 0, 0)
+                                                val radioButton = RadioButton(context)
+                                                params.gravity = Gravity.CENTER
+                                                radioButton.buttonDrawable = null
+                                                radioButton.id = index
+                                                radioButton.setOnCheckedChangeListener { _, isChecked ->
+                                                    if (isChecked) {
+                                                        params.width += 50
+                                                        params.height += 50
+                                                        radioButton.layoutParams = params
+                                                        Glide.with(bindingImage.root.context).load(imageBitmap)
+                                                            .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                                bindingImage.showImageView.height))
+                                                            .transform(RoundedCorners(10)).into(bindingImage.showImageView)
+                                                        bindingImage.executePendingBindings()
+                                                    } else {
+                                                        params.width -= 50
+                                                        params.height -= 50
+                                                        radioButton.layoutParams = params
+                                                    }
+                                                }
+                                                radioButton.layoutParams = params
+                                                radioButton.background = layerDrawable
+                                                radioButton.setOnClickListener {
+                                                    Glide.with(bindingImage.root.context).load(imageBitmap)
+                                                        .apply(RequestOptions().override(bindingImage.showImageView.width,
+                                                            bindingImage.showImageView.height))
+                                                        .transform(RoundedCorners(10)).into(bindingImage.showImageView)
+                                                    bindingImage.executePendingBindings()
+                                                }
+                                                radioGroup.addView(radioButton)
+                                            }
+                                            bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
+                                                View.OnTouchListener {
+                                                override fun onSwipeRight(): Boolean {
+                                                    if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
+                                                        (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
+                                                    } else
+                                                        (radioGroup[0] as RadioButton).isChecked = true
+                                                    return true
+                                                }
+
+                                                override fun onSwipeLeft(): Boolean {
+                                                    if (radioGroup.checkedRadioButtonId > 0)
+                                                        (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
+                                                    else
+                                                        (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
+                                                    return true
+                                                }
+                                            })
+                                            radioGroup.gravity = Gravity.CENTER
+                                            (radioGroup.getChildAt(0) as RadioButton).isChecked = true
+
+                                            bindingImage.footLinearLayout.addView(radioGroup)
+                                            bindingImage.executePendingBindings()
+                                            dialog.setContentView(bindingImage.root)
+                                            showDialog(activity, dialog)
+                                            dialog.setOnDismissListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                            dialog.setOnCancelListener {
+                                                activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
+                                                activity.window.statusBarColor = activity.getColor(R.color.primary_color)
+                                            }
+                                        }
+                                    }
+                                    bindingImage.optionsOfFileDetail.setOnClickListener {
+                                        var stringList =
+                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
+                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
+                                        val taskTypeList = TaskType.values().filter {
+                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
+                                                    it.value == TaskType.GOTOFOLDER.value
+                                        }.toMutableList()
+                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
+                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
+                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
+                                        } else {
+                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
+                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
+                                        }
+                                        showFavoritesBottomDialog(activity,
+                                            rowBinding.root,
+                                            dialog,
+                                            item,
+                                            stringList,
+                                            drawableList,
+                                            taskTypeList)
+                                    }
+                                } else {
+                                    if (!selectedRowList.contains(item)) {
+                                        selectedRowList.add(item)
+                                        rowBinding.transitionGridLinearLayout.background =
+                                            context.getDrawable(R.drawable.custom_adapter_selected_background)
+                                    } else {
+                                        selectedRowList.remove(item)
+                                        rowBinding.transitionGridLinearLayout.background =
+                                            context.getDrawable(R.drawable.custom_adapter_unselected_background)
+                                    }
+                                    sendSelectedRowSize(selectedRowList.size)
+                                }
+                            } catch (e: Exception) {
+                                println(e.toString())
+                                sendErrorMessage(context.getString(R.string.something_went_wrong))
+                            }
+                        }
+                        rowBinding.optionsGridImageView.setOnClickListener {
+                            showOptionsBottomDialog(activity.supportFragmentManager, arrayListOf(item))
+                        }
+                    } catch (e: Exception) {
+                        println(e.toString())
+                        sendErrorMessage(R.string.something_went_wrong.toString())
+                    }
+                }
+            })
+        }
+        recylerView.apply {
+            adapter = transitionGridAdapter
+            layoutManager =
+                GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
+            setHasFixedSize(true)
+            setItemViewCacheSize(10)
+            drawingCacheQuality = View.DRAWING_CACHE_QUALITY_LOW
+        }
+
+        return transitionGridAdapter
+    }
+
     fun showFavoritesBottomDialog(
-        supportFragmentManager: FragmentManager,
+        activity: FragmentActivity,
         view: View,
         dialog: Dialog,
         transitionModel: TransitionModel,
@@ -299,7 +561,8 @@ class TransitionFragmentViewModel @Inject constructor(
     ) {
         try {
             val list = arrayListOf<OptionsModel>()
-            val taskList = arrayListOf(ToolsTask(),
+
+            val taskList = arrayListOf(ToolsTask(view.context, arrayListOf(transitionModel.filePath), pageModel),
                 ShareTask(context, arrayListOf(transitionModel), arrayListOf()),
                 GoToFolderTask(transitionModel, view, dialog))
             val favoriteFile = transitionModel.toFavoriteModel()
@@ -349,225 +612,10 @@ class TransitionFragmentViewModel @Inject constructor(
                 }
             })
             favoriteOptionsBottomDialog = FavoriteOptionsBottomDialog(optionsAdapter)
-            favoriteOptionsBottomDialog.show(supportFragmentManager, "FavoriteOptionsBottomDialog")
+            favoriteOptionsBottomDialog.show(activity.supportFragmentManager, "FavoriteOptionsBottomDialog")
         } catch (e: Exception) {
             LogManager.log(TAG, e.toString())
         }
-    }
-
-    fun setAdapter(
-        context: Context,
-        activity: FragmentActivity,
-        layoutInflater: LayoutInflater,
-        recylerView: RecyclerView,
-        transitionGridAdapter: TransitionGridAdapter,
-        list: MutableList<TransitionModel>,
-    ): TransitionGridAdapter {
-        transitionGridAdapter.apply {
-            setItems(list)
-            setListener(object :
-                BaseViewBindingRecyclerViewAdapter.ClickListener<TransitionModel, RowTransitionGridItemBinding> {
-                override fun onItemClick(
-                    item: TransitionModel,
-                    position: Int,
-                    rowBinding: RowTransitionGridItemBinding,
-                ) {
-                    rowBinding.transitionGridLinearLayout.setOnLongClickListener {
-                        if (!longListenerActivated.value!!) {
-                            sendLongListenerActivated(true)
-                            selectedRowList.clear()
-                            selectedRowList.add(item)
-                            sendSelectedRowSize(selectedRowList.size)
-                        }
-                        return@setOnLongClickListener true
-                    }
-                    rowBinding.transitionGridLinearLayout.setOnClickListener {
-                        if (!longListenerActivated.value!!) {
-                            val bindingImage =
-                                ShowImageLayoutBinding.inflate(layoutInflater)
-                            when (item.fileType) {
-                                FileType.FOLDER.type -> {
-                                    sendIntentToTransitionFragmentWithIntent(it,
-                                        item.filePath)
-                                }
-                                FileType.PNG.type, FileType.JPG.type -> {
-                                    val view = layoutInflater.inflate(R.layout.show_image_layout, null)
-                                    view.findViewById<ImageView>(R.id.backShowImageView)
-                                        .setOnClickListener {
-                                            dialog.dismiss()
-                                        }
-                                    view.findViewById<ImageView>(R.id.optionsOfFileDetail).setOnClickListener {
-
-
-                                        var stringList =
-                                            activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                        val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
-                                        var taskTypeList = TaskType.values().filter {
-                                            it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
-                                                    it.value == TaskType.GOTOFOLDER.value
-                                        }.toMutableList()
-                                        if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
-                                            stringList.add(activity.resources.getString(R.string.remove_favorite))
-                                            taskTypeList.add(TaskType.REMOVEFAVORITETASK)
-                                        } else {
-                                            stringList.add(activity.resources.getString(R.string.mark_as_favorite))
-                                            taskTypeList.add(TaskType.MARKFAVORITETASK)
-                                        }
-                                        showFavoritesBottomDialog(activity.supportFragmentManager,
-                                            rowBinding.root,
-                                            dialog,
-                                            item,
-                                            stringList,
-                                            drawableList,
-                                            taskTypeList)
-                                    }
-                                    val bitmap = BitmapFactory.decodeFile(item.filePath)
-                                    val imageView = view.findViewById<ImageView>(R.id.showImageView)
-                                    imageView.setImageBitmap(bitmap)
-                                    dialog = Dialog(activity, R.style.fullscreenalert)
-                                    dialog.setContentView(view)
-                                    showDialog(activity, dialog)
-                                    dialog.setOnCancelListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
-                                    }
-                                    dialog.setOnDismissListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
-                                    }
-                                }
-                                FileType.PDF.type -> {
-                                    bindingImage.backShowImageView.setOnClickListener {
-                                        dialog.cancel()
-                                    }
-                                    dialog = Dialog(activity, R.style.fullscreenalert)
-                                    val showImageBitmap = BitmapUtils.getImageOfPdf(activity, File(item.filePath), 0)
-                                    bindingImage.showImageView.setImageBitmap(BitmapUtils.getRoundedBitmap(activity.resources,
-                                        showImageBitmap,
-                                        10f))
-                                    val list = BitmapUtils.pdfToBitmap(context, File(item.filePath))
-                                    val radioGroup = RadioGroup(bindingImage.root.context)
-                                    radioGroup.orientation = RadioGroup.HORIZONTAL
-                                    radioGroup.clearCheck()
-                                    list.forEachIndexed { index, imageBitmap ->
-                                        val drawable =
-                                            BitmapUtils.getRoundedBitmap(activity.resources, imageBitmap, 10f)
-                                                .toDrawable(activity.resources)
-                                        val layerDrawable = LayerDrawable(arrayOf(drawable))
-                                        var params = LinearLayout.LayoutParams(100,
-                                            100)
-                                        params.setMargins(0, 0, 0, 0)
-                                        val radioButton = RadioButton(context)
-                                        params.gravity = Gravity.CENTER
-                                        radioButton.buttonDrawable = null
-                                        radioButton.id = index
-                                        radioButton.setOnCheckedChangeListener { _, isChecked ->
-                                            if (isChecked) {
-                                                params.width += 50
-                                                params.height += 50
-                                                radioButton.layoutParams = params
-                                                bindingImage.showImageView.setImageBitmap(imageBitmap)
-                                                bindingImage.executePendingBindings()
-                                            } else {
-                                                params.width -= 50
-                                                params.height -= 50
-                                                radioButton.layoutParams = params
-                                            }
-                                        }
-                                        radioButton.layoutParams = params
-                                        radioButton.background = layerDrawable
-                                        radioButton.setOnClickListener {
-                                            bindingImage.showImageView.setImageBitmap(imageBitmap)
-                                            bindingImage.executePendingBindings()
-                                        }
-                                        radioGroup.addView(radioButton)
-                                        bindingImage.executePendingBindings()
-                                    }
-                                    bindingImage.root.setOnTouchListener(object : OnSwipeTouchListener(context),
-                                        View.OnTouchListener {
-                                        override fun onSwipeRight(): Boolean {
-                                            if (radioGroup.checkedRadioButtonId < radioGroup.childCount - 1) {
-                                                (radioGroup[radioGroup.checkedRadioButtonId + 1] as RadioButton).isChecked = true
-                                            } else
-                                                (radioGroup[0] as RadioButton).isChecked = true
-                                            return true
-                                        }
-
-                                        override fun onSwipeLeft(): Boolean {
-                                            if (radioGroup.checkedRadioButtonId > 0)
-                                                (radioGroup[radioGroup.checkedRadioButtonId - 1] as RadioButton).isChecked = true
-                                            else
-                                                (radioGroup[radioGroup.childCount - 1] as RadioButton).isChecked = true
-                                            return true
-                                        }
-                                    })
-                                    radioGroup.gravity = Gravity.CENTER
-                                    (radioGroup.getChildAt(0) as RadioButton).isChecked = true
-
-                                    bindingImage.footLinearLayout.addView(radioGroup)
-                                    bindingImage.executePendingBindings()
-                                    dialog.setContentView(bindingImage.root)
-                                    showDialog(activity, dialog)
-                                    dialog.setOnDismissListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
-                                    }
-                                    dialog.setOnCancelListener {
-                                        activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-                                        activity.window.statusBarColor = activity.getColor(R.color.primary_color)
-                                    }
-                                }
-                            }
-                            bindingImage.optionsOfFileDetail.setOnClickListener {
-                                var stringList =
-                                    activity.resources.getStringArray(R.array.favorites_optionsmenu_string_array).toMutableList()
-                                val drawableList = activity.resources.obtainTypedArray(R.array.favorites_images_array)
-                                val taskTypeList = TaskType.values().filter {
-                                    it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
-                                            it.value == TaskType.GOTOFOLDER.value
-                                }.toMutableList()
-                                if (favoritesDao.getFavorite(item.filePath, item.fileName, item.fileType) != null) {
-                                    stringList.add(activity.resources.getString(R.string.remove_favorite))
-                                    taskTypeList.add(TaskType.REMOVEFAVORITETASK)
-                                } else {
-                                    stringList.add(activity.resources.getString(R.string.mark_as_favorite))
-                                    taskTypeList.add(TaskType.MARKFAVORITETASK)
-                                }
-                                showFavoritesBottomDialog(activity.supportFragmentManager,
-                                    rowBinding.root,
-                                    dialog,
-                                    item,
-                                    stringList,
-                                    drawableList,
-                                    taskTypeList)
-                            }
-                        } else {
-                            if (!selectedRowList.contains(item)) {
-                                selectedRowList.add(item)
-                                rowBinding.transitionGridLinearLayout.background =
-                                    context.getDrawable(R.drawable.custom_adapter_selected_background)
-                            } else {
-                                selectedRowList.remove(item)
-                                rowBinding.transitionGridLinearLayout.background =
-                                    context.getDrawable(R.drawable.custom_adapter_unselected_background)
-                            }
-                            sendSelectedRowSize(selectedRowList.size)
-                        }
-                    }
-                    rowBinding.optionsGridImageView.setOnClickListener {
-                        showOptionsBottomDialog(supportFragmentManager, arrayListOf(item))
-                    }
-                }
-            })
-        }
-        recylerView.apply {
-            adapter = transitionGridAdapter
-            layoutManager =
-                GridLayoutManager(context, 2, GridLayoutManager.VERTICAL, false)
-            setHasFixedSize(true)
-        }
-
-        return transitionGridAdapter
     }
 
     fun showOptionsBottomDialog(
@@ -578,14 +626,13 @@ class TransitionFragmentViewModel @Inject constructor(
             val list = arrayListOf<OptionsModel>()
             val adapter = OptionsAdapter()
             val title =
-                if (transitionList.size > 1) transitionList.size.toString() + "  " + context.getString(R.string.item) else transitionList.get(
-                    0).fileName
+                if (transitionList.size > 1) transitionList.size.toString() + "  " + context.getString(R.string.item) else transitionList[0].fileName
             optionsBottomDialog = OptionsBottomDialog(adapter, title, transitionList)
             val stringList = context.resources.getStringArray(R.array.options_menu_string_array).toList()
             val drawableList = context.resources.obtainTypedArray(R.array.imagesArray)
             val taskTypeList = TaskType.values().copyOfRange(0, stringList.size).toList()
             val taskList = arrayListOf(
-                ToolsTask(),
+                ToolsTask(context, transitionList.map { it.filePath }.toMutableList() as ArrayList<String>, pageModel),
                 ShareTask(context, transitionList, selectedRowList),
                 MarkFavoriteTask(transitionList),
                 CreateFolderWithSelectionTask(supportFragmentManager, transitionList, folderPath.value!!, favoritesDao),
@@ -817,9 +864,9 @@ class TransitionFragmentViewModel @Inject constructor(
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK)
         intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-        intent.setType("*/*")
+        intent.type = "*/*"
         intent.putExtra(Intent.EXTRA_STREAM, uriArrayList)
-        intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.");
+        intent.putExtra(Intent.EXTRA_SUBJECT, "Here are some files.")
         context.startActivity(intent)
     }
 
@@ -870,6 +917,10 @@ class TransitionFragmentViewModel @Inject constructor(
 
     fun sendItemsChangedSate(value: Boolean) {
         itemsChangedState.postValue(value)
+    }
+
+    fun sendErrorMessage(message: String) {
+        errorMessage.postValue(message)
     }
 
     fun sendLongListenerActivated(state: Boolean) {
@@ -945,4 +996,5 @@ class TransitionFragmentViewModel @Inject constructor(
     fun getFilterStateMutableLiveData() = this.filterState
     fun getNoDataStateMutableLiveData() = this.noDataState
     fun getFolderPathMutableLiveData() = this.folderPath
+    fun getErrorMessageMutableLiveData() = this.errorMessage
 }

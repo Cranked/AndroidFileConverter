@@ -1,14 +1,19 @@
 package com.cranked.androidfileconverter.utils.file
 
 import android.content.Context
+import android.graphics.BitmapFactory
+import android.graphics.pdf.PdfDocument
 import android.os.Environment
 import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.ui.home.StorageModel
+import com.cranked.androidfileconverter.ui.model.PageModel
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.FileType
+import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import java.io.File
+import java.io.FileOutputStream
 
 object FileUtility {
     fun getMenuFolderSizes(context: Context, processedFilesDao: ProcessedFilesDao): StorageModel {
@@ -43,8 +48,7 @@ object FileUtility {
         Environment.getExternalStorageDirectory().absolutePath + File.separator
 
     fun getSdCarPath(context: Context) = "/storage/" +
-            ContextCompat.getExternalFilesDirs(context, null).get(1).absolutePath.split("/")
-                .get(2) + "/"
+            ContextCompat.getExternalFilesDirs(context, null).get(1).absolutePath.split("/")[2] + "/"
 
     fun getFileTransformerPath() =
         getInternalStoragePath() + Constants.folderName + File.separator
@@ -82,5 +86,29 @@ object FileUtility {
 
     fun renameFile(oldPath: String, newPath: String): Boolean {
         return File(oldPath).renameTo(File(newPath))
+    }
+
+    fun imageToPdf(context: Context, pageModel: PageModel, path: String): Boolean {
+        val file = File(path)
+        var bitmap = BitmapFactory.decodeFile(path)
+        val pdfDocument = PdfDocument()
+        val height = context.resources.displayMetrics.densityDpi / 72 * pageModel.pageHeight
+        val width = context.resources.displayMetrics.densityDpi / 72 * pageModel.pageWidth
+        val pageInfo = PdfDocument.PageInfo.Builder(width, height, 1).create()
+        val page = pdfDocument.startPage(pageInfo)
+        page.canvas!!.drawBitmap(bitmap, 0f, 0f, null)
+        pdfDocument.finishPage(page)
+        val tempFile = file.path.substringBeforeLast("/")
+        val newFileName = file.name.substringBeforeLast(".")
+        val resultFile = File(tempFile + File.separator + newFileName + ".pdf")
+        try {
+            val fileOutputStream = FileOutputStream(resultFile)
+            pdfDocument.writeTo(fileOutputStream)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            return false
+        }
+        pdfDocument.close()
+        return true
     }
 }
