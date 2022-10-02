@@ -18,6 +18,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.cranked.androidcorelibrary.adapter.BaseViewBindingRecyclerViewAdapter
 import com.cranked.androidcorelibrary.viewmodel.BaseViewModel
+import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.options.OptionsAdapter
 import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
@@ -31,6 +32,7 @@ import com.cranked.androidfileconverter.dialog.options.RenameTask
 import com.cranked.androidfileconverter.dialog.options.ToolsTask
 import com.cranked.androidfileconverter.dialog.takenphoto.TakenPhotoOptionsDialog
 import com.cranked.androidfileconverter.ui.model.OptionsModel
+import com.cranked.androidfileconverter.ui.model.PageModel
 import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.ui.model.toTransitionModel
 import com.cranked.androidfileconverter.ui.transition.TransitionModel
@@ -45,7 +47,11 @@ import java.text.SimpleDateFormat
 import java.util.*
 import javax.inject.Inject
 
-class CameraFragmentViewModel @Inject constructor(private val context: Context, private val favoritesDao: FavoritesDao) :
+class CameraFragmentViewModel @Inject constructor(
+    private val context: Context,
+    private val favoritesDao: FavoritesDao,
+    private val pageModel: PageModel,
+) :
     BaseViewModel() {
     private val TAG = this::class.java.toString().substringAfterLast(".")
     lateinit var dialog: Dialog
@@ -136,9 +142,10 @@ class CameraFragmentViewModel @Inject constructor(private val context: Context, 
         taskTypeList: List<TaskType>,
     ) {
         try {
+            val pageModel = Constants.pageSizes[(activity.application as FileConvertApp).getPageDefaultSize()]
             var takenPhotoOptionsDialog: TakenPhotoOptionsDialog? = null
             val list = arrayListOf<OptionsModel>()
-            val taskList = arrayListOf(ToolsTask(),
+            val taskList = arrayListOf(ToolsTask(activity.baseContext, arrayListOf(photoFile.path),pageModel!!),
                 RenameTask(supportFragmentManager, arrayListOf(photoFile.toTransitionModel()), favoritesDao),
                 DeleteTask(supportFragmentManager, arrayListOf(photoFile.toTransitionModel())),
                 GoToFolderTask(photoFile, view, dialog))

@@ -4,6 +4,9 @@ import android.app.Application
 import android.content.Context
 import com.cranked.androidcorelibrary.local.LocaleManager
 import com.cranked.androidcorelibrary.local.PrefManager
+import com.cranked.androidfileconverter.FileConvertApp
+import com.cranked.androidfileconverter.ui.model.PageModel
+import com.cranked.androidfileconverter.utils.Constants
 import dagger.Module
 import dagger.Provides
 import javax.inject.Singleton
@@ -29,5 +32,11 @@ class AppModule {
         return LocaleManager(provideSharedPreferences(context))
     }
 
+    @Singleton
+    @Provides
+    fun providesPageModel(application: Application): PageModel {
+        val app = application as FileConvertApp
+        return Constants.pageSizes[app.getPageDefaultSize()] as PageModel
+    }
 
 }

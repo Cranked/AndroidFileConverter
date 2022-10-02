@@ -15,13 +15,6 @@ class ToolsFragment @Inject constructor() :
     BaseDaggerFragment<ToolsFragmentViewModel, FragmentToolsBinding>(ToolsFragmentViewModel::class.java) {
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            onBundle(it)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?,
@@ -40,9 +33,5 @@ class ToolsFragment @Inject constructor() :
 
     override fun initViewModel(viewModel: ToolsFragmentViewModel) {
         binding.viewModel = viewModel
-    }
-
-    override fun onBundle(bundle: Bundle) {
-        
     }
 }

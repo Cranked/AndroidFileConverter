@@ -100,11 +100,11 @@ class CameraImageFragmentViewModel @Inject constructor(private val favoritesDao:
                         dialog.setContentView(view)
                         showDialog(activity, dialog)
                         dialog.setOnCancelListener {
-                            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                             activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                         }
                         dialog.setOnDismissListener {
-                            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
+                            activity.window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
                             activity.window.statusBarColor = activity.getColor(R.color.primary_color)
                         }
 
