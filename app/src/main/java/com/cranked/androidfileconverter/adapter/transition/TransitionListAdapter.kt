@@ -44,8 +44,7 @@ class TransitionListAdapter(private val transitionFragmentViewModel: TransitionF
                         .into(binding.transitionListImageView)
                 }
                 FileType.PDF.type -> {
-                    val bitmap = BitmapUtils.getImagePdf(File(item.filePath))
-                    Glide.with(binding.transitionListImageView).load(bitmap)
+                    Glide.with(binding.transitionListImageView).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf)
                         .diskCacheStrategy(DiskCacheStrategy.ALL).priority(Priority.IMMEDIATE)
                         .override(binding.transitionListImageView.width, binding.transitionListImageView.height)
                         .apply(RequestOptions().transform(RoundedCorners(10)))

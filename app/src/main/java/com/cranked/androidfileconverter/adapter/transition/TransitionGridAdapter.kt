@@ -44,7 +44,7 @@ class TransitionGridAdapter(private val transitionFragmentViewModel: TransitionF
                         .into(binding.transitionGridImageView)
                 }
                 FileType.PDF.type -> {
-                    Glide.with(binding.root.context).load(item.filePath)
+                    Glide.with(binding.root.context).load(com.cranked.androidcorelibrary.R.drawable.icon_pdf)
                         .override(binding.transitionGridImageView.width, binding.transitionGridImageView.height)
                         .apply(RequestOptions().format(DecodeFormat.PREFER_ARGB_8888).transform(RoundedCorners(10)))
                         .into(binding.transitionGridImageView)
