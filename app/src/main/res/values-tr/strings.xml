@@ -105,5 +105,22 @@
     <string name="files_copied">%1$d dosya kopyalandı</string>
     <string name="something_went_wrong">Bir hata oluştu</string>
     <string name="item_counts">%1$d öğe</string>
+    <!--    ToolsFragmentString-->
+    <string name="pdf_to_image">Pdf\'ten Resim\'e</string>
+    <string name="pdf_to_excel">Pdf\'ten Excel\'e</string>
+    <string name="pdf_to_word">Pdf\'ten Word\'e</string>
+    <string name="compress_pdf">Pdf Sıkıştır</string>
+    <string name="merge_pdf">Pdf Birleştir</string>
+    <string name="split_pdf">Pdf\'i Ayır</string>
+    <string name="lock_pdf">Pdf Kilitle</string>
+    <string name="unlock_pdf">Pdf kilidini aç</string>
+    <string name="rotate_pdf">Pdf döndür</string>
+    <string name="watermark">Filigran</string>
+    <string name="text_recognition">Metin Tanıma(OCR)</string>
+    <string name="sign_pdf">Pdf\'i imzala</string>
+
+    <string name="pdf_converter_title">Pdf Dönüştürücüler</string>
+    <string name="pdf_tool_title">Pdf Araçları</string>
+    <string name="image_converter_title">Resim Dönüştürücüler</string>
 
 </resources>

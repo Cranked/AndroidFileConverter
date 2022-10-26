@@ -12,7 +12,6 @@
         <item>@drawable/icon_duplicate</item>
     </integer-array>
     <integer-array name="favorites_images_array">
-
         <item>@drawable/icon_tools</item>
         <item>@drawable/icon_share</item>
         <item>@drawable/icon_go</item>
@@ -28,4 +27,10 @@
         <item>@drawable/icon_share</item>
         <item>@drawable/icon_go</item>
     </integer-array>
+    <integer-array name="pdf_converter_tools">
+        <item>@drawable/icon_default</item>
+        <item>@drawable/icon_default</item>
+        <item>@drawable/icon_default</item>
+    </integer-array>
+
 </resources>

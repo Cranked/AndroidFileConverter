@@ -102,4 +102,27 @@
     <string name="something_went_wrong">Something went wrong</string>
     <string name="item_counts">%1$d elements</string>
 
+    <!--    ToolsFragmentString-->
+    <string name="pdf_to_image">PdftoImage</string>
+    <string name="pdf_to_excel">PdftoExcel</string>
+    <string name="pdf_to_word">PdftoWord</string>
+    <string name="compress_pdf">CompressPdf</string>
+    <string name="merge_pdf">MergePdf</string>
+    <string name="split_pdf">SplitPdf</string>
+    <string name="lock_pdf">LockPdf</string>
+    <string name="unlock_pdf">UnlockPdf</string>
+    <string name="rotate_pdf">RotatePdf</string>
+    <string name="watermark">Watermark</string>
+    <string name="text_recognition">Text Recognition(OCR)</string>
+    <string name="sign_pdf">Sign Pdf</string>
+
+    <string-array name="pdf_converter_strings">
+        <item>@string/pdf_to_image</item>
+        <item>@string/pdf_to_excel</item>
+        <item>@string/pdf_to_word</item>
+    </string-array>
+
+    <string name="pdf_converter_title">Pdf Converters</string>
+    <string name="pdf_tool_title">Pdf Tools</string>
+    <string name="image_converter_title">Image Converters</string>
 </resources>
