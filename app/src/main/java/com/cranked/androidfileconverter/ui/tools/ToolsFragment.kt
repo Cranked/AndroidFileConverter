@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.viewModelScope
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
@@ -15,6 +16,7 @@ import com.cranked.androidfileconverter.adapter.tool.ToolListAdapter
 import com.cranked.androidfileconverter.adapter.tool.ToolListener
 import com.cranked.androidfileconverter.databinding.FragmentToolsBinding
 import com.cranked.androidfileconverter.utils.enums.LayoutState
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ToolsFragment @Inject constructor() :
@@ -40,6 +42,8 @@ class ToolsFragment @Inject constructor() :
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val pdfConvertersList = viewModel.getPdfConverterItems()
+        val pdfToolsList = viewModel.getPdfToolItems()
+
         when (app.getLayoutState()) {
             LayoutState.LIST_LAYOUT.value -> {
                 val adapter = ToolListAdapter(this)
@@ -48,10 +52,16 @@ class ToolsFragment @Inject constructor() :
                 binding.pdfConvertersRV.adapter = adapter
             }
             LayoutState.GRID_LAYOUT.value -> {
-                val adapter = ToolGridAdapter(this)
-                binding.pdfConvertersRV.layoutManager = GridLayoutManager(requireContext(), 3)
-                adapter.setItems(pdfConvertersList)
-                binding.pdfConvertersRV.adapter = adapter
+                val pdfConverterAdapter = ToolGridAdapter(this)
+                val pdfToolsAdapter = ToolGridAdapter(this)
+                val imageConvertersAdapter = ToolGridAdapter(this)
+                viewModel.viewModelScope.launch {
+                    viewModel.setAdapter(binding.pdfConvertersRV,
+                        GridLayoutManager(requireContext(), 3),
+                        pdfConverterAdapter,
+                        pdfConvertersList)
+                    viewModel.setAdapter(binding.pdfToolRV, GridLayoutManager(requireContext(), 3), pdfToolsAdapter, pdfToolsList)
+                }
             }
         }
     }

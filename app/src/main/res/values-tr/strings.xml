@@ -123,4 +123,17 @@
     <string name="pdf_tool_title">Pdf Araçları</string>
     <string name="image_converter_title">Resim Dönüştürücüler</string>
 
+    <string-array name="pdf_converter_strings">
+        <item>@string/pdf_to_image</item>
+        <item>@string/pdf_to_excel</item>
+        <item>@string/pdf_to_word</item>
+    </string-array>
+
+    <string-array name="pdf_tools_strings">
+        <item>@string/split_pdf</item>
+        <item>@string/merge_pdf</item>
+        <item>@string/lock_pdf</item>
+        <item>@string/unlock_pdf</item>
+        <item>@string/rotate_pdf</item>
+    </string-array>
 </resources>

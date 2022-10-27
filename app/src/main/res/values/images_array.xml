@@ -32,5 +32,12 @@
         <item>@drawable/icon_default</item>
         <item>@drawable/icon_default</item>
     </integer-array>
+    <integer-array name="pdf_tools_images">
+        <item>@drawable/icon_pdf</item>
+        <item>@drawable/icon_pdf</item>
+        <item>@drawable/icon_pdf</item>
+        <item>@drawable/icon_pdf</item>
+        <item>@drawable/icon_pdf</item>
+    </integer-array>
 
 </resources>
