@@ -78,6 +78,7 @@ class MainViewModel @Inject constructor(
                             app.setLayoutState(LayoutState.LIST_LAYOUT.value)
                         }
                     }
+
                     app.rxBus.send(app.getLayoutState())
                 }
             }

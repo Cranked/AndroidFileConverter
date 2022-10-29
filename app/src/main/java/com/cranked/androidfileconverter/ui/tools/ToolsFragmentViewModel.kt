@@ -2,6 +2,7 @@ package com.cranked.androidfileconverter.ui.tools
 
 import android.content.Context
 import androidx.core.graphics.drawable.toBitmap
+import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -20,18 +21,18 @@ import javax.inject.Inject
 class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseViewModel() {
     private val _changesItems = MutableStateFlow(Boolean)
     val changesItems = _changesItems.asStateFlow()
-    fun getPdfConverterItems(): ArrayList<ToolModel> {
+    fun getPdfConverterItems(activity: FragmentActivity): ArrayList<ToolModel> {
         val pdfConverterEnumList =
             arrayListOf<ToolTaskType>(ToolTaskType.PDFTOIMAGES, ToolTaskType.PDFTOEXCEL, ToolTaskType.PDFTOWORD, ToolTaskType.IMAGETOPDF)
         val list = arrayListOf<ToolModel>()
         val drawableList = context.resources.obtainTypedArray(R.array.pdf_converter_tools)
-        context.resources.getStringArray(R.array.pdf_converter_strings).forEachIndexed { index, s ->
+        activity.resources.getStringArray(R.array.pdf_converter_strings).forEachIndexed { index, s ->
             list.add(ToolModel(s, drawableList.getDrawable(index)!!.toBitmap(), pdfConverterEnumList[index]))
         }
         return list
     }
 
-    fun getPdfToolItems(): ArrayList<ToolModel> {
+    fun getPdfToolItems(activity: FragmentActivity): ArrayList<ToolModel> {
         val pdfToolsEnumList = arrayListOf(ToolTaskType.COMPRESSPDF,
             ToolTaskType.SPLITPDF,
             ToolTaskType.MERGEPDF,
@@ -40,7 +41,7 @@ class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseVie
             ToolTaskType.ROTATEPDF)
         val list = arrayListOf<ToolModel>()
         val drawableList = context.resources.obtainTypedArray(R.array.pdf_tools_images)
-        context.resources.getStringArray(R.array.pdf_tools_strings).forEachIndexed { index, s ->
+        activity.resources.getStringArray(R.array.pdf_tools_strings).forEachIndexed { index, s ->
             list.add(ToolModel(s, drawableList.getDrawable(index)!!.toBitmap(), pdfToolsEnumList[index]))
         }
 
@@ -70,6 +71,7 @@ class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseVie
         recyclerView.adapter = adapter
         return adapter
     }
+
     fun init(
         app: FileConvertApp,
         context: Context,
@@ -95,7 +97,7 @@ class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseVie
 
             }
             LayoutState.GRID_LAYOUT.value -> {
-              setAdapter(binding.pdfConvertersRV,
+                setAdapter(binding.pdfConvertersRV,
                     GridLayoutManager(context, 3),
                     converterGridAdapter,
                     pdfConvertersList)

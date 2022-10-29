@@ -44,8 +44,8 @@ class ToolsFragment @Inject constructor() :
         binding = getViewDataBinding(inflater, container)
         initViewModel(viewModel)
         app.rxBus.send(ToolbarState(true))
-        pdfConvertersList = viewModel.getPdfConverterItems()
-        pdfToolsList = viewModel.getPdfToolItems()
+        pdfConvertersList = viewModel.getPdfConverterItems(requireActivity())
+        pdfToolsList = viewModel.getPdfToolItems(requireActivity())
         viewModel.init(app,
             requireContext(),
             binding,
@@ -70,11 +70,11 @@ class ToolsFragment @Inject constructor() :
 
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
-        app.rxBus.toObservable().subscribe {
+        disposable = app.rxBus.toObservable().subscribe {
             when (it) {
                 LayoutState.LIST_LAYOUT.value, LayoutState.GRID_LAYOUT.value -> {
                     viewModel.init(app,
-                        requireContext(),
+                        this.context!!,
                         binding,
                         converterListAdapter,
                         converterGridAdapter,
@@ -93,5 +93,11 @@ class ToolsFragment @Inject constructor() :
 
     override fun onItemClick(item: ToolModel) {
         println(item)
+    }
+
+    override fun onDestroyView() {
+        super.onDestroyView()
+        onBindingClear(binding)
+        disposable.dispose()
     }
 }

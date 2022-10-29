@@ -18,7 +18,7 @@
     <dimen name="border_stroke_8dp">8dp</dimen>
     <dimen name="camera_margin">32dp</dimen>
     <dimen name="margin_5dp">5dp</dimen>
-    <dimen name="tool_item_image_size">60dp</dimen>
+    <dimen name="tool_item_image_size">50dp</dimen>
 
     <dimen name="take_photo_image_size">100dp</dimen>
 </resources>

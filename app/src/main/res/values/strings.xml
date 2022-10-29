@@ -103,16 +103,16 @@
     <string name="item_counts">%1$d elements</string>
 
     <!--    ToolsFragmentString-->
-    <string name="pdf_to_image">PdftoImage</string>
-    <string name="pdf_to_excel">PdftoExcel</string>
-    <string name="pdf_to_word">PdftoWord</string>
-    <string name="image_to_pdf">ImagetoPdf</string>
-    <string name="compress_pdf">CompressPdf</string>
-    <string name="merge_pdf">MergePdf</string>
-    <string name="split_pdf">SplitPdf</string>
-    <string name="lock_pdf">LockPdf</string>
-    <string name="unlock_pdf">UnlockPdf</string>
-    <string name="rotate_pdf">RotatePdf</string>
+    <string name="pdf_to_image">Pdf to Image</string>
+    <string name="pdf_to_excel">Pdf to Excel</string>
+    <string name="pdf_to_word">Pdf to Word</string>
+    <string name="image_to_pdf">Image to Pdf</string>
+    <string name="compress_pdf">Compress Pdf</string>
+    <string name="merge_pdf">Merge Pdf</string>
+    <string name="split_pdf">Split Pdf</string>
+    <string name="lock_pdf">Lock Pdf</string>
+    <string name="unlock_pdf">Unlock Pdf</string>
+    <string name="rotate_pdf">Rotate Pdf</string>
     <string name="watermark">Watermark</string>
     <string name="text_recognition">Text Recognition(OCR)</string>
     <string name="sign_pdf">Sign Pdf</string>
