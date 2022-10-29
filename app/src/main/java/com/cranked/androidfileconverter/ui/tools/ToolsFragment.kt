@@ -46,15 +46,7 @@ class ToolsFragment @Inject constructor() :
         app.rxBus.send(ToolbarState(true))
         pdfConvertersList = viewModel.getPdfConverterItems(requireActivity())
         pdfToolsList = viewModel.getPdfToolItems(requireActivity())
-        viewModel.init(app,
-            requireContext(),
-            binding,
-            converterListAdapter,
-            converterGridAdapter,
-            toolListAdapter,
-            toolGridAdapter,
-            pdfConvertersList,
-            pdfToolsList)
+
 
         return binding.root
     }
@@ -65,7 +57,15 @@ class ToolsFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
+        viewModel.init(app,
+            requireContext(),
+            binding,
+            converterListAdapter,
+            converterGridAdapter,
+            toolListAdapter,
+            toolGridAdapter,
+            pdfConvertersList,
+            pdfToolsList)
     }
 
 
@@ -91,7 +91,8 @@ class ToolsFragment @Inject constructor() :
         binding.viewModel = viewModel
     }
 
-    override fun onItemClick(item: ToolModel) {
+    override fun onItemClick(view: View, item: ToolModel) {
+        viewModel.goToFileTypeFragmentWithIntent(requireActivity(), item)
         println(item)
     }
 

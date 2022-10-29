@@ -10,6 +10,6 @@ class ToolListAdapter(val listener: ToolListener) :
     override fun setBindingModel(item: ToolModel, binding: RowToolListItemBinding, position: Int) {
         binding.toolListImageView.setImageBitmap(item.image)
         binding.toolListItemName.text = item.taskTypeName
-        binding.toolListLinearLayout.setOnClickListener { listener.onItemClick(item) }
+        binding.toolListLinearLayout.setOnClickListener { listener.onItemClick(binding.root, item) }
     }
 }

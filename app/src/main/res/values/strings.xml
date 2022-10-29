@@ -116,12 +116,14 @@
     <string name="watermark">Watermark</string>
     <string name="text_recognition">Text Recognition(OCR)</string>
     <string name="sign_pdf">Sign Pdf</string>
+    <string name="next">Next</string>
+    <string name="selected_files">%1$d  file%2$s selected</string>
 
     <string-array name="pdf_converter_strings">
         <item>@string/pdf_to_image</item>
         <item>@string/pdf_to_excel</item>
         <item>@string/pdf_to_word</item>
-        <item>@string/pdf_to_word</item>
+        <item>@string/image_to_pdf</item>
     </string-array>
 
     <string-array name="pdf_tools_strings">

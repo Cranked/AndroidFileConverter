@@ -124,6 +124,9 @@
     <string name="pdf_converter_title">Pdf Dönüştürücüler</string>
     <string name="pdf_tool_title">Pdf Araçları</string>
     <string name="image_converter_title">Resim Dönüştürücüler</string>
+    <string name="next">Sonraki</string>
+    <string name="selected_files">%1$d  dosya seçildi</string>
+
 
     <string-array name="pdf_converter_strings">
         <item>@string/pdf_to_image</item>

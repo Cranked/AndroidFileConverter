@@ -10,6 +10,6 @@ class ToolGridAdapter(val listener: ToolListener) :
     override fun setBindingModel(item: ToolModel, binding: RowToolGridItemBinding, position: Int) {
         binding.toolGridImageView.setImageBitmap(item.image)
         binding.toolGridItemName.text = item.taskTypeName
-        binding.toolGridLinearLayout.setOnClickListener { listener.onItemClick(item) }
+        binding.toolGridLinearLayout.setOnClickListener { listener.onItemClick(binding.root,item) }
     }
 }

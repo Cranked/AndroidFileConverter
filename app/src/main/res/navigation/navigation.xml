@@ -18,7 +18,11 @@
         android:id="@+id/tools_dest"
         android:name="com.cranked.androidfileconverter.ui.tools.ToolsFragment"
         android:label="@string/tools"
-        tools:layout="@layout/fragment_tools" />
+        tools:layout="@layout/fragment_tools" >
+        <action
+            android:id="@+id/action_tools_dest_to_fileTypeFragment"
+            app:destination="@id/fileTypeFragment" />
+    </fragment>
     <fragment
         android:id="@+id/camera_dest"
         android:name="com.cranked.androidfileconverter.ui.camera.CameraFragment"
@@ -56,5 +60,9 @@
             android:id="@+id/action_cameraImageFragment_to_transition_fragment"
             app:destination="@id/transition_fragment" />
     </fragment>
+    <fragment
+        android:id="@+id/fileTypeFragment"
+        android:name="com.cranked.androidfileconverter.ui.filetype.FileTypeFragment"
+        android:label="FileTypeFragment" />
 
 </navigation>

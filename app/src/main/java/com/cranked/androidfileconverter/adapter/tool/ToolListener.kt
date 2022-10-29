@@ -1,7 +1,8 @@
 package com.cranked.androidfileconverter.adapter.tool
 
+import android.view.View
 import com.cranked.androidfileconverter.ui.tools.ToolModel
 
 interface ToolListener {
-    fun onItemClick(item: ToolModel)
+    fun onItemClick(view: View, item: ToolModel)
 }

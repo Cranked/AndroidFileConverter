@@ -1,8 +1,11 @@
 package com.cranked.androidfileconverter.ui.tools
 
 import android.content.Context
+import android.os.Bundle
 import androidx.core.graphics.drawable.toBitmap
 import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.viewModelScope
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -12,18 +15,18 @@ import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.tool.ToolGridAdapter
 import com.cranked.androidfileconverter.adapter.tool.ToolListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentToolsBinding
+import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.LayoutState
 import com.cranked.androidfileconverter.utils.enums.ToolTaskType
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
 class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseViewModel() {
     private val _changesItems = MutableStateFlow(Boolean)
-    val changesItems = _changesItems.asStateFlow()
     fun getPdfConverterItems(activity: FragmentActivity): ArrayList<ToolModel> {
         val pdfConverterEnumList =
-            arrayListOf<ToolTaskType>(ToolTaskType.PDFTOIMAGES, ToolTaskType.PDFTOEXCEL, ToolTaskType.PDFTOWORD, ToolTaskType.IMAGETOPDF)
+            arrayListOf(ToolTaskType.PDFTOIMAGES, ToolTaskType.PDFTOEXCEL, ToolTaskType.PDFTOWORD, ToolTaskType.IMAGETOPDF)
         val list = arrayListOf<ToolModel>()
         val drawableList = context.resources.obtainTypedArray(R.array.pdf_converter_tools)
         activity.resources.getStringArray(R.array.pdf_converter_strings).forEachIndexed { index, s ->
@@ -33,7 +36,8 @@ class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseVie
     }
 
     fun getPdfToolItems(activity: FragmentActivity): ArrayList<ToolModel> {
-        val pdfToolsEnumList = arrayListOf(ToolTaskType.COMPRESSPDF,
+        val pdfToolsEnumList = arrayListOf(
+            ToolTaskType.COMPRESSPDF,
             ToolTaskType.SPLITPDF,
             ToolTaskType.MERGEPDF,
             ToolTaskType.LOCKPDF,
@@ -44,7 +48,6 @@ class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseVie
         activity.resources.getStringArray(R.array.pdf_tools_strings).forEachIndexed { index, s ->
             list.add(ToolModel(s, drawableList.getDrawable(index)!!.toBitmap(), pdfToolsEnumList[index]))
         }
-
         return list
     }
 
@@ -83,27 +86,37 @@ class ToolsFragmentViewModel @Inject constructor(val context: Context) : BaseVie
         pdfConvertersList: ArrayList<ToolModel>,
         pdfToolsList: ArrayList<ToolModel>,
     ) {
-        when (app.getLayoutState()) {
-            LayoutState.LIST_LAYOUT.value -> {
-                setAdapter(binding.pdfConvertersRV,
-                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false),
-                    converterListAdapter,
-                    pdfConvertersList)
-                setAdapter(binding.pdfToolRV,
-                    LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false),
-                    toolListAdapter,
-                    pdfToolsList)
+        viewModelScope.async {
+            when (app.getLayoutState()) {
+                LayoutState.LIST_LAYOUT.value -> {
+                    setAdapter(binding.pdfConvertersRV,
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false),
+                        converterListAdapter,
+                        pdfConvertersList)
+                    setAdapter(binding.pdfToolRV,
+                        LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false),
+                        toolListAdapter,
+                        pdfToolsList)
 
 
-            }
-            LayoutState.GRID_LAYOUT.value -> {
-                setAdapter(binding.pdfConvertersRV,
-                    GridLayoutManager(context, 3),
-                    converterGridAdapter,
-                    pdfConvertersList)
-                setAdapter(binding.pdfToolRV, GridLayoutManager(context, 3), toolGridAdapter, pdfToolsList)
+                }
+                LayoutState.GRID_LAYOUT.value -> {
+                    setAdapter(binding.pdfConvertersRV,
+                        GridLayoutManager(context, 3),
+                        converterGridAdapter,
+                        pdfConvertersList)
+                    setAdapter(binding.pdfToolRV, GridLayoutManager(context, 3), toolGridAdapter, pdfToolsList)
 
+                }
+                else -> {}
             }
         }
+    }
+
+    fun goToFileTypeFragmentWithIntent(activity: FragmentActivity, toolModel: ToolModel) {
+        val bundle = Bundle()
+        bundle.putInt(Constants.FILE_TASK_TYPE, toolModel.taskType.value)
+        activity.findNavController(R.id.nav_host_fragment)
+            .navigate(R.id.action_tools_dest_to_fileTypeFragment, bundle)
     }
 }
