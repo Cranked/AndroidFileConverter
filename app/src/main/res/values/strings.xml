@@ -106,6 +106,7 @@
     <string name="pdf_to_image">PdftoImage</string>
     <string name="pdf_to_excel">PdftoExcel</string>
     <string name="pdf_to_word">PdftoWord</string>
+    <string name="image_to_pdf">ImagetoPdf</string>
     <string name="compress_pdf">CompressPdf</string>
     <string name="merge_pdf">MergePdf</string>
     <string name="split_pdf">SplitPdf</string>
@@ -120,9 +121,11 @@
         <item>@string/pdf_to_image</item>
         <item>@string/pdf_to_excel</item>
         <item>@string/pdf_to_word</item>
+        <item>@string/pdf_to_word</item>
     </string-array>
 
     <string-array name="pdf_tools_strings">
+        <item>@string/compress_pdf</item>
         <item>@string/split_pdf</item>
         <item>@string/merge_pdf</item>
         <item>@string/lock_pdf</item>

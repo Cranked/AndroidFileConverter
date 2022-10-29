@@ -6,7 +6,7 @@
         android:id="@+id/toolGridLinearLayout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/margin_5dp"
+        android:layout_margin="@dimen/margin_10dp"
         android:background="@drawable/tool_grid_item_border_radius"
         android:clickable="true"
         android:elevation="5dp"
@@ -16,7 +16,7 @@
         <ImageView
             android:id="@+id/tool_grid_imageView"
             android:layout_width="match_parent"
-            android:layout_height="80dp"
+            android:layout_height="@dimen/tool_item_image_size"
             android:layout_gravity="center_horizontal"
             android:layout_margin="@dimen/side_margin"
             app:srcCompat="@drawable/icon_broken_image" />
@@ -27,7 +27,7 @@
             android:layout_height="40dp"
             android:layout_gravity="center"
             android:layout_margin="@dimen/margin_5dp"
-            android:fontFamily="monospace"
+            android:fontFamily="sans-serif-medium"
             android:gravity="center"
             android:text="TextView"
             android:textStyle="bold" />
