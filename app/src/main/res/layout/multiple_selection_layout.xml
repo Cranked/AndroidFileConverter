@@ -11,7 +11,7 @@
         android:layout_marginLeft="@dimen/icon_margin_8dp"
         android:layout_marginRight="@dimen/icon_margin_8dp"
         android:background="@drawable/icon_cancel"
-        android:backgroundTint="@color/long_listener_background_color"
+        android:backgroundTint="@color/item_selected_background_color"
         android:clickable="true" />
 
     <TextView
@@ -21,14 +21,14 @@
         android:layout_weight="1"
         android:gravity="center_vertical"
         android:text="TextView"
-        android:textColor="@color/long_listener_background_color" />
+        android:textColor="@color/item_selected_background_color" />
 
     <TextView
         android:id="@+id/selectAllMultiple"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/icon_check_all"
-        android:backgroundTint="@color/long_listener_background_color"
+        android:backgroundTint="@color/item_selected_background_color"
         android:clickable="true" />
 
     <TextView
@@ -36,7 +36,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/icon_delete"
-        android:backgroundTint="@color/long_listener_background_color"
+        android:backgroundTint="@color/item_selected_background_color"
         android:clickable="true" />
 
     <TextView
@@ -44,7 +44,7 @@
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
         android:background="@drawable/icon_vertical_dots"
-        android:backgroundTint="@color/long_listener_background_color"
+        android:backgroundTint="@color/item_selected_background_color"
         android:clickable="true" />
 
 </LinearLayout>

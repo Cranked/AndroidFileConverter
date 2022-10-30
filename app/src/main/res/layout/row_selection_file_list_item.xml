@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <LinearLayout
+        android:id="@+id/selectionFileListLinLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:clickable="true">
+
+        <ImageView
+            android:id="@+id/selectionFileListIV"
+            android:layout_width="@dimen/tool_item_image_size"
+            android:layout_height="@dimen/tool_item_image_size"
+            android:layout_margin="@dimen/margin_5dp"
+            app:srcCompat="@drawable/icon_default" />
+
+        <TextView
+            android:id="@+id/selectionFileNameTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/margin_10dp"
+            android:layout_weight="1"
+            android:text="TextView" />
+
+        <ImageView
+            android:id="@+id/selectionFileListIsSelected"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:visibility="invisible"
+            app:srcCompat="@drawable/icon_tick" />
+    </LinearLayout>
+</layout>
