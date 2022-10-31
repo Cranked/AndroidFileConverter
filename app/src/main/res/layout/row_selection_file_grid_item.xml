@@ -10,14 +10,6 @@
         android:orientation="vertical">
 
         <ImageView
-            android:id="@+id/imageView10"
-            android:layout_width="25dp"
-            android:layout_height="25dp"
-            android:layout_gravity="right"
-            android:visibility="invisible"
-            app:srcCompat="@drawable/icon_tick" />
-
-        <ImageView
             android:id="@+id/selectionFileGridIV"
             android:layout_width="match_parent"
             android:layout_height="@dimen/tool_item_image_size"

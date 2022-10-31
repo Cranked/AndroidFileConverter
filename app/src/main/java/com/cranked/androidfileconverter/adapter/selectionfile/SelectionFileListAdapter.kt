@@ -19,7 +19,6 @@ class SelectionFileListAdapter :
 
         Glide.with(binding.selectionFileListIV).load(BitmapUtils.getImageByType(binding.root.context, File(item.filePath))).into(binding.selectionFileListIV)
         binding.selectionFileNameTV.text = item.fileName
-        binding.selectionFileListIsSelected.visibility = if (item.isSelected) View.VISIBLE else View.INVISIBLE
         binding.selectionFileListLinLayout.setBackgroundColor(if (item.isSelected) ContextCompat.getColor(binding.root.context,
             R.color.item_selected_background_color) else ContextCompat.getColor(binding.root.context, R.color.white))
     }

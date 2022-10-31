@@ -11,6 +11,7 @@ import androidx.lifecycle.LifecycleOwner
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
+import com.cranked.androidfileconverter.adapter.selectionfile.SelectedFileAdapter
 import com.cranked.androidfileconverter.adapter.selectionfile.SelectionFileGridAdapter
 import com.cranked.androidfileconverter.adapter.selectionfile.SelectionFileListAdapter
 import com.cranked.androidfileconverter.databinding.FragmentFileTypeBinding
@@ -29,6 +30,7 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
     }
     val listAdapter = SelectionFileListAdapter()
     val gridAdapter = SelectionFileGridAdapter()
+    val selectedItemAdapter = SelectedFileAdapter()
     lateinit var disposable: Disposable
 
     lateinit var selectionFileList: MutableList<SelectionFileModel>
@@ -55,6 +57,9 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
             binding.selectedItemsRV.isVisible = !binding.selectedItemsRV.isVisible
             binding.selectedDropDown.setImageDrawable(if (binding.selectedItemsRV.isVisible) ContextCompat.getDrawable(requireContext(),
                 R.drawable.icon_down_arrow) else ContextCompat.getDrawable(requireContext(), R.drawable.icon_up_arrow))
+            if (binding.selectedItemsRV.isVisible) {
+                viewModel.setAdapter(binding.selectedItemsRV, selectedItemAdapter, this)
+            }
         }
     }
 
@@ -78,6 +83,11 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
 
             }
         }
+        initItemsRecyclerView()
+        println(taskType)
+    }
+
+    fun initItemsRecyclerView() {
         when (app.getLayoutState()) {
             LayoutState.LIST_LAYOUT.value -> {
                 listAdapter.setItems(selectionFileList)
@@ -88,7 +98,8 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
                 viewModel.setAdapter(binding.fileTypeResultRV, gridAdapter, this)
             }
         }
-        println(taskType)
+        binding.fragmentFileTypeLinearLayout.isClickable = selectedItemsList.size > 0
+        binding.fragmentFileTypeLinearLayout.alpha = if (selectedItemsList.size > 0) 1f else 0.3f
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -99,15 +110,29 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
     }
 
     override fun itemSelected(selectionFileModel: SelectionFileModel) {
-        selectionFileList.forEach { selectionFile ->
-            if (selectedItemsList.filter {
-                    it.filePath == selectionFile.filePath
-                }.isNotEmpty()) {
-                selectedItemsList.remove(selectionFile)
-            } else {
-                selectedItemsList.add(selectionFile)
+        var isExist = false
+        selectedItemsList.forEach {
+            if (it.filePath == selectionFileModel.filePath) {
+                isExist = true
             }
         }
+        if (isExist) selectedItemsList.remove(selectionFileModel) else selectedItemsList.add(selectionFileModel)
+        selectionFileList = FileUtility.getAllFilesFromPath(FileUtility.getInternalStoragePath(), 1000, 1, "pdf")
+            .toSelectionModelList(selectedItemsList)
+        if (selectedItemsList.size > 0) {
+            binding.fragmentFileTypeLinearLayout.isClickable = true
+            binding.fragmentFileTypeLinearLayout.alpha = 1f
+            binding.selectedItemsRV.isVisible = true
+            selectedItemAdapter.setItems(selectedItemsList)
+            viewModel.setAdapter(binding.selectedItemsRV, selectedItemAdapter, this)
+        } else {
+            binding.selectedItemsRV.isVisible = false
+            binding.selectedDropDown.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.icon_up_arrow))
+            binding.fragmentFileTypeLinearLayout.isClickable = false
+            binding.fragmentFileTypeLinearLayout.alpha = 0.3f
+        }
+        listAdapter.setItems(selectionFileList)
+        gridAdapter.setItems(selectionFileList)
     }
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
