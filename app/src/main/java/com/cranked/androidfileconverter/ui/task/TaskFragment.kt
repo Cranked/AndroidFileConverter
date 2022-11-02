@@ -71,6 +71,6 @@ class TaskFragment @Inject constructor() :
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        app.rxBus.send(Title(context!!.getString(R.string.files)))
+        app.rxBus.send(Title(requireContext().getString(R.string.files)))
     }
 }

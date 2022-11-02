@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <import type="android.view.View" />
+
+        <variable
+            name="viewModel"
+            type="com.cranked.androidfileconverter.ui.filetype.FileTypeFragmentVM" />
+    </data>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/fileTypeResultRV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_10dp"
+            android:layout_weight="1" />
+
+        <LinearLayout
+            android:id="@+id/fragmentFileTypeLinearLayout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="@dimen/margin_5dp"
+            tools:layout_editor_absoluteY="558dp">
+
+            <LinearLayout
+                android:id="@+id/selectedItemsLinLayout"
+                android:layout_width="match_parent"
+                android:layout_height="55dp"
+                android:layout_margin="@dimen/margin_10dp"
+                android:clickable="true"
+                android:orientation="horizontal"
+                app:layout_constraintBottom_toTopOf="@+id/selectedItemsRV"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent">
+
+                <TextView
+                    android:id="@+id/selectedItemsTV"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="clip_vertical"
+                    android:gravity="center"
+                    android:text="TextView" />
+
+                <ImageView
+                    android:id="@+id/selectedDropDown"
+                    android:layout_width="35dp"
+                    android:layout_height="match_parent"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginLeft="@dimen/margin_10dp"
+                    app:srcCompat="@drawable/icon_up_arrow" />
+            </LinearLayout>
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/selectedItemsRV"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_10dp"
+                android:layout_weight="1"
+                android:visibility="gone"
+                app:viewVisibility="@{viewModel.isVisible}" />
+
+            <androidx.appcompat.widget.AppCompatButton
+                android:id="@+id/selectedItemsButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/margin_10dp"
+                android:background="@drawable/custom_radius_primary_color"
+                android:text="@string/next"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+</layout>

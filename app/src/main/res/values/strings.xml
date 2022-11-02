@@ -103,26 +103,31 @@
     <string name="item_counts">%1$d elements</string>
 
     <!--    ToolsFragmentString-->
-    <string name="pdf_to_image">PdftoImage</string>
-    <string name="pdf_to_excel">PdftoExcel</string>
-    <string name="pdf_to_word">PdftoWord</string>
-    <string name="compress_pdf">CompressPdf</string>
-    <string name="merge_pdf">MergePdf</string>
-    <string name="split_pdf">SplitPdf</string>
-    <string name="lock_pdf">LockPdf</string>
-    <string name="unlock_pdf">UnlockPdf</string>
-    <string name="rotate_pdf">RotatePdf</string>
+    <string name="pdf_to_image">Pdf to Image</string>
+    <string name="pdf_to_excel">Pdf to Excel</string>
+    <string name="pdf_to_word">Pdf to Word</string>
+    <string name="image_to_pdf">Image to Pdf</string>
+    <string name="compress_pdf">Compress Pdf</string>
+    <string name="merge_pdf">Merge Pdf</string>
+    <string name="split_pdf">Split Pdf</string>
+    <string name="lock_pdf">Lock Pdf</string>
+    <string name="unlock_pdf">Unlock Pdf</string>
+    <string name="rotate_pdf">Rotate Pdf</string>
     <string name="watermark">Watermark</string>
     <string name="text_recognition">Text Recognition(OCR)</string>
     <string name="sign_pdf">Sign Pdf</string>
+    <string name="next">Next</string>
+    <string name="selected_files">%1$d  file%2$s selected</string>
 
     <string-array name="pdf_converter_strings">
         <item>@string/pdf_to_image</item>
         <item>@string/pdf_to_excel</item>
         <item>@string/pdf_to_word</item>
+        <item>@string/image_to_pdf</item>
     </string-array>
 
     <string-array name="pdf_tools_strings">
+        <item>@string/compress_pdf</item>
         <item>@string/split_pdf</item>
         <item>@string/merge_pdf</item>
         <item>@string/lock_pdf</item>

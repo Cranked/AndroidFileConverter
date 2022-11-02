@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/selectionFileGridLinLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_10dp"
+        android:orientation="vertical">
+
+        <ImageView
+            android:id="@+id/selectionFileGridIV"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/tool_item_image_size"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/margin_5dp"
+            app:srcCompat="@drawable/icon_default" />
+
+        <TextView
+            android:id="@+id/selectionFileGridTV"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_10dp"
+            android:gravity="center"
+            android:text="TextView" />
+    </LinearLayout>
+</layout>

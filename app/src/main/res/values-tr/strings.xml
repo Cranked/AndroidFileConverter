@@ -109,6 +109,8 @@
     <string name="pdf_to_image">Pdf\'ten Resim\'e</string>
     <string name="pdf_to_excel">Pdf\'ten Excel\'e</string>
     <string name="pdf_to_word">Pdf\'ten Word\'e</string>
+    <string name="image_to_pdf">Resim\'den Pdf\'e</string>
+
     <string name="compress_pdf">Pdf Sıkıştır</string>
     <string name="merge_pdf">Pdf Birleştir</string>
     <string name="split_pdf">Pdf\'i Ayır</string>
@@ -122,14 +124,19 @@
     <string name="pdf_converter_title">Pdf Dönüştürücüler</string>
     <string name="pdf_tool_title">Pdf Araçları</string>
     <string name="image_converter_title">Resim Dönüştürücüler</string>
+    <string name="next">Sonraki</string>
+    <string name="selected_files">%1$d  dosya seçildi</string>
+
 
     <string-array name="pdf_converter_strings">
         <item>@string/pdf_to_image</item>
         <item>@string/pdf_to_excel</item>
         <item>@string/pdf_to_word</item>
+        <item>@string/image_to_pdf</item>
     </string-array>
 
     <string-array name="pdf_tools_strings">
+        <item>@string/compress_pdf</item>
         <item>@string/split_pdf</item>
         <item>@string/merge_pdf</item>
         <item>@string/lock_pdf</item>

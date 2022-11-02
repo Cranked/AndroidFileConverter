@@ -41,6 +41,7 @@ class MainActivity @Inject constructor() : BaseDaggerActivity<MainViewModel, Act
         viewModel.init(this)
         viewModel.setupToolBar(this, binding.toolbar, true)
         initRxBus()
+
     }
 
     private fun setupBottomNavMenu(navController: NavController) {

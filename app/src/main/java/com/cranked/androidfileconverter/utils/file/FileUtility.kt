@@ -9,9 +9,10 @@ import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
 import com.cranked.androidfileconverter.ui.home.StorageModel
 import com.cranked.androidfileconverter.ui.model.PageModel
+import com.cranked.androidfileconverter.ui.transition.TransitionModel
+import com.cranked.androidfileconverter.ui.transition.toTransitionList
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.enums.FileType
-import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import java.io.File
 import java.io.FileOutputStream
 
@@ -82,6 +83,10 @@ object FileUtility {
             return fileDelete.canonicalFile.deleteRecursively()
         }
         return true
+    }
+
+    fun getAllFilesFromPath(path: String, maxDepth: Int, drop: Int, fileType: String): List<TransitionModel> {
+        return FileUtils.getFolderFiles(path, maxDepth, drop).filter {it.extension==fileType }.toMutableList().toTransitionList()
     }
 
     fun renameFile(oldPath: String, newPath: String): Boolean {

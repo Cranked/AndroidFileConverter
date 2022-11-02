@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <LinearLayout
+        android:id="@+id/rowSelectedLinLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="@dimen/margin_5dp"
+        android:orientation="horizontal">
+
+        <ImageView
+            android:id="@+id/rowSelectedItemListIV"
+            android:layout_width="@dimen/selected_image_size"
+            android:layout_height="@dimen/selected_image_size"
+            android:layout_margin="@dimen/margin_10dp"
+            android:src="@drawable/icon_broken_image" />
+
+        <TextView
+            android:id="@+id/rowSelectedItemListTV"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_margin="@dimen/margin_5dp"
+            android:layout_weight="1"
+            android:text="FileName" />
+
+        <ImageView
+            android:id="@+id/remove_selected_item"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="@dimen/margin_5dp"
+            android:clickable="true"
+            android:src="@drawable/icon_cancel" />
+    </LinearLayout>
+</layout>

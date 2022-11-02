@@ -5,11 +5,13 @@ import android.content.Intent
 import android.content.res.Resources
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
+import android.graphics.Canvas
 import android.graphics.Matrix
 import android.graphics.pdf.PdfRenderer
 import android.os.ParcelFileDescriptor
 import android.provider.MediaStore
 import android.view.View
+import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.core.graphics.drawable.RoundedBitmapDrawableFactory
 import androidx.core.graphics.drawable.toBitmap
@@ -18,7 +20,10 @@ import com.cranked.androidfileconverter.BuildConfig
 import com.cranked.androidfileconverter.utils.Constants
 import com.tom_roush.pdfbox.pdmodel.PDDocument
 import com.tom_roush.pdfbox.rendering.PDFRenderer
-import kotlinx.coroutines.*
+import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.coroutineScope
 import java.io.File
 
 
@@ -140,6 +145,70 @@ object BitmapUtils {
 
     fun setViewVisibility(view: View, isVisible: Boolean) {
         view.visibility = if (isVisible) View.VISIBLE else View.GONE
-
     }
+
+    fun getImageByType(context: Context, file: File): Bitmap {
+        when (file.extension) {
+            "zip" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_zip)
+            }
+            "psd" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_psd)
+            }
+            "otf" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_default)
+            }
+            "jpeg" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_jpg)
+            }
+            "png" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_png)
+            }
+            "pdf" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_pdf)
+            }
+            "svg" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_svg)
+            }
+            "html" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_html)
+            }
+            "css" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_css)
+            }
+            "doc" -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_doc)
+            }
+            else -> {
+                return getBitmapFromImage(context, com.cranked.androidcorelibrary.R.drawable.icon_default)
+            }
+        }
+    }
+
+    private fun getBitmapFromImage(context: Context, drawable: Int): Bitmap {
+
+        // on below line we are getting drawable
+        val db = ContextCompat.getDrawable(context, drawable)
+
+        // in below line we are creating our bitmap and initializing it.
+        val bit = Bitmap.createBitmap(
+            db!!.intrinsicWidth, db.intrinsicHeight, Bitmap.Config.ARGB_8888
+        )
+
+        // on below line we are
+        // creating a variable for canvas.
+        val canvas = Canvas(bit)
+
+        // on below line we are setting bounds for our bitmap.
+        db.setBounds(0, 0, canvas.width, canvas.height)
+
+        // on below line we are simply
+        // calling draw to draw our canvas.
+        db.draw(canvas)
+
+        // on below line we are
+        // returning our bitmap.
+        return bit
+    }
+
 }
