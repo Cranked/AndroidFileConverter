@@ -32,7 +32,6 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
     val gridAdapter = SelectionFileGridAdapter()
     val selectedItemAdapter = SelectedFileAdapter()
     lateinit var disposable: Disposable
-
     lateinit var selectionFileList: MutableList<SelectionFileModel>
 
     override fun onCreateView(
@@ -116,14 +115,15 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
                 isExist = true
             }
         }
-        if (isExist) selectedItemsList.remove(selectionFileModel) else selectedItemsList.add(selectionFileModel)
+        if (isExist)
+            selectedItemsList.removeIf { it.filePath == selectionFileModel.filePath } else selectedItemsList.add(selectionFileModel)
         selectionFileList = FileUtility.getAllFilesFromPath(FileUtility.getInternalStoragePath(), 1000, 1, "pdf")
             .toSelectionModelList(selectedItemsList)
         if (selectedItemsList.size > 0) {
             binding.fragmentFileTypeLinearLayout.isClickable = true
             binding.fragmentFileTypeLinearLayout.alpha = 1f
-            binding.selectedItemsRV.isVisible = true
             selectedItemAdapter.setItems(selectedItemsList)
+
             viewModel.setAdapter(binding.selectedItemsRV, selectedItemAdapter, this)
         } else {
             binding.selectedItemsRV.isVisible = false
