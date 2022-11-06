@@ -17,6 +17,7 @@ import com.cranked.androidfileconverter.databinding.RowSelectionFileGridItemBind
 import com.cranked.androidfileconverter.databinding.RowSelectionFileListItemBinding
 import javax.inject.Inject
 
+
 class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
     var _mIsVisible = MutableLiveData(false)
     val isVisible: LiveData<Boolean> = _mIsVisible

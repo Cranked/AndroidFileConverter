@@ -12,7 +12,7 @@
     <color name="light_gray">#cccccc</color>
     <color name="white">#FFFFFFFF</color>
     <color name="colorSecondaryDark">#cccccc</color>
-    <color name="item_selected_background_color">#9999FF</color>
+    <color name="item_selected_background_color">#FFFFCC</color>
     <color name="image_background_color">@color/black</color>
 
 </resources>

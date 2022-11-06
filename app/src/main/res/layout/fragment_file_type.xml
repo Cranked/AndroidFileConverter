@@ -13,17 +13,21 @@
     </data>
 
     <LinearLayout
-        android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:animateLayoutChanges="true"
+        android:animationCache="true"
+        android:orientation="vertical">
 
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/fileTypeResultRV"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="@dimen/margin_10dp"
-            android:layout_weight="1" />
+            android:layout_marginLeft="@dimen/margin_10dp"
+            android:layout_marginRight="@dimen/margin_10dp"
+            android:layout_weight="1"
+            android:layoutAnimation="@anim/layout_animation" />
 
         <LinearLayout
             android:id="@+id/fragmentFileTypeLinearLayout"
@@ -36,7 +40,7 @@
             <LinearLayout
                 android:id="@+id/selectedItemsLinLayout"
                 android:layout_width="match_parent"
-                android:layout_height="55dp"
+                android:layout_height="35dp"
                 android:layout_margin="@dimen/margin_10dp"
                 android:clickable="true"
                 android:orientation="horizontal"
@@ -68,6 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_10dp"
                 android:layout_weight="1"
+                android:layoutAnimation="@anim/layout_animation"
                 android:visibility="gone"
                 app:viewVisibility="@{viewModel.isVisible}" />
 
