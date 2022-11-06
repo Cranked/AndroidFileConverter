@@ -8,6 +8,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.isVisible
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
@@ -57,9 +58,11 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
             binding.selectedDropDown.setImageDrawable(if (binding.selectedItemsRV.isVisible) ContextCompat.getDrawable(requireContext(),
                 R.drawable.icon_down_arrow) else ContextCompat.getDrawable(requireContext(), R.drawable.icon_up_arrow))
             if (binding.selectedItemsRV.isVisible) {
-                viewModel.setAdapter(binding.selectedItemsRV, selectedItemAdapter, this)
+                selectedItemAdapter.notifyDataSetChanged()
             }
         }
+        binding.selectedItemsRV.adapter = selectedItemAdapter
+        binding.selectedItemsRV.layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
     }
 
     override fun onBundle(bundle: Bundle) {
@@ -99,6 +102,7 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
         }
         binding.fragmentFileTypeLinearLayout.isClickable = selectedItemsList.size > 0
         binding.fragmentFileTypeLinearLayout.alpha = if (selectedItemsList.size > 0) 1f else 0.3f
+        binding.selectedItemsLinLayout.isClickable = false
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -115,6 +119,7 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
                 isExist = true
             }
         }
+        viewModel.setAdapter(binding.selectedItemsRV, selectedItemAdapter, this)
         if (isExist)
             selectedItemsList.removeIf { it.filePath == selectionFileModel.filePath } else selectedItemsList.add(selectionFileModel)
         selectionFileList = FileUtility.getAllFilesFromPath(FileUtility.getInternalStoragePath(), 1000, 1, "pdf")
@@ -122,17 +127,18 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
         if (selectedItemsList.size > 0) {
             binding.fragmentFileTypeLinearLayout.isClickable = true
             binding.fragmentFileTypeLinearLayout.alpha = 1f
+            binding.selectedItemsLinLayout.isClickable = true
             selectedItemAdapter.setItems(selectedItemsList)
 
-            viewModel.setAdapter(binding.selectedItemsRV, selectedItemAdapter, this)
         } else {
             binding.selectedItemsRV.isVisible = false
             binding.selectedDropDown.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.icon_up_arrow))
             binding.fragmentFileTypeLinearLayout.isClickable = false
             binding.fragmentFileTypeLinearLayout.alpha = 0.3f
+            binding.selectedItemsLinLayout.isClickable = false
         }
-        listAdapter.setItems(selectionFileList)
-        gridAdapter.setItems(selectionFileList)
+//        listAdapter.setItems(selectionFileList)
+//        gridAdapter.setItems(selectionFileList)
     }
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
