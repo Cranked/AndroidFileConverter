@@ -33,7 +33,7 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
     val gridAdapter = SelectionFileGridAdapter()
     val selectedItemAdapter = SelectedFileAdapter()
     lateinit var disposable: Disposable
-    lateinit var selectionFileList: MutableList<SelectionFileModel>
+    var selectionFileList: MutableList<SelectionFileModel> = mutableListOf()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -137,8 +137,8 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
             binding.fragmentFileTypeLinearLayout.alpha = 0.3f
             binding.selectedItemsLinLayout.isClickable = false
         }
-//        listAdapter.setItems(selectionFileList)
-//        gridAdapter.setItems(selectionFileList)
+        listAdapter.setItems(selectionFileList)
+        gridAdapter.setItems(selectionFileList)
     }
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
