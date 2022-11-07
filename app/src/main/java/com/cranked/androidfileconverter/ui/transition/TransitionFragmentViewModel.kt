@@ -13,6 +13,7 @@ import android.graphics.drawable.LayerDrawable
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.view.animation.AnimationUtils
 import android.widget.*
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
@@ -100,6 +101,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding: RowTransitionListItemBinding,
                 ) {
                     try {
+                        recylerView.layoutAnimation = AnimationUtils.loadLayoutAnimation(context, R.anim.fall_down_layout_animation)
                         val bindingImage =
                             ShowImageLayoutBinding.inflate(layoutInflater)
 
@@ -340,6 +342,7 @@ class TransitionFragmentViewModel @Inject constructor(
                     rowBinding: RowTransitionGridItemBinding,
                 ) {
                     try {
+                        recylerView.layoutAnimation = AnimationUtils.loadLayoutAnimation(context, R.anim.scale_up_layout_animation)
                         rowBinding.transitionGridLinearLayout.setOnLongClickListener {
                             if (!longListenerActivated.value!!) {
                                 sendLongListenerActivated(true)

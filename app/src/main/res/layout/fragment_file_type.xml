@@ -27,7 +27,7 @@
             android:layout_marginLeft="@dimen/margin_10dp"
             android:layout_marginRight="@dimen/margin_10dp"
             android:layout_weight="1"
-            android:layoutAnimation="@anim/layout_animation" />
+            android:layoutAnimation="@anim/fall_down_layout_animation" />
 
         <LinearLayout
             android:id="@+id/fragmentFileTypeLinearLayout"
@@ -72,7 +72,7 @@
                 android:layout_height="wrap_content"
                 android:layout_margin="@dimen/margin_10dp"
                 android:layout_weight="1"
-                android:layoutAnimation="@anim/layout_animation"
+                android:layoutAnimation="@anim/fall_down_layout_animation"
                 android:visibility="gone"
                 app:viewVisibility="@{viewModel.isVisible}" />
 

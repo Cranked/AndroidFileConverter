@@ -1,5 +1,6 @@
 package com.cranked.androidfileconverter.ui.filetype
 
+import android.view.animation.AnimationUtils
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -27,6 +28,7 @@ class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
         recyclerView.apply {
             adapter = recyclerAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+            layoutAnimation = AnimationUtils.loadLayoutAnimation(recyclerView.context, R.anim.fall_down_layout_animation)
         }
         recyclerAdapter.setListener(object :
             BaseViewBindingRecyclerViewAdapter.ClickListener<SelectionFileModel, RowSelectionFileListItemBinding> {
@@ -39,7 +41,6 @@ class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
                         R.color.white))
                 }
             }
-
         })
     }
 
@@ -47,6 +48,7 @@ class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
         recyclerView.apply {
             adapter = recyclerAdapter
             layoutManager = GridLayoutManager(context, 3)
+            layoutAnimation = AnimationUtils.loadLayoutAnimation(recyclerView.context, R.anim.scale_up_layout_animation)
         }
         recyclerAdapter.setListener(object :
             BaseViewBindingRecyclerViewAdapter.ClickListener<SelectionFileModel, RowSelectionFileGridItemBinding> {
