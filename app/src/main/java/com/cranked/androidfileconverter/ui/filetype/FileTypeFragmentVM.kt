@@ -15,7 +15,6 @@ import com.cranked.androidfileconverter.adapter.selectionfile.SelectionFileGridA
 import com.cranked.androidfileconverter.adapter.selectionfile.SelectionFileListAdapter
 import com.cranked.androidfileconverter.databinding.RowSelectedListItemBinding
 import com.cranked.androidfileconverter.databinding.RowSelectionFileGridItemBinding
-import com.cranked.androidfileconverter.databinding.RowSelectionFileListItemBinding
 import javax.inject.Inject
 
 
@@ -30,16 +29,15 @@ class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
             layoutAnimation = AnimationUtils.loadLayoutAnimation(recyclerView.context, R.anim.fall_down_layout_animation)
         }
-        recyclerAdapter.setListener(object :
-            BaseViewBindingRecyclerViewAdapter.ClickListener<SelectionFileModel, RowSelectionFileListItemBinding> {
-            override fun onItemClick(item: SelectionFileModel, position: Int, rowBinding: RowSelectionFileListItemBinding) {
-                rowBinding.selectionFileListLinLayout.setOnClickListener {
-                    item.isSelected = !item.isSelected
-                    selectionFileListener.itemSelected(item)
-                    rowBinding.selectionFileListLinLayout.setBackgroundColor(if (item.isSelected) rowBinding.root.context.getColor(R.color.item_selected_background_color) else ContextCompat.getColor(
-                        rowBinding.root.context,
-                        R.color.white))
-                }
+        recyclerView.addOnScrollListener(object :RecyclerView.OnScrollListener(){
+            override fun onScrollStateChanged(recyclerView: RecyclerView, newState: Int) {
+
+
+            }
+
+
+            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+
             }
         })
     }
@@ -50,20 +48,6 @@ class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
             layoutManager = GridLayoutManager(context, 3)
             layoutAnimation = AnimationUtils.loadLayoutAnimation(recyclerView.context, R.anim.scale_up_layout_animation)
         }
-        recyclerAdapter.setListener(object :
-            BaseViewBindingRecyclerViewAdapter.ClickListener<SelectionFileModel, RowSelectionFileGridItemBinding> {
-            override fun onItemClick(item: SelectionFileModel, position: Int, rowBinding: RowSelectionFileGridItemBinding) {
-                rowBinding.selectionFileGridLinLayout.setOnClickListener {
-                    item.isSelected = !item.isSelected
-                    selectionFileListener.itemSelected(item)
-                    if (item.isSelected) {
-                        rowBinding.selectionFileGridLinLayout.setBackgroundColor(rowBinding.root.context.getColor(R.color.item_selected_background_color))
-                    } else {
-                        rowBinding.selectionFileGridLinLayout.setBackgroundColor(rowBinding.root.context.getColor(R.color.white))
-                    }
-                }
-            }
-        })
     }
 
     fun setAdapter(recyclerView: RecyclerView, selectedFileAdapter: SelectedFileAdapter, selectionFileListener: SelectionFileListener) {
@@ -71,14 +55,6 @@ class FileTypeFragmentVM @Inject constructor() : BaseViewModel() {
             adapter = selectedFileAdapter
             layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
         }
-        selectedFileAdapter.setListener(object :
-            BaseViewBindingRecyclerViewAdapter.ClickListener<SelectionFileModel, RowSelectedListItemBinding> {
-            override fun onItemClick(item: SelectionFileModel, position: Int, rowBinding: RowSelectedListItemBinding) {
-                rowBinding.removeSelectedItem.setOnClickListener {
-                    selectionFileListener.itemSelected(item)
-                }
-            }
-        })
     }
 
 }
