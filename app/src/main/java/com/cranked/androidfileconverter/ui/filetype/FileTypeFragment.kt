@@ -29,9 +29,9 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
     val app by lazy {
         requireActivity().application as FileConvertApp
     }
-    val listAdapter = SelectionFileListAdapter()
-    val gridAdapter = SelectionFileGridAdapter()
-    val selectedItemAdapter = SelectedFileAdapter()
+    val listAdapter = SelectionFileListAdapter(this)
+    val gridAdapter = SelectionFileGridAdapter(this)
+    val selectedItemAdapter = SelectedFileAdapter(this)
     lateinit var disposable: Disposable
     var selectionFileList: MutableList<SelectionFileModel> = mutableListOf()
 
@@ -92,11 +92,11 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
     fun initItemsRecyclerView() {
         when (app.getLayoutState()) {
             LayoutState.LIST_LAYOUT.value -> {
-                listAdapter.setItems(selectionFileList)
+                listAdapter.submitList(selectionFileList)
                 viewModel.setAdapter(binding.fileTypeResultRV, listAdapter, this)
             }
             LayoutState.GRID_LAYOUT.value -> {
-                gridAdapter.setItems(selectionFileList)
+                gridAdapter.submitList(selectionFileList)
                 viewModel.setAdapter(binding.fileTypeResultRV, gridAdapter, this)
             }
         }
@@ -128,8 +128,7 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
             binding.fragmentFileTypeLinearLayout.isClickable = true
             binding.fragmentFileTypeLinearLayout.alpha = 1f
             binding.selectedItemsLinLayout.isClickable = true
-            selectedItemAdapter.setItems(selectedItemsList)
-
+            selectedItemAdapter.submitList(selectedItemsList)
         } else {
             binding.selectedItemsRV.isVisible = false
             binding.selectedDropDown.setImageDrawable(ContextCompat.getDrawable(requireContext(), R.drawable.icon_up_arrow))
@@ -137,19 +136,19 @@ class FileTypeFragment : BaseDaggerFragment<FileTypeFragmentVM, FragmentFileType
             binding.fragmentFileTypeLinearLayout.alpha = 0.3f
             binding.selectedItemsLinLayout.isClickable = false
         }
-        listAdapter.setItems(selectionFileList)
-        gridAdapter.setItems(selectionFileList)
+        listAdapter.submitList(selectionFileList)
+        gridAdapter.submitList(selectionFileList)
     }
 
     override fun createLiveData(viewLifecycleOwner: LifecycleOwner) {
         disposable = app.rxBus.toObservable().subscribe {
             when (it) {
                 LayoutState.LIST_LAYOUT.value -> {
-                    listAdapter.setItems(selectionFileList)
+                    listAdapter.submitList(selectionFileList)
                     viewModel.setAdapter(binding.fileTypeResultRV, listAdapter, this)
                 }
                 LayoutState.GRID_LAYOUT.value -> {
-                    gridAdapter.setItems(selectionFileList)
+                    gridAdapter.submitList(selectionFileList)
                     viewModel.setAdapter(binding.fileTypeResultRV, gridAdapter, this)
                 }
             }
