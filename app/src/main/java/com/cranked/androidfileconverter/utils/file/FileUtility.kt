@@ -48,8 +48,13 @@ object FileUtility {
     fun getInternalStoragePath() =
         Environment.getExternalStorageDirectory().absolutePath + File.separator
 
-    fun getSdCarPath(context: Context) = "/storage/" +
-            ContextCompat.getExternalFilesDirs(context, null).get(1).absolutePath.split("/")[2] + "/"
+    fun getSdCarPath(context: Context): String {
+        return if (FileUtils.isSdCardMounted(context))
+            "/storage/" +
+                    ContextCompat.getExternalFilesDirs(context, null)[1].absolutePath.split("/")[2] + "/"
+        else
+            ""
+    }
 
     fun getFileTransformerPath() =
         getInternalStoragePath() + Constants.folderName + File.separator
@@ -86,7 +91,7 @@ object FileUtility {
     }
 
     fun getAllFilesFromPath(path: String, maxDepth: Int, drop: Int, fileType: String): List<TransitionModel> {
-        return FileUtils.getFolderFiles(path, maxDepth, drop).filter {it.extension==fileType }.toMutableList().toTransitionList()
+        return FileUtils.getFolderFiles(path, maxDepth, drop).filter { it.extension == fileType }.toMutableList().toTransitionList()
     }
 
     fun renameFile(oldPath: String, newPath: String): Boolean {

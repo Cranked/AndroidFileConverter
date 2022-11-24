@@ -66,8 +66,11 @@ class HomeFragmentViewModel @Inject constructor(
     fun internalStoragePath(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getInternalStoragePath())
 
-    fun sdCardPathFolder(view: View) =
-        goToTransitionFragmentWithIntent(view, FileUtility.getSdCarPath(view.context))
+    fun sdCardPathFolder(view: View) {
+        if (FileUtils.isSdCardMounted(view.context))
+            goToTransitionFragmentWithIntent(view, FileUtility.getSdCarPath(view.context))
+
+    }
 
     fun downloadsPathFolder(view: View) =
         goToTransitionFragmentWithIntent(view, FileUtility.getDownloadsPath())
@@ -93,17 +96,21 @@ class HomeFragmentViewModel @Inject constructor(
                 it.value == TaskType.TOOLSTASK.value || it.value == TaskType.SHARETASK.value ||
                         it.value == TaskType.REMOVEFAVORITETASK.value || it.value == TaskType.GOTOFOLDER.value
             }.toList()
-            val taskList = arrayListOf(ToolsTask(view.context, arrayListOf(favoriteFile.path), pageModel!!),
+            val taskList = arrayListOf(
+                ToolsTask(view.context, arrayListOf(favoriteFile.path), pageModel!!),
                 ShareTask(context, arrayListOf(favoriteFile)),
                 GoToFolderTask(favoriteFile, view),
-                RemoveFavoriteTask(favoritesDao, favoriteFile))
+                RemoveFavoriteTask(favoritesDao, favoriteFile)
+            )
             val optionsAdapter = OptionsAdapter()
             when (favoriteFile.fileType) {
                 FileType.FOLDER.type -> {
                     taskTypeList.forEachIndexed { index, s ->
                         if (s.value == TaskType.REMOVEFAVORITETASK.value)
-                            list += OptionsModel(drawableList.getDrawable(index)!!,
-                                stringList[index].toString(), taskList[index])
+                            list += OptionsModel(
+                                drawableList.getDrawable(index)!!,
+                                stringList[index].toString(), taskList[index]
+                            )
                     }
                 }
                 else -> {
@@ -113,9 +120,11 @@ class HomeFragmentViewModel @Inject constructor(
                             s.value == TaskType.REMOVEFAVORITETASK.value ||
                             s.value == TaskType.GOTOFOLDER.value
                         )
-                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                            list += OptionsModel(
+                                drawableList.getDrawable(index)!!,
                                 stringList[index].toString(),
-                                taskList[index])
+                                taskList[index]
+                            )
                     }
                 }
             }
@@ -147,10 +156,12 @@ class HomeFragmentViewModel @Inject constructor(
         try {
             val list = arrayListOf<OptionsModel>()
             val pageModel = Constants.pageSizes[(fragment.requireActivity().application as FileConvertApp).getPageDefaultSize()]
-            val taskList = arrayListOf(ToolsTask(fragment.requireActivity(), arrayListOf(favoriteFile.path), pageModel!!),
+            val taskList = arrayListOf(
+                ToolsTask(fragment.requireActivity(), arrayListOf(favoriteFile.path), pageModel!!),
                 ShareTask(context, arrayListOf(favoriteFile)),
                 GoToFolderTask(favoriteFile, fragment.view!!, dialog),
-                RemoveFavoriteTask(favoritesDao, favoriteFile))
+                RemoveFavoriteTask(favoritesDao, favoriteFile)
+            )
             val optionsAdapter = OptionsAdapter()
             when (favoriteFile.fileType) {
                 FileType.PNG.type, FileType.JPG.type -> {
@@ -159,9 +170,11 @@ class HomeFragmentViewModel @Inject constructor(
                             s.value == TaskType.REMOVEFAVORITETASK.value ||
                             s.value == TaskType.GOTOFOLDER.value
                         )
-                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                            list += OptionsModel(
+                                drawableList.getDrawable(index)!!,
                                 stringList[index],
-                                taskList[index])
+                                taskList[index]
+                            )
                     }
                 }
                 FileType.PDF.type -> {
@@ -171,9 +184,11 @@ class HomeFragmentViewModel @Inject constructor(
                             s.value == TaskType.REMOVEFAVORITETASK.value ||
                             s.value == TaskType.GOTOFOLDER.value
                         )
-                            list += OptionsModel(drawableList.getDrawable(index)!!,
+                            list += OptionsModel(
+                                drawableList.getDrawable(index)!!,
                                 stringList[index],
-                                taskList[index])
+                                taskList[index]
+                            )
                     }
                 }
             }
@@ -196,9 +211,11 @@ class HomeFragmentViewModel @Inject constructor(
     fun shareItemsList(context: Context, favoriteList: ArrayList<FavoriteFile>) {
         val uriArrayList = arrayListOf<Uri>()
         favoriteList.forEach {
-            uriArrayList += FileProvider.getUriForFile(context,
+            uriArrayList += FileProvider.getUriForFile(
+                context,
                 BuildConfig.APPLICATION_ID + ".provider",
-                File(it.path))
+                File(it.path)
+            )
         }
         val intent = Intent(Intent.ACTION_SEND_MULTIPLE)
         intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)

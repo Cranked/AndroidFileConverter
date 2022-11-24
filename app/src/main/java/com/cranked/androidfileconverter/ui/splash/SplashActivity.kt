@@ -2,7 +2,13 @@ package com.cranked.androidfileconverter.ui.splash
 
 import android.Manifest
 import android.animation.AnimatorSet
+import android.content.Intent
+import android.net.Uri
+import android.os.Build
+import android.os.Build.VERSION.SDK_INT
 import android.os.Bundle
+import android.os.Environment
+import android.provider.Settings
 import androidx.appcompat.app.AlertDialog
 import com.cranked.androidcorelibrary.extension.openAppPermissionPage
 import com.cranked.androidcorelibrary.local.PrefManager
@@ -60,11 +66,24 @@ class SplashActivity : RawActivity() {
 //        imageView.animationStart(1000, animatorSetX, zoomInRightAnimation)
 
         if (permissionTemp.isGranted(this)) {
-            startActivity(MainActivity::class.java, true)
+            if (SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    startActivity(MainActivity::class.java, true)
+                } else { //request for the permission
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    val uri: Uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+            }
         } else {
             permissionTemp.request(this)
         }
+    }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        println(resultCode)
     }
 
     override fun onRequestPermissionsResult(
@@ -75,7 +94,16 @@ class SplashActivity : RawActivity() {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         permissionTemp.onRequestPermissionsResult(this, requestCode, grantResults)
             .onGranted {
-                startActivity(MainActivity::class.java, true)
+                if (SDK_INT >= Build.VERSION_CODES.R) {
+                    if (Environment.isExternalStorageManager()) {
+                        startActivity(MainActivity::class.java, true)
+                    } else { //request for the permission
+                        val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                        val uri: Uri = Uri.fromParts("package", packageName, null)
+                        intent.data = uri
+                        startActivity(intent)
+                    }
+                }
             }.onDenied {
                 permissionTemp.request(this)
             }.onNeverAskAgain {
@@ -94,6 +122,29 @@ class SplashActivity : RawActivity() {
                 }
                 builder.show()
             }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (permissionTemp.isGranted(this)) {
+            if (Environment.isExternalStorageManager()) {
+                startActivity(MainActivity::class.java, true)
+            } else { //request for the permission
+                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                val uri: Uri = Uri.fromParts("package", packageName, null)
+                intent.data = uri
+                startActivity(intent)
+            }
+        } else {
+            permissionTemp.request(this)
+        }
+
+        println("resume girdi")
+    }
+
+    override fun onPause() {
+        super.onPause()
+        println("Pause girdi")
     }
 
     fun setLocale() {
