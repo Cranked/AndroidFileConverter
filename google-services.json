@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "693637606134",
+    "project_id": "filetransforrmer",
+    "storage_bucket": "filetransforrmer.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:693637606134:android:68adf4ea16dfe80ef19ad7",
+        "android_client_info": {
+          "package_name": "com.cranked.androidfileconverter"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "693637606134-v1g3qm4cca9tb0ra6is3essof97a15ss.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQ1LXbcsmTnhP9R-FlLZZzZMzDEzEv5co"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "693637606134-v1g3qm4cca9tb0ra6is3essof97a15ss.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
