@@ -1,9 +1,13 @@
 package com.cranked.androidfileconverter.utils.file
 
+import android.app.Activity
 import android.content.Context
+import android.database.Cursor
 import android.graphics.BitmapFactory
 import android.graphics.pdf.PdfDocument
+import android.net.Uri
 import android.os.Environment
+import android.provider.MediaStore
 import androidx.core.content.ContextCompat
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.data.database.dao.ProcessedFilesDao
@@ -120,5 +124,18 @@ object FileUtility {
         }
         pdfDocument.close()
         return true
+    }
+    fun getRealPathFromURI(activity: Activity, contentUri: Uri?): String? {
+        try {
+            val proj = arrayOf(MediaStore.Images.Media.DATA)
+            val cursor: Cursor = activity.managedQuery(contentUri, proj, null, null, null)
+            val columnIndex: Int = cursor
+                .getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+            cursor.moveToFirst()
+            return cursor.getString(columnIndex)
+        } catch (e: Exception) {
+            println(e.toString())
+            return ""
+        }
     }
 }

@@ -13,10 +13,9 @@ import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-import com.cranked.androidfileconverter.adapter.options.OptionsAdapter
 import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraBinding
-import com.cranked.androidfileconverter.dialog.takenphoto.TakenPhotoOptionsDialog
+import com.cranked.androidfileconverter.ui.imagecrop.ImageCropActivity
 import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
@@ -79,8 +78,11 @@ class CameraFragment @Inject constructor() :
                         return@setOnClickListener
                     }
                 }
-                folderPath = viewModel.getImagePath(path)
-                BitmapUtils.takePhoto(this, folderPath)
+                folderPath = BitmapUtils.createImageFile(viewModel.getImagePath(path)).absolutePath
+                val intent = Intent(requireContext(), ImageCropActivity::class.java)
+                intent.putExtra(Constants.TAKEN_PHOTO_PATH, folderPath)
+                startActivity(intent)
+//                BitmapUtils.takePhoto(this, folderPath)
             } catch (e: Exception) {
                 LogManager.log(TAG, e)
             }

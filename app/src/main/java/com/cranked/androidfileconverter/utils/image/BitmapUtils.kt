@@ -129,8 +129,8 @@ object BitmapUtils {
         }
     }
 
-    private fun createImageFile(filePath: String): File {
-        val imageFileName = "JPEG_"
+    fun createImageFile(filePath: String): File {
+        val imageFileName = "JPEG_" + System.currentTimeMillis().toString()
         val file = File(filePath)
         file.mkdirs()
 

@@ -3,6 +3,10 @@ plugins {
     id 'org.jetbrains.kotlin.android'
     id("kotlin-parcelize")
     id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+    // Add the Performance Monitoring Gradle plugin
+    id 'com.google.firebase.firebase-perf'
+    id 'com.google.firebase.crashlytics'
 }
 
 android {
@@ -80,9 +84,11 @@ dependencies {
 
     // Livedata - Kotlin Flow
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.5.1'
+
     // Retrofit
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
     implementation 'com.squareup.retrofit2:adapter-rxjava3:2.9.0'
+
     // RxJava3
     implementation 'io.reactivex.rxjava3:rxjava:3.1.5'
     implementation "androidx.room:room-rxjava3:2.4.3"
@@ -112,8 +118,18 @@ dependencies {
 
     //Pdf View Library
     implementation "com.dmitryborodin:pdfview-android:1.1.0"
-
     implementation 'com.tom_roush:pdfbox-android:1.8.10.1'
+
+    // ImageCrop Library
+    implementation 'com.github.CanHub:Android-Image-Cropper:3.3.5'
+
+    //Firebase
+    implementation platform('com.google.firebase:firebase-bom:29.0.1')
+    implementation 'com.google.firebase:firebase-crashlytics-ktx'
+    implementation 'com.google.firebase:firebase-analytics-ktx'
+    implementation 'com.google.firebase:firebase-perf-ktx'
+    implementation 'com.google.firebase:firebase-perf'
+
 
 
 
