@@ -121,6 +121,10 @@
     <string name="text_recognition">Metin Tanıma(OCR)</string>
     <string name="sign_pdf">Pdf\'i imzala</string>
 
+    <!--    Image Cropping Strings-->
+    <string name="image_crop_title">Image Cropping</string>
+    <string name="finish">Bitir</string>
+
     <string name="pdf_converter_title">Pdf Dönüştürücüler</string>
     <string name="pdf_tool_title">Pdf Araçları</string>
     <string name="image_converter_title">Resim Dönüştürücüler</string>

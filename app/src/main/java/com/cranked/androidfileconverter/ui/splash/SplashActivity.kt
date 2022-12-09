@@ -103,6 +103,8 @@ class SplashActivity : RawActivity() {
                         intent.data = uri
                         startActivity(intent)
                     }
+                }else{
+                    startActivity(MainActivity::class.java, true)
                 }
             }.onDenied {
                 permissionTemp.request(this)
@@ -127,13 +129,17 @@ class SplashActivity : RawActivity() {
     override fun onResume() {
         super.onResume()
         if (permissionTemp.isGranted(this)) {
-            if (Environment.isExternalStorageManager()) {
+            if (SDK_INT >= Build.VERSION_CODES.R) {
+                if (Environment.isExternalStorageManager()) {
+                    startActivity(MainActivity::class.java, true)
+                } else { //request for the permission
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    val uri: Uri = Uri.fromParts("package", packageName, null)
+                    intent.data = uri
+                    startActivity(intent)
+                }
+            }else{
                 startActivity(MainActivity::class.java, true)
-            } else { //request for the permission
-                val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
-                val uri: Uri = Uri.fromParts("package", packageName, null)
-                intent.data = uri
-                startActivity(intent)
             }
         } else {
             permissionTemp.request(this)

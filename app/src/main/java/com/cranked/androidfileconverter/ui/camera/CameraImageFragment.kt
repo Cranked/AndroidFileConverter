@@ -7,13 +7,14 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import androidx.navigation.findNavController
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
 import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
-
 import com.cranked.androidfileconverter.adapter.photo.PhotoStaggeredAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraImageBinding
 import com.cranked.androidfileconverter.ui.model.ImagePreview
@@ -23,6 +24,9 @@ import com.cranked.androidfileconverter.utils.LogManager
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
+import java.io.File
 
 class CameraImageFragment :
     BaseDaggerFragment<CameraImageFragmentViewModel, FragmentCameraImageBinding>(CameraImageFragmentViewModel::class.java) {
@@ -85,7 +89,27 @@ class CameraImageFragment :
                 it.findNavController().navigate(R.id.action_cameraImageFragment_to_camera_dest)
             }
             binding.takePhotoButton.setOnClickListener {
-                BitmapUtils.takePhoto(this, viewModel.getImagePathMutableLiveData().value!!.path)
+                try {
+                    if (!File(FileUtility.getPhotosPath()).exists()) {
+                        if (!File(FileUtility.getPhotosPath()).mkdirs()) {
+                            Toast.makeText(activity,
+                                requireActivity().baseContext.getString(R.string.something_went_wrong),
+                                Toast.LENGTH_SHORT)
+                                .show()
+                            return@setOnClickListener
+                        }
+                    }
+
+                    folderPath = BitmapUtils.createImageFile(viewModel.getImagePath(path)).absolutePath
+                    println(folderPath)
+                    println(path)
+                    CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setActivityTitle(getString(R.string.image_crop_title))
+                        .setOutputUri(File(folderPath.substringBeforeLast("/")).toUri()).setCropShape(CropImageView.CropShape.RECTANGLE)
+                        .setCropMenuCropButtonTitle(getString(R.string.finish)).setRequestedSize(400, 400).start(requireContext(), this);
+
+                } catch (e: Exception) {
+                    LogManager.log(TAG, e)
+                }
             }
         } catch (e: Exception) {
             LogManager.log(TAG, e)
@@ -94,15 +118,16 @@ class CameraImageFragment :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-                when (requestCode) {
-                    Constants.RESULT_ADD_PHOTO -> {
-                        var photoList =
-                            FileUtils.getFolderFiles(path, 100000, 1).filter { it.isFile or Constants.VALID_TYPES.contains(it.extension) }
-                                .map {
-                                    ImagePreview(it.path, it.name)
-                                }.sortedByDescending { it.fileName }.toMutableList()
+        when (requestCode) {
+            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                when (resultCode) {
+                    Activity.RESULT_OK -> {
+                        var photoList = FileUtils.getFolderFiles(path, 1, 1).map {
+                            ImagePreview(
+                                it.path,
+                                it.name,
+                            )
+                        }.toMutableList()
                         adapter.setItems(photoList)
                         adapter.notifyDataSetChanged()
                     }
@@ -110,8 +135,7 @@ class CameraImageFragment :
             }
             Activity.RESULT_CANCELED -> {
                 when (requestCode) {
-                    Constants.RESULT_ADD_PHOTO ->
-                        FileUtility.deleteFile(folderPath)
+                    Constants.RESULT_ADD_PHOTO -> FileUtility.deleteFile(folderPath)
                 }
             }
         }

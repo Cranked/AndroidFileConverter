@@ -1,6 +1,7 @@
 package com.cranked.androidfileconverter.ui.camera
 
 import android.app.Activity
+import android.app.Activity.RESULT_OK
 import android.app.Dialog
 import android.content.Intent
 import android.os.Bundle
@@ -8,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.core.net.toUri
 import androidx.databinding.DataBindingUtil
 import com.cranked.androidcorelibrary.ui.base.BaseDaggerFragment
 import com.cranked.androidcorelibrary.utility.FileUtils
@@ -15,7 +17,6 @@ import com.cranked.androidfileconverter.FileConvertApp
 import com.cranked.androidfileconverter.R
 import com.cranked.androidfileconverter.adapter.photo.PhotoAdapter
 import com.cranked.androidfileconverter.databinding.FragmentCameraBinding
-import com.cranked.androidfileconverter.ui.imagecrop.ImageCropActivity
 import com.cranked.androidfileconverter.ui.model.PhotoFile
 import com.cranked.androidfileconverter.utils.Constants
 import com.cranked.androidfileconverter.utils.LogManager
@@ -23,6 +24,8 @@ import com.cranked.androidfileconverter.utils.date.DateUtils
 import com.cranked.androidfileconverter.utils.file.FileUtility
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import com.cranked.androidfileconverter.utils.junk.ToolbarState
+import com.theartofdev.edmodo.cropper.CropImage
+import com.theartofdev.edmodo.cropper.CropImageView
 import java.io.File
 import javax.inject.Inject
 
@@ -78,11 +81,12 @@ class CameraFragment @Inject constructor() :
                         return@setOnClickListener
                     }
                 }
+
                 folderPath = BitmapUtils.createImageFile(viewModel.getImagePath(path)).absolutePath
-                val intent = Intent(requireContext(), ImageCropActivity::class.java)
-                intent.putExtra(Constants.TAKEN_PHOTO_PATH, folderPath)
-                startActivity(intent)
-//                BitmapUtils.takePhoto(this, folderPath)
+                CropImage.activity().setGuidelines(CropImageView.Guidelines.ON).setActivityTitle(getString(R.string.image_crop_title))
+                    .setOutputUri(File(folderPath).toUri()).setCropShape(CropImageView.CropShape.RECTANGLE)
+                    .setCropMenuCropButtonTitle(getString(R.string.finish)).setRequestedSize(400, 400).start(requireContext(), this);
+
             } catch (e: Exception) {
                 LogManager.log(TAG, e)
             }
@@ -91,11 +95,13 @@ class CameraFragment @Inject constructor() :
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        when (resultCode) {
-            Activity.RESULT_OK -> {
-                when (requestCode) {
-                    Constants.RESULT_ADD_PHOTO -> {
-                        var photoList = FileUtils.getFolderFiles(path, 1, 1).filter { it.isDirectory }.map {
+        when (requestCode) {
+            CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE -> {
+                val result = CropImage.getActivityResult(data)
+
+                when (resultCode) {
+                    RESULT_OK -> {
+                        var photoList = FileUtils.getFolderFiles(path, 1, 1).map {
                             PhotoFile(it.path,
                                 it.name,
                                 FileUtils.getFolderFiles(it.path, 10000, 1).filter { it.isFile }.size,
@@ -108,8 +114,7 @@ class CameraFragment @Inject constructor() :
             }
             Activity.RESULT_CANCELED -> {
                 when (requestCode) {
-                    Constants.RESULT_ADD_PHOTO ->
-                        FileUtility.deleteFile(folderPath)
+                    Constants.RESULT_ADD_PHOTO -> FileUtility.deleteFile(folderPath)
                 }
             }
         }

@@ -49,6 +49,8 @@ import com.cranked.androidfileconverter.utils.animation.animationStart
 import com.cranked.androidfileconverter.utils.enums.TaskType
 import com.cranked.androidfileconverter.utils.image.BitmapUtils
 import java.io.File
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 class CameraImageFragmentViewModel @Inject constructor(private val favoritesDao: FavoritesDao) : BaseViewModel() {
@@ -119,6 +121,9 @@ class CameraImageFragmentViewModel @Inject constructor(private val favoritesDao:
         }
         return photoStaggeredAdapter
     }
+
+    fun getImagePath(path: String) = path + SimpleDateFormat("yyyyMMdd_HHmmss").format(
+        Date())
 
     fun showTakenPhotoOptionsBottomDialog(
         supportFragmentManager: FragmentManager,

@@ -123,6 +123,8 @@ dependencies {
     // ImageCrop Library
     implementation 'com.github.CanHub:Android-Image-Cropper:3.3.5'
 
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.0'
+
     //Firebase
     implementation platform('com.google.firebase:firebase-bom:29.0.1')
     implementation 'com.google.firebase:firebase-crashlytics-ktx'

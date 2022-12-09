@@ -119,6 +119,12 @@
     <string name="next">Next</string>
     <string name="selected_files">%1$d  file%2$s selected</string>
 
+
+<!--    Image Cropping Strings-->
+    <string name="image_crop_title">Image Cropping</string>
+    <string name="finish">Finish</string>
+
+
     <string-array name="pdf_converter_strings">
         <item>@string/pdf_to_image</item>
         <item>@string/pdf_to_excel</item>
